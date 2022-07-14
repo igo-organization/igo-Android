@@ -29,7 +29,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.i_go.R
+import com.example.i_go.feature_note.domain.model.Doctor
 import com.example.i_go.feature_note.presentation.add_edit_patient.AddEditPatientScreen
+import com.example.i_go.feature_note.presentation.doctors.DoctorScreen
 import com.example.i_go.feature_note.presentation.patients.PatientsScreen
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.I_GOTheme
@@ -63,6 +65,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screen.PatientsScreen.route) {
                             PatientsScreen(navController = navController)
+                        }
+                        composable(route = Screen.DoctorScreen.route) {
+                            DoctorScreen(navController = navController)
                         }
                         composable(
                             route = Screen.AddEditPatientScreen.route +

@@ -1,6 +1,5 @@
 package com.example.i_go.feature_note.presentation.patients
 
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,25 +10,34 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.i_go.R
 import com.example.i_go.feature_note.presentation.patients.components.OrderSection
 import com.example.i_go.feature_note.presentation.patients.components.PatientItem
 import com.example.i_go.feature_note.presentation.util.Screen
+import com.example.i_go.name_dataStore
 import com.example.i_go.ui.theme.button_color
 import com.example.i_go.ui.theme.dark_blue
 import com.example.i_go.ui.theme.primary
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+@OptIn(InternalCoroutinesApi::class)
 @ExperimentalAnimationApi
 @Composable
 fun PatientsScreen(
@@ -39,6 +47,22 @@ fun PatientsScreen(
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+    val nameKey = stringPreferencesKey("doctor_name")
+
+    val name = flow<String> {
+
+        context.name_dataStore.data.map {
+            it[nameKey]
+        }.collect {
+            if (it != null) {
+                this.emit(it)
+            }
+        }
+    }.collectAsState(initial = "")
+    // name == doctor's name
+    // usage - when doctor call patient -> alarm
 
     Scaffold(
         floatingActionButton = {
@@ -85,8 +109,7 @@ fun PatientsScreen(
                 ) {
                     IconButton(
                         onClick = {
-                            // viewModel.onEvent(PatientsEvent.ToggleOrderSection)
-                            // TODO
+                            navController.navigate(Screen.DoctorScreen.route)
                         },
                     ) {
                         Icon(
