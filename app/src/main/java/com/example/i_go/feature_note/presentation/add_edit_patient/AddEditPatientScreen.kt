@@ -1,5 +1,6 @@
 package com.example.i_go.feature_note.presentation.add_edit_patient
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
@@ -11,6 +12,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -41,13 +48,16 @@ import com.example.i_go.feature_note.domain.model.Patient
 import com.example.i_go.feature_note.domain.model.Patient.Companion.patientImages
 import com.example.i_go.feature_note.domain.model.Patient.Companion.patient_image_real
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.TransparentHintTextField
-import com.example.i_go.ui.theme.I_GOTheme
-import com.example.i_go.ui.theme.button_color
-import com.example.i_go.ui.theme.card_color
-import com.example.i_go.ui.theme.primary
+import com.example.i_go.feature_note.presentation.doctors.MakeRectangular
+import com.example.i_go.ui.theme.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun AddEditPatientScreen(
     navController: NavController,
@@ -63,8 +73,12 @@ fun AddEditPatientScreen(
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
+    val selectedGender = remember { mutableStateOf("")}
     val focusRequester by remember { mutableStateOf(FocusRequester()) }
     val focusManager = LocalFocusManager.current
+
+    val pagerState = rememberPagerState(pageCount = 5, initialPage = if (patientImage > 0) patientImage else patientImages.random())
+
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -84,6 +98,7 @@ fun AddEditPatientScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
+                    viewModel.onEvent(AddEditPatientEvent.ChangeImage(pagerState.currentPage))
                     viewModel.onEvent(AddEditPatientEvent.SavePatient)
                 },
                 backgroundColor = button_color
@@ -96,7 +111,6 @@ fun AddEditPatientScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .addFocusCleaner(focusManager)
         ) {
             Row(
@@ -120,67 +134,81 @@ fun AddEditPatientScreen(
             }
             Divider(color = primary, modifier = Modifier.shadow(8.dp), thickness = 2.dp)
 
-            Row(
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .addFocusCleaner(focusManager)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-                patientImages.forEach { image ->
-                    val imageInt = image
-                    Box(
+
+                HorizontalPager(
+                    state = pagerState,
+                    verticalAlignment = Alignment.Top
+                ) { page ->
+                    Column(
                         modifier = Modifier
-                            .size(50.dp)
-                            .shadow(5.dp, CircleShape)
-                            .clip(CircleShape)
-                            .background(Color.White)
-                            .border(
-                                width = 3.dp,
-                                color = if (viewModel.patientImage.value == imageInt) {
-                                    button_color
-                                } else card_color,
-                                shape = CircleShape
+                            .padding(top = 30.dp, bottom = 8.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Card(
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(150.dp)
+                        ) {
+                            Image(
+                                painterResource(
+                                    id = patient_image_real[page]
+                                ),
+                                contentDescription = "painting"
                             )
-                            .clickable {
-                                viewModel.onEvent(AddEditPatientEvent.ChangeImage(imageInt))
-                            }
-                    ){
-                        Image(painterResource(id = patient_image_real[imageInt]),
-                            contentDescription = "painting",
-                            modifier = Modifier.size(45.dp)
-                                .padding(start = 5.dp),
-                            alignment = Alignment.BottomCenter,
-                        )
-
+                        }
                     }
-
-
                 }
+                HorizontalPagerIndicator(
+                    pagerState = pagerState,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(30.dp),
+                    activeColor = card_color
+                )
             }
 
-            Text("이름",
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .padding(start = 12.dp)
-            )
-
-            Box (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(start = 10.dp, end = 5.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                MakeRectangular()
-                Column(
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "이름",
                     modifier = Modifier
+                        .padding(start = 30.dp),
+                    color = recruit_city
                 )
-                {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 40.dp)
+                        .padding(end = 40.dp)
+                        .padding(top = 10.dp)
+                        .padding(bottom = 20.dp)
+                ) {
+                    MakeRectangular()
                     TransparentHintTextField(
                         text = nameState.text,
                         hint = nameState.hint,
                         modifier = Modifier
-                                .padding(8.dp)
+                            .padding(8.dp)
                             .focusRequester(focusRequester = focusRequester),
 
                         onValueChange = {
@@ -195,23 +223,61 @@ fun AddEditPatientScreen(
                     )
                 }
             }
-            Text("성별",
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .padding(start = 12.dp)
-            )
-
-            Box (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(start = 10.dp, end = 5.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                MakeRectangular()
-                Column(
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "성별",
                     modifier = Modifier
+                        .padding(start = 30.dp),
+                    color = recruit_city
                 )
-                {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 40.dp)
+                        .padding(end = 40.dp)
+                        .padding(top = 10.dp)
+                        .padding(bottom = 20.dp)
+                ) {
+                    MakeRectangular()/*
+                    Row{
+
+                        RadioButton(
+                            selected = selectedGender.value == "남",
+                            onClick = {
+                                selectedGender.value == "남"
+                                viewModel.onEvent(AddEditPatientEvent.EnteredSex(selectedGender.value))
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = call_color,
+                                unselectedColor = call_color
+                            )
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text("남")
+                        Spacer(modifier = Modifier.size(8.dp))
+
+                        RadioButton(
+                            selected = selectedGender.value == "여",
+                            onClick = {
+                                selectedGender.value == "여"
+                                viewModel.onEvent(AddEditPatientEvent.EnteredSex(selectedGender.value))
+                              },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = call_color,
+                                unselectedColor = call_color
+                            )
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text("여")
+                        Spacer(modifier = Modifier.size(8.dp))
+                    }*/
+
                     TransparentHintTextField(
                         text = sexState.text,
                         hint = sexState.hint,
@@ -231,23 +297,28 @@ fun AddEditPatientScreen(
                     )
                 }
             }
-            Text("나이",
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .padding(start = 12.dp)
-            )
-
-            Box (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(start = 10.dp, end = 5.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                MakeRectangular()
-                Column(
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "나이",
                     modifier = Modifier
+                        .padding(start = 30.dp),
+                    color = recruit_city
                 )
-                {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 40.dp)
+                        .padding(end = 40.dp)
+                        .padding(top = 10.dp)
+                        .padding(bottom = 20.dp)
+                ) {
+                    MakeRectangular()
                     TransparentHintTextField(
                         text = ageState.text,
                         hint = ageState.hint,
@@ -267,23 +338,28 @@ fun AddEditPatientScreen(
                     )
                 }
             }
-            Text("혈액형",
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .padding(start = 12.dp)
-            )
-
-            Box (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(start = 10.dp, end = 5.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                MakeRectangular()
-                Column(
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "혈액형",
                     modifier = Modifier
+                        .padding(start = 25.dp),
+                    color = recruit_city
                 )
-                {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 30.dp)
+                        .padding(end = 40.dp)
+                        .padding(top = 10.dp)
+                        .padding(bottom = 20.dp)
+                ) {
+                    MakeRectangular()
                     TransparentHintTextField(
                         text = bloodTypeState.text,
                         hint = bloodTypeState.hint,
@@ -303,23 +379,28 @@ fun AddEditPatientScreen(
                     )
                 }
             }
-            Text("질병",
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .padding(start = 12.dp)
-            )
-
-            Box (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(start = 10.dp, end = 5.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                MakeRectangular()
-                Column(
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "질병",
                     modifier = Modifier
+                        .padding(start = 30.dp),
+                    color = recruit_city
                 )
-                {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 40.dp)
+                        .padding(end = 40.dp)
+                        .padding(top = 10.dp)
+                        .padding(bottom = 20.dp)
+                ) {
+                    MakeRectangular()
                     TransparentHintTextField(
                         text = diseasesState.text,
                         hint = diseasesState.hint,
@@ -339,53 +420,56 @@ fun AddEditPatientScreen(
                     )
                 }
             }
-            Text("기타사항",
-                fontSize = 13.sp,
+            Row(
                 modifier = Modifier
-                    .padding(top = 10.dp)
-                    .padding(start = 12.dp)
-            )
-
-            Box (
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 5.dp)
             ) {
-                val cornerRadius: Dp = 10.dp
-                val cutCornerSize: Dp = 0.dp
-                Canvas(
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "기타사항",
                     modifier = Modifier
-                        .matchParentSize()
-                        .shadow(elevation = 5.dp, shape = RoundedCornerShape(10.dp))
-                ) {
-                    val clipPath = Path().apply {
-                        lineTo(size.width - cutCornerSize.toPx(), 0f)
-                        lineTo(size.width, cutCornerSize.toPx())
-                        lineTo(size.width, size.height)
-                        lineTo(0f, size.height)
-                        close()
-                    }
-
-                    clipPath(clipPath) {
-                        drawRoundRect(
-                            color = card_color,
-                            size = size,
-                            cornerRadius = CornerRadius(cornerRadius.toPx())
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier
+                        .padding(start = 12.dp, top = 17.dp),
+                    color = recruit_city
                 )
-                {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 30.dp)
+                        .padding(end = 40.dp)
+                        .padding(top = 10.dp)
+                        .padding(bottom = 20.dp)
+                ) {
+                    val cornerRadius: Dp = 10.dp
+                    val cutCornerSize: Dp = 0.dp
+                    Canvas(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .shadow(elevation = 5.dp, shape = RoundedCornerShape(10.dp))
+                    ) {
+                        val clipPath = Path().apply {
+                            lineTo(size.width - cutCornerSize.toPx(), 0f)
+                            lineTo(size.width, cutCornerSize.toPx())
+                            lineTo(size.width, size.height)
+                            lineTo(0f, size.height)
+                            close()
+                        }
+
+                        clipPath(clipPath) {
+                            drawRoundRect(
+                                color = card_color,
+                                size = size,
+                                cornerRadius = CornerRadius(cornerRadius.toPx())
+                            )
+                        }
+                    }
                     TransparentHintTextField(
                         text = extraState.text,
                         hint = extraState.hint,
                         modifier = Modifier
                             .padding(8.dp)
                             .fillMaxSize()
-                            .focusRequester(focusRequester = focusRequester)
-                        ,
+                            .focusRequester(focusRequester = focusRequester),
 
                         onValueChange = {
                             viewModel.onEvent(AddEditPatientEvent.EnteredExtra(it))
@@ -400,37 +484,9 @@ fun AddEditPatientScreen(
                 }
             }
 
-
-
-
-        }
-    }
-}
-
-@Composable
-fun MakeRectangular() {
-    val cornerRadius: Dp = 10.dp
-    val cutCornerSize: Dp = 0.dp
-    Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp)
-            .shadow(elevation = 5.dp, shape = RoundedCornerShape(10.dp))
-    ) {
-        val clipPath = Path().apply {
-            lineTo(size.width - cutCornerSize.toPx(), 0f)
-            lineTo(size.width, cutCornerSize.toPx())
-            lineTo(size.width, size.height)
-            lineTo(0f, size.height)
-            close()
         }
 
-        clipPath(clipPath) {
-            drawRoundRect(
-                color = card_color,
-                size = size,
-                cornerRadius = CornerRadius(cornerRadius.toPx())
-            )
+
         }
     }
 }

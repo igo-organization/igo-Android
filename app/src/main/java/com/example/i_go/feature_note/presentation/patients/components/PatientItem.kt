@@ -31,24 +31,25 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import com.example.i_go.R
 import com.example.i_go.feature_note.domain.model.Patient
-import com.example.i_go.ui.theme.button_color
-import com.example.i_go.ui.theme.call_color
-import com.example.i_go.ui.theme.card_color
+import com.example.i_go.ui.theme.*
 
 @Composable
 fun PatientItem(
     patient: Patient,
     modifier: Modifier = Modifier,
-    cornerRadius: Dp = 15.dp,
+    cornerRadius: Dp = 26.dp,
     cutCornerSize: Dp = 0.dp,
     onDeleteClick: () -> Unit
 ) {
     Box(
         modifier = modifier
+            .padding(start = 15.dp)
+            .padding(end = 15.dp)
+            .padding(top = 15.dp)
     ) {
         Canvas(modifier = Modifier
             .matchParentSize()
-            .shadow(elevation = 5.dp, shape = RoundedCornerShape(15.dp))
+            .shadow(elevation = 5.dp, shape = RoundedCornerShape(26.dp))
         ) {
             val clipPath = Path().apply {
                 lineTo(size.width - cutCornerSize.toPx(), 0f)
@@ -68,7 +69,7 @@ fun PatientItem(
         }
         Row(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(16.dp)
         ) {
             Box( modifier = Modifier
@@ -90,7 +91,7 @@ fun PatientItem(
             }
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(8.dp)
             ){
                 Text(
@@ -101,7 +102,7 @@ fun PatientItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(11.dp))
                 Row (
                     modifier = Modifier
                         .padding(start = 8.dp)
@@ -109,30 +110,46 @@ fun PatientItem(
                     Text(
                         text = patient.sex,
                         style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.onSurface,
+                        color = text_gray,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Text(text = " / ")
+                    Text(
+                        text = " / ",
+                        style = MaterialTheme.typography.body1,
+                        color = text_gray,
+                        maxLines = 1
+                    )
                     Text(
                         text = patient.age,
                         style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.onSurface,
+                        color = text_gray,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Text(text = " / ")
+                    Text(
+                        text = " / ",
+                        style = MaterialTheme.typography.body1,
+                        color = text_gray,
+                        maxLines = 1
+                    )
                     Text(
                         text = patient.blood_type,
                         style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.onSurface,
+                        color = text_gray,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Text(text = " / ")
+                    Text(
+                        text = " / ",
+                        style = MaterialTheme.typography.body1,
+                        color = text_gray,
+                        maxLines = 1
+                    )
                     Text(
                         text = patient.disease,
                         style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.onSurface,
+                        color = text_gray,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -146,8 +163,8 @@ fun PatientItem(
             onClick = onDeleteClick,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .size(30.dp)
-                .padding(5.dp)
+                .size(50.dp)
+                .padding(15.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
@@ -164,6 +181,7 @@ fun PatientItem(
             modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(0.dp, 0.dp, 26.dp, 26.dp))
         ) {
            Text(
                text = "호출하기",

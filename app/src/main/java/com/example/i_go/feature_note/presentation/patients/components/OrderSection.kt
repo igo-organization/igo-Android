@@ -1,6 +1,8 @@
 package com.example.i_go.feature_note.presentation.patients.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -17,7 +19,9 @@ fun OrderSection(
         modifier = modifier
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 26.dp)
         ) {
             DefaultRadioButton(
                 text = "이름",
@@ -45,7 +49,9 @@ fun OrderSection(
         }
         Spacer(modifier = Modifier.height(12.dp))
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 26.dp)
         ) {
             DefaultRadioButton(
                 text = "오름차순",
@@ -60,7 +66,8 @@ fun OrderSection(
                 selected = patientOrder.orderType is OrderType.Descending,
                 onSelect = {
                     onOrderChange(patientOrder.copy(OrderType.Descending))
-                }
+                },
+                modifier = Modifier.padding(start = 40.dp)
             )
         }
     }

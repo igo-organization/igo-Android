@@ -108,21 +108,7 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:$compose_version")
     implementation ("androidx.compose.runtime:runtime-rxjava2:$compose_version")
 
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.14.0:osx-x86_64"
-    }
-
-
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                java {
-                    option 'lite'
-                }
-            }
-        }
-    }
+    def accompanist_version = '0.15.0'
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
 }

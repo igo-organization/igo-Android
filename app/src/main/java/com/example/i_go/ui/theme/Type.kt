@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.i_go.R
 
@@ -28,7 +29,8 @@ val Typography = Typography(
     body1 = TextStyle(
         fontFamily = QuickSand,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 16.sp,
+        textAlign = TextAlign.Center
     )
     /* Other default text styles to override
     button = TextStyle(

@@ -20,32 +20,32 @@ class AddEditPatientViewModel @Inject constructor (
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _patientName = mutableStateOf(PatientTextFieldState(
-        hint = "환자 이름을 입력해주세요.   ex) 홍길동"
+        hint = "홍길동"
     ))
     val patientName: State<PatientTextFieldState> = _patientName
 
     private val _patientSex = mutableStateOf(PatientTextFieldState(
-        hint = "환자 성별을 입력해주세요.   ex) 남"
+        hint = "남"
     ))
     val patientSex: State<PatientTextFieldState> = _patientSex
 
     private val _patientAge = mutableStateOf(PatientTextFieldState(
-        hint = "나이을 입력해주세요.       ex) 70세"
+        hint = "70세"
     ))
     val patientAge: State<PatientTextFieldState> = _patientAge
 
     private val _patientBloodType= mutableStateOf(PatientTextFieldState(
-        hint = "혈액형을 입력해주세요.     ex) Rh+ A형"
+        hint = "Rh+ A형"
     ))
     val patientBloodType: State<PatientTextFieldState> = _patientBloodType
 
     private val _patientDiseases = mutableStateOf(PatientTextFieldState(
-        hint = "환자의 질병 정보를 입력해주세요.   ex) 치매"
+        hint = "치매"
     ))
     val patientDiseases: State<PatientTextFieldState> = _patientDiseases
 
     private val _patientExtra = mutableStateOf(PatientTextFieldState(
-        hint = "기타 사항을 입력해주세요. \nex) 어르신 거동이 불편하심"
+        hint = "어르신 거동이 불편하심"
     ))
     val patientExtra: State<PatientTextFieldState> = _patientExtra
 

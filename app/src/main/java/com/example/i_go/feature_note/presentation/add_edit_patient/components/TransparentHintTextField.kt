@@ -10,6 +10,7 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import com.example.i_go.ui.theme.dark_gray
 
 @Composable
@@ -38,7 +39,7 @@ fun TransparentHintTextField(
                 }
         )
         if(isHintVisible) {
-            Text(text = hint, style = textStyle, color = dark_gray)
+            Text(text = hint, modifier = Modifier.fillMaxWidth(), style = textStyle, textAlign = TextAlign.Center, color = dark_gray)
         }
     }
 }

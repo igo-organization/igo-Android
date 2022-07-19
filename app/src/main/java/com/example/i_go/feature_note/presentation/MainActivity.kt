@@ -29,7 +29,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.i_go.R
-import com.example.i_go.feature_note.domain.model.Doctor
 import com.example.i_go.feature_note.presentation.add_edit_patient.AddEditPatientScreen
 import com.example.i_go.feature_note.presentation.doctors.DoctorScreen
 import com.example.i_go.feature_note.presentation.patients.PatientsScreen
@@ -132,11 +131,12 @@ fun SplashScreen (navController: NavController) {
                 .scale(scale.value)
         )
         Text (
-            text = " from\n기컴프",
+            text = " from\n 기컴프",
             color = Color.White,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(10.dp)
+                .padding(bottom = 20.dp)
         )
     }
 }

@@ -11,6 +11,10 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
@@ -35,6 +39,7 @@ import com.example.i_go.name_dataStore
 import com.example.i_go.ui.theme.button_color
 import com.example.i_go.ui.theme.card_color
 import com.example.i_go.ui.theme.primary
+import com.example.i_go.ui.theme.recruit_city
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -161,14 +166,16 @@ fun DoctorScreen (
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, end = 5.dp),
+                    .padding(start = 10.dp)
+                    .padding(end = 10.dp),
                 verticalAlignment =  Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = "이름",
                     modifier = Modifier
-                        .padding(start = 30.dp)
+                        .padding(start = 30.dp),
+                    color = recruit_city
                 )
                 Box (
                     modifier = Modifier
@@ -176,7 +183,7 @@ fun DoctorScreen (
                         .padding(start = 40.dp)
                         .padding(end = 40.dp)
                         .padding(top = 10.dp)
-                        .padding(bottom = 20.dp)
+                        .padding(bottom = 10.dp)
                 ) {
                     MakeRectangular()
 
@@ -186,8 +193,8 @@ fun DoctorScreen (
                             nameValue.value = it
                         },
                         modifier = Modifier
-                            .padding(8.dp)
-                            .padding(start = 10.dp),
+                            .padding(10.dp)
+                            .align(BottomCenter),
                         textStyle = MaterialTheme.typography.body1,
                         singleLine = true,
                     )
@@ -197,20 +204,21 @@ fun DoctorScreen (
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, end = 5.dp),
+                    .padding(start = 10.dp, end = 10.dp),
                 verticalAlignment =  Alignment.CenterVertically
             ) {
                 Text(
                     text = "전공",
                     modifier = Modifier
-                        .padding(start = 30.dp)
+                        .padding(start = 30.dp),
+                    color = recruit_city
                 )
                 Box (
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(start = 40.dp)
                         .padding(end = 40.dp)
-                        .padding(top = 10.dp)
+                        .padding(top = 20.dp)
                         .padding(bottom = 20.dp)
                 ) {
                     MakeRectangular()
@@ -218,8 +226,8 @@ fun DoctorScreen (
                         value = majorValue.value,
                         onValueChange = { majorValue.value = it },
                         modifier = Modifier
-                            .padding(8.dp)
-                            .padding(start = 10.dp),
+                            .padding(10.dp)
+                            .align(BottomCenter),
                         textStyle = MaterialTheme.typography.body1,
                         singleLine = true,
                     )
@@ -234,7 +242,8 @@ fun DoctorScreen (
                 Text(
                     text = "시설",
                     modifier = Modifier
-                        .padding(start = 30.dp)
+                        .padding(start = 30.dp),
+                    color = recruit_city
                 )
                 Box (
                     modifier = Modifier
@@ -249,8 +258,8 @@ fun DoctorScreen (
                         value = facilityValue.value,
                         onValueChange = { facilityValue.value = it },
                         modifier = Modifier
-                            .padding(8.dp)
-                            .padding(start = 10.dp),
+                                .padding(10.dp)
+                                .align(BottomCenter),
                         textStyle = MaterialTheme.typography.body1,
                         singleLine = true,
                     )

@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.i_go.ui.theme.button_color
+import com.example.i_go.ui.theme.*
 
 @Composable
 fun DefaultRadioButton(
@@ -29,11 +29,11 @@ fun DefaultRadioButton(
             selected = selected,
             onClick = onSelect,
             colors = RadioButtonDefaults.colors(
-                selectedColor = button_color,
-                unselectedColor = button_color
+                selectedColor = call_color,
+                unselectedColor = call_color
             )
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = text, style = MaterialTheme.typography.body1)
+        Text(text = text, style = MaterialTheme.typography.body1, color = recruit_city )
     }
 }

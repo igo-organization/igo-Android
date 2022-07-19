@@ -10,19 +10,19 @@ class AddPatient(
     @Throws(InvalidNoteException::class)
     suspend operator fun invoke(patient: Patient) {
         if(patient.name.isBlank()) {
-            throw InvalidNoteException("The name is empty.")
+            throw InvalidNoteException("이름을 입력해주세요.")
         }
         if(patient.sex.isBlank()) {
-            throw InvalidNoteException("The sex is empty.")
+            throw InvalidNoteException("성별을 입력해주세요.")
         }
         if(patient.age.isBlank()) {
-            throw InvalidNoteException("The age is empty.")
+            throw InvalidNoteException("나이을 입력해주세요.")
         }
         if(patient.blood_type.isBlank()) {
-            throw InvalidNoteException("The blood type is empty.")
+            throw InvalidNoteException("혈액형을 입력해주세요.")
         }
         if(patient.disease.isBlank()) {
-            throw InvalidNoteException("The disease is empty.")
+            throw InvalidNoteException("질병 정보를 입력해주세요.")
         }
         repository.insertPatient(patient)
     }
