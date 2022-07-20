@@ -10,6 +10,7 @@ data class Patient(
     val sex: String,
     val age: String,
     val blood_type: String,
+    val blood_rh: String,
     val disease: String,
     val extra: String,
     val timestamp: Long,

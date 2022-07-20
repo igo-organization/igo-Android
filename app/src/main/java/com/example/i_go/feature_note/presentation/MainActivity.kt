@@ -57,9 +57,9 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "splash_screen"
+                        startDestination = Screen.SplashScreen.route
                     ) {
-                        composable("splash_screen") {
+                        composable(route = Screen.SplashScreen.route) {
                             SplashScreen(navController = navController)
                         }
                         composable(route = Screen.PatientsScreen.route) {
@@ -100,43 +100,3 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@Composable
-fun SplashScreen (navController: NavController) {
-    val scale = remember {
-        Animatable (0f)
-    }
-    LaunchedEffect(key1 = true) {
-
-        scale.animateTo (
-            targetValue = 0.3f,
-            animationSpec = tween (
-                durationMillis = 500,
-                easing = {
-                    OvershootInterpolator(1f).getInterpolation(it)
-                }
-            )
-        )
-        delay(700L)
-        navController.navigate(Screen.PatientsScreen.route)
-    }
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-                           .background(call_color)
-    ) {
-        Image (
-            painter = painterResource(id = R.drawable.image_splash),
-            contentDescription = "LOGO",
-            modifier = Modifier
-                .scale(scale.value)
-        )
-        Text (
-            text = " from\n 기컴프",
-            color = Color.White,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(10.dp)
-                .padding(bottom = 20.dp)
-        )
-    }
-}

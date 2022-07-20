@@ -24,20 +24,19 @@ class AddEditPatientViewModel @Inject constructor (
     ))
     val patientName: State<PatientTextFieldState> = _patientName
 
-    private val _patientSex = mutableStateOf(PatientTextFieldState(
-        hint = "남"
-    ))
-    val patientSex: State<PatientTextFieldState> = _patientSex
+    private val _patientSex = mutableStateOf(PatientRadioButtonState())
+    val patientSex: State<PatientRadioButtonState> = _patientSex
 
     private val _patientAge = mutableStateOf(PatientTextFieldState(
         hint = "70세"
     ))
     val patientAge: State<PatientTextFieldState> = _patientAge
 
-    private val _patientBloodType= mutableStateOf(PatientTextFieldState(
-        hint = "Rh+ A형"
-    ))
-    val patientBloodType: State<PatientTextFieldState> = _patientBloodType
+    private val _patientBloodType = mutableStateOf(PatientRadioButtonState())
+    val patientBloodType: State<PatientRadioButtonState> = _patientBloodType
+
+    private val _patientBloodRh = mutableStateOf(PatientRadioButtonState())
+    val patientBloodRh: State<PatientRadioButtonState> = _patientBloodRh
 
     private val _patientDiseases = mutableStateOf(PatientTextFieldState(
         hint = "치매"
@@ -68,16 +67,17 @@ class AddEditPatientViewModel @Inject constructor (
                             isHintVisible = false
                         )
                         _patientSex.value = _patientSex.value.copy(
-                            text = patient.sex,
-                            isHintVisible = false
+                            text = patient.sex
                         )
                         _patientAge.value = _patientAge.value.copy(
                             text = patient.age,
                             isHintVisible = false
                         )
                         _patientBloodType.value = _patientBloodType.value.copy(
-                            text = patient.blood_type,
-                            isHintVisible = false
+                            text = patient.blood_type
+                        )
+                        _patientBloodRh.value = _patientBloodType.value.copy(
+                            text = patient.blood_rh
                         )
                         _patientDiseases.value = _patientDiseases.value.copy(
                             text = patient.disease,
@@ -112,12 +112,6 @@ class AddEditPatientViewModel @Inject constructor (
                     text = event.value
                 )
             }
-            is AddEditPatientEvent.ChangeSexFocus -> {
-                _patientSex.value = _patientSex.value.copy(
-                    isHintVisible = !event.focusState.isFocused &&
-                            _patientSex.value.text.isBlank()
-                )
-            }
             is AddEditPatientEvent.EnteredAge -> {
                 _patientAge.value = _patientAge.value.copy(
                     text = event.value
@@ -134,10 +128,9 @@ class AddEditPatientViewModel @Inject constructor (
                     text = event.value
                 )
             }
-            is AddEditPatientEvent.ChangeBloodTypeFocus -> {
-                _patientBloodType.value = _patientBloodType.value.copy(
-                    isHintVisible = !event.focusState.isFocused &&
-                            _patientBloodType.value.text.isBlank()
+            is AddEditPatientEvent.EnteredBloodRh -> {
+                _patientBloodRh.value = _patientBloodRh.value.copy(
+                    text = event.value
                 )
             }
             is AddEditPatientEvent.EnteredDiseases -> {
@@ -175,6 +168,7 @@ class AddEditPatientViewModel @Inject constructor (
                                 sex = patientSex.value.text,
                                 age = patientAge.value.text,
                                 blood_type = patientBloodType.value.text,
+                                blood_rh = patientBloodRh.value.text,
                                 disease = patientDiseases.value.text,
                                 extra = patientExtra.value.text,
 

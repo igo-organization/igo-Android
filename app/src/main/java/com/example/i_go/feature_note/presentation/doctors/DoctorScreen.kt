@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
@@ -32,14 +33,12 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavHostController
 import com.example.i_go.R
 import com.example.i_go.facility_dataStore
+import com.example.i_go.feature_note.presentation.add_edit_patient.AddEditPatientEvent
 import com.example.i_go.feature_note.presentation.add_edit_patient.addFocusCleaner
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.major_dataStore
 import com.example.i_go.name_dataStore
-import com.example.i_go.ui.theme.button_color
-import com.example.i_go.ui.theme.card_color
-import com.example.i_go.ui.theme.primary
-import com.example.i_go.ui.theme.recruit_city
+import com.example.i_go.ui.theme.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -49,20 +48,15 @@ import kotlinx.coroutines.launch
 fun DoctorScreen (
     navController : NavHostController
 ) {
-    val scaffoldState = rememberScaffoldState()
     val focusManager = LocalFocusManager.current
 
-    var nameValue = rememberSaveable {
-        mutableStateOf("")
-    }
-    var majorValue = rememberSaveable {
-        mutableStateOf("")
-    }
-    var facilityValue = rememberSaveable {
-        mutableStateOf("")
-    }
+    var nameValue = rememberSaveable { mutableStateOf("") }
+    var majorValue = rememberSaveable { mutableStateOf("") }
+    var facilityValue = rememberSaveable { mutableStateOf("") }
     var context = LocalContext.current
     var scope = rememberCoroutineScope()
+
+    val scaffoldState = rememberScaffoldState()
 
     val nameKey = stringPreferencesKey("doctor_name")
     var name = flow<String> {
@@ -102,40 +96,14 @@ fun DoctorScreen (
 
 
     LaunchedEffect(Unit) {
-        nameValue.value = name.value
-        majorValue.value = major.value
-        facilityValue.value = facility.value
+        if (name.value.isNotEmpty()) nameValue.value = name.value
+        if (major.value.isNotEmpty()) majorValue.value = major.value
+        if (facility.value.isNotEmpty()) facilityValue.value = facility.value
     }
-    Scaffold(
-            floatingActionButton = {
-                if (nameValue.value.trim().isNotEmpty()) {
-                    FloatingActionButton(
-                        onClick = {
-                            scope.launch {
-                                saveDoctorName(
-                                    context, nameValue.value
-                                )
-                                saveDoctorMajor(
-                                    context, majorValue.value
-                                )
-                                saveDoctorFacility(
-                                    context, facilityValue.value
-                                )
-                            }
-                            navController.navigate(Screen.PatientsScreen.route)
-                        },
-                        backgroundColor = button_color
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Save,
-                            tint = Color.White,
-                            contentDescription = "Save doctor"
-                        )
-                      }
-                }
-            }, scaffoldState = scaffoldState
 
-            ) {
+    Scaffold(
+        scaffoldState = scaffoldState
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -163,12 +131,12 @@ fun DoctorScreen (
             }
             Divider(color = primary, modifier = Modifier.shadow(8.dp), thickness = 2.dp)
             Profile()
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp)
                     .padding(end = 10.dp),
-                verticalAlignment =  Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
@@ -177,7 +145,7 @@ fun DoctorScreen (
                         .padding(start = 30.dp),
                     color = recruit_city
                 )
-                Box (
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(start = 40.dp)
@@ -201,11 +169,11 @@ fun DoctorScreen (
 
                 }
             }
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp, end = 10.dp),
-                verticalAlignment =  Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "전공",
@@ -213,7 +181,7 @@ fun DoctorScreen (
                         .padding(start = 30.dp),
                     color = recruit_city
                 )
-                Box (
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(start = 40.dp)
@@ -233,11 +201,11 @@ fun DoctorScreen (
                     )
                 }
             }
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp, end = 5.dp),
-                verticalAlignment =  Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "시설",
@@ -245,7 +213,7 @@ fun DoctorScreen (
                         .padding(start = 30.dp),
                     color = recruit_city
                 )
-                Box (
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(start = 40.dp)
@@ -258,15 +226,59 @@ fun DoctorScreen (
                         value = facilityValue.value,
                         onValueChange = { facilityValue.value = it },
                         modifier = Modifier
-                                .padding(10.dp)
-                                .align(BottomCenter),
+                            .padding(10.dp)
+                            .align(BottomCenter),
                         textStyle = MaterialTheme.typography.body1,
                         singleLine = true,
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(40.dp))
+            Button(
+                onClick = {
+                    scope.launch {
+                        if (nameValue.value.isEmpty()){
+                            NameExcept(nameValue.value, scaffoldState)
+                        }
+                        if (majorValue.value.isEmpty()){
+                            MajorExcept(majorValue.value, scaffoldState)
+                        }
+                        if (facilityValue.value.isEmpty()){
+                            FacilityExcept(facilityValue.value, scaffoldState)
+                        }
+                        if (facilityValue.value.isNotEmpty()
+                            && nameValue.value.isNotEmpty()
+                            && majorValue.value.isNotEmpty()) {
+                            saveDoctorName(
+                                context, nameValue.value
+                            )
+                            saveDoctorMajor(
+                                context, majorValue.value
+                            )
+                            saveDoctorFacility(
+                                context, facilityValue.value
+                            )
+                            navController.navigate(Screen.PatientsScreen.route)
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(20.dp)
+                    .width(200.dp)
+                    .height(50.dp)
+                    .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
+            ) {
+                Text(
+                    text = "저장하기",
+                    color = Color.White,
+                    style = MaterialTheme.typography.h4
+                )
+            }
         }
     }
+
 }
 
 @Composable
@@ -290,6 +302,7 @@ fun Profile() {
         }
     }
 }
+
 @Composable
 fun MakeRectangular() {
     val cornerRadius: Dp = 10.dp

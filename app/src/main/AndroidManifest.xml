@@ -5,7 +5,7 @@
 
     <application
         android:name=".PatientApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/igo_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/igo_icon_round"
