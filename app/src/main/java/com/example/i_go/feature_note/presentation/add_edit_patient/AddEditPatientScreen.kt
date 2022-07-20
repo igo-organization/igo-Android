@@ -573,13 +573,12 @@ fun AddEditPatientScreen(
                     onClick = {
                         viewModel.onEvent(AddEditPatientEvent.ChangeImage(pagerState.currentPage))
                         viewModel.onEvent(AddEditPatientEvent.SavePatient)
-                        navController.navigate(Screen.PatientsScreen.route)
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
                     modifier = Modifier
-                        .align(CenterHorizontally)
-                        .fillMaxWidth()
-                        .padding(20.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .padding(50.dp)
+                        .width(220.dp)
                         .height(50.dp)
                         .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
                 ) {
@@ -589,6 +588,7 @@ fun AddEditPatientScreen(
                         style = MaterialTheme.typography.h4
                     )
                 }
+              //  Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }

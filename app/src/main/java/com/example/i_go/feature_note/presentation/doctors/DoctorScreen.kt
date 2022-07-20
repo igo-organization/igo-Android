@@ -258,7 +258,7 @@ fun DoctorScreen (
                             saveDoctorFacility(
                                 context, facilityValue.value
                             )
-                            navController.navigate(Screen.PatientsScreen.route)
+                            navController.navigateUp()
                         }
                     }
                 },
@@ -266,7 +266,7 @@ fun DoctorScreen (
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(20.dp)
-                    .width(200.dp)
+                    .width(220.dp)
                     .height(50.dp)
                     .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
             ) {
