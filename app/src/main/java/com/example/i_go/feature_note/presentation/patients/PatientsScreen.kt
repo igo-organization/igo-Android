@@ -109,7 +109,7 @@ fun PatientsScreen(
                     IconButton(
                         onClick = {
                             //viewModel.onEvent(PatientsEvent.ToggleOrderSection)
-                            //TODO
+                            //TODO: 언젠가는 만들 알림뷰
                         },
                     ) {
                         Icon(

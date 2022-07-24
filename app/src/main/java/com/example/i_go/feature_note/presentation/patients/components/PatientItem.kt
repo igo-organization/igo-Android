@@ -160,6 +160,7 @@ fun PatientItem(
         }
 
         IconButton(
+            // TODO: Patient 정보 삭제하기
             onClick = onDeleteClick,
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -174,7 +175,7 @@ fun PatientItem(
         }
         Button (
             onClick = {
-                // TODO
+                // TODO: 서버로 신호 주기
             },
             colors =  ButtonDefaults
                 .buttonColors(backgroundColor = call_color),

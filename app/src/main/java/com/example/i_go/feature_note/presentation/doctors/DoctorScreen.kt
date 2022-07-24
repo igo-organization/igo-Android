@@ -7,28 +7,40 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.End
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavHostController
 import com.example.i_go.R
@@ -55,8 +67,20 @@ fun DoctorScreen (
     var facilityValue = rememberSaveable { mutableStateOf("") }
     var context = LocalContext.current
     var scope = rememberCoroutineScope()
-
     val scaffoldState = rememberScaffoldState()
+
+    var expanded by remember { mutableStateOf(false) }
+
+    // TODO : 요양병원 이름 서버에서 불러오기
+
+    var list = listOf("행복 요양병원", "사랑 요양병원", "나눔 요양병원")
+    var textFieldSize by remember { mutableStateOf(Size.Zero) }
+
+    val icon = if (expanded){
+        Icons.Filled.KeyboardArrowUp
+    } else {
+        Icons.Filled.KeyboardArrowDown
+    }
 
     val nameKey = stringPreferencesKey("doctor_name")
     var name = flow<String> {
@@ -99,6 +123,7 @@ fun DoctorScreen (
         if (name.value.isNotEmpty()) nameValue.value = name.value
         if (major.value.isNotEmpty()) majorValue.value = major.value
         if (facility.value.isNotEmpty()) facilityValue.value = facility.value
+        if (facilityValue.value.isEmpty()) facilityValue.value = list[0]
     }
 
     Scaffold(
@@ -222,20 +247,64 @@ fun DoctorScreen (
                         .padding(bottom = 10.dp)
                 ) {
                     MakeRectangular()
-                    BasicTextField(
-                        value = facilityValue.value,
-                        onValueChange = { facilityValue.value = it },
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .align(BottomCenter),
-                        textStyle = MaterialTheme.typography.body1,
-                        singleLine = true,
-                    )
+                    Column(
+                        horizontalAlignment = CenterHorizontally,
+                        modifier = Modifier.fillMaxSize()
+                    ){
+                        Box {
+                                TextButton(
+                                    onClick = { expanded = !expanded },
+                                    colors= ButtonDefaults.buttonColors(backgroundColor = card_color),
+                                ) {
+                                Row {
+                                    Text(
+                                        text = facilityValue.value,
+                                        modifier = Modifier.align(CenterVertically),
+                                        color = Black,
+                                        maxLines = 1,
+                                        style = MaterialTheme.typography.body1,
+                                    )
+                                    Icon(
+                                        icon,
+                                        contentDescription = "",
+                                        Modifier
+                                            .padding(start = 3.dp)
+                                            .clickable { expanded = !expanded }
+                                            .background(card_color),
+                                        tint = button_color
+                                    )
+
+                                }
+                            }
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = {
+                                    expanded = false
+                                },
+                                modifier = Modifier.width(160.dp)
+                            ) {
+                                list.forEach { label ->
+                                    DropdownMenuItem(onClick = {
+                                        facilityValue.value = label
+                                        expanded = false
+                                    }) {
+                                        Text(text = label)
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(40.dp))
             Button(
                 onClick = {
+                    // TODO: 서버로 Doctor의 상세 정보 보내기
+                    if (name.value.isNotEmpty()){
+                        // 수정
+                    }else{
+                        // 추가
+                    }
                     scope.launch {
                         if (nameValue.value.isEmpty()){
                             NameExcept(nameValue.value, scaffoldState)
@@ -258,7 +327,7 @@ fun DoctorScreen (
                             saveDoctorFacility(
                                 context, facilityValue.value
                             )
-                            navController.navigateUp()
+                            navController.navigate(Screen.PatientsScreen.route)
                         }
                     }
                 },
@@ -271,7 +340,7 @@ fun DoctorScreen (
                     .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
             ) {
                 Text(
-                    text = "저장하기",
+                    text = if (name.value.isNotEmpty()){ "수정하기" } else{ "저장하기" },
                     color = Color.White,
                     style = MaterialTheme.typography.h4
                 )

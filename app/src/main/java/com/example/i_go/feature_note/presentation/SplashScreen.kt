@@ -41,7 +41,7 @@ fun SplashScreen (navController: NavController) {
             )
         )
         delay(700L)
-        navController.navigate(Screen.PatientsScreen.route)
+        navController.navigate(Screen.LoginScreen.route)
     }
     Box(
         contentAlignment = Alignment.Center,

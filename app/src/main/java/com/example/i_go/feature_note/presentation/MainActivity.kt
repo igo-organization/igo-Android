@@ -31,6 +31,7 @@ import androidx.navigation.navArgument
 import com.example.i_go.R
 import com.example.i_go.feature_note.presentation.add_edit_patient.AddEditPatientScreen
 import com.example.i_go.feature_note.presentation.doctors.DoctorScreen
+import com.example.i_go.feature_note.presentation.login.LoginScreen
 import com.example.i_go.feature_note.presentation.patients.PatientsScreen
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.I_GOTheme
@@ -59,8 +60,13 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = Screen.SplashScreen.route
                     ) {
+                        // TODO: 처음 Login하면 이 progress를 걸치지만
+                        // Login이 이미 된 상태면 splash -> patientScreen으로 이동함
                         composable(route = Screen.SplashScreen.route) {
                             SplashScreen(navController = navController)
+                        }
+                        composable(route = Screen.LoginScreen.route) {
+                            LoginScreen(navController = navController)
                         }
                         composable(route = Screen.PatientsScreen.route) {
                             PatientsScreen(navController = navController)

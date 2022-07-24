@@ -571,19 +571,26 @@ fun AddEditPatientScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = {
+                        // TODO: 서버로 Patient의 상세 정보 보내기
+
+                        if(nameState.text.isNotEmpty()){
+                            // 수정하기
+                        }else{
+                            // 추가하기
+                        }
                         viewModel.onEvent(AddEditPatientEvent.ChangeImage(pagerState.currentPage))
                         viewModel.onEvent(AddEditPatientEvent.SavePatient)
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(50.dp)
+                        .padding(20.dp)
                         .width(220.dp)
                         .height(50.dp)
                         .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
                 ) {
                     Text(
-                        text = "저장하기",
+                        text = if(nameState.text.isNotEmpty()){ "수정하기" } else{ "추가하기" },
                         color = Color.White,
                         style = MaterialTheme.typography.h4
                     )
