@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavHostController
@@ -309,15 +310,13 @@ fun DoctorScreen (
                         if (nameValue.value.isEmpty()){
                             NameExcept(nameValue.value, scaffoldState)
                         }
-                        if (majorValue.value.isEmpty()){
+                        else if (majorValue.value.isEmpty()){
                             MajorExcept(majorValue.value, scaffoldState)
                         }
-                        if (facilityValue.value.isEmpty()){
+                        else if (facilityValue.value.isEmpty()){
                             FacilityExcept(facilityValue.value, scaffoldState)
                         }
-                        if (facilityValue.value.isNotEmpty()
-                            && nameValue.value.isNotEmpty()
-                            && majorValue.value.isNotEmpty()) {
+                        else {
                             saveDoctorName(
                                 context, nameValue.value
                             )
@@ -342,7 +341,8 @@ fun DoctorScreen (
                 Text(
                     text = if (name.value.isNotEmpty()){ "수정하기" } else{ "저장하기" },
                     color = Color.White,
-                    style = MaterialTheme.typography.h4
+                    style = MaterialTheme.typography.h4,
+                    fontSize = 20.sp
                 )
             }
         }

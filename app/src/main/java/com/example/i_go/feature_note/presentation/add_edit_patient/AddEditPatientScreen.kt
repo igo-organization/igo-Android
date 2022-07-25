@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.i_go.feature_note.domain.model.Patient.Companion.patientImages
@@ -592,7 +593,8 @@ fun AddEditPatientScreen(
                     Text(
                         text = if(nameState.text.isNotEmpty()){ "수정하기" } else{ "추가하기" },
                         color = Color.White,
-                        style = MaterialTheme.typography.h4
+                        style = MaterialTheme.typography.h4,
+                        fontSize = 20.sp
                     )
                 }
               //  Spacer(modifier = Modifier.height(100.dp))

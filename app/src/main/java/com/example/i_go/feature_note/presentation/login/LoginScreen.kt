@@ -23,10 +23,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.BottomEnd
+import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
@@ -36,9 +39,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
@@ -58,10 +63,16 @@ import androidx.navigation.NavController
 import com.example.i_go.R
 import com.example.i_go.feature_note.presentation.add_edit_patient.addFocusCleaner
 import com.example.i_go.feature_note.presentation.doctors.*
+import com.example.i_go.feature_note.presentation.login.components.CustomText
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.*
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.onebone.toolbar.CollapsingToolbar
+import me.onebone.toolbar.CollapsingToolbarScaffold
+import me.onebone.toolbar.ScrollStrategy
+import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 import java.net.PasswordAuthentication
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -73,268 +84,195 @@ fun LoginScreen(
     val emailValue = rememberSaveable { mutableStateOf("") }
     val passwordValue =  rememberSaveable { mutableStateOf("") }
     val passwordConfirmValue = rememberSaveable { mutableStateOf("") }
-    val focusRequester by remember { mutableStateOf(FocusRequester()) }
+
+    val logIdValue = rememberSaveable { mutableStateOf("") }
+    val logPasswordValue = rememberSaveable { mutableStateOf("") }
+
+
     val focusManager = LocalFocusManager.current
     var scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
-
-    val sizeState by remember { mutableStateOf(200.dp) }
-    var isTouched by remember { mutableStateOf(false) }
+    
+    var isLogIn by remember { mutableStateOf(true) }
+    var isMaxSize by remember { mutableStateOf(false) }
+    val state = rememberCollapsingToolbarScaffoldState()
 
     Scaffold(
-        scaffoldState = scaffoldState
-    ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(call_color),
-        contentAlignment = BottomCenter
-    ) {
-        Image(
-            painterResource(id = R.drawable.image_splash),
-            contentDescription = "image_splash",
-            modifier = Modifier
-                .clickable { isTouched = !isTouched }
-                .align(TopStart)
-                .padding(10.dp)
-                .size(50.dp)
-        )
-        MiddleImage(
-            Modifier
-                .clickable { isTouched = !isTouched }
-                .padding(top = 150.dp)
-                .padding(bottom = 30.dp)
-                .align(TopCenter)
-        )
-        Column(
-            horizontalAlignment = CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(
-                    if (isTouched) 0.9f else 0.2f
-                )
-                .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
-                .background(card_color)
-                .padding(10.dp)
-                .verticalScroll(rememberScrollState())
-                .addFocusCleaner(focusManager)
-                .animateContentSize()
-        ) {
-            Column(
-                modifier = Modifier.clickable{isTouched = !isTouched}
-                    .fillMaxSize()
-            ) {
-                Spacer(modifier = Modifier.padding(20.dp))
-                Text(
-                    text = "로그인",
-                    style = MaterialTheme.typography.h1,
-                    modifier = Modifier
-                        .clickable { isTouched = !isTouched }
-                        .align(CenterHorizontally)
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Divider(modifier = Modifier.align(CenterHorizontally).width(70.dp).height(3.dp).background(call_color))
-
-            }
-            Spacer(modifier = Modifier.padding(40.dp))
-
-            Column(
-                horizontalAlignment = CenterHorizontally
-            ) {
-
-                CustomText("아이디   ", idValue)
-                CustomText("이메일   ", emailValue)
-                CustomText("패스워드", passwordValue, true)
-                CustomText("패스워드", passwordConfirmValue, true)
-
-                Spacer(modifier = Modifier
-                    .padding(50.dp)
-                    .clickable { isTouched = !isTouched })
-                Button(
-                    onClick = {
-                        // TODO: 서버로 의료진의 로그인 정보 보내기
-
-                        scope.launch{
-                            if (idValue.value.isEmpty()) {
-                                IdExcept(emailValue.value, scaffoldState)
-                            }
-                            if (emailValue.value.isEmpty()) {
-                                EmailExcept(emailValue.value, scaffoldState)
-                            }
-                            if (passwordValue.value.isEmpty()) {
-                                PasswordExcept(passwordValue.value, scaffoldState)
-                            }
-                            if (passwordConfirmValue.value.isEmpty()) {
-                                PasswordExcept(passwordConfirmValue.value, scaffoldState)
-                            }
-                            if (passwordConfirmValue.value != passwordValue.value) {
-                                WrongPasswordExcept(
-                                    passwordConfirmValue.value,
-                                    passwordValue.value,
-                                    scaffoldState
-                                )
-                            }
-                            if (idValue.value.isNotEmpty()
-                                && emailValue.value.isNotEmpty()
-                                && passwordValue.value.isNotEmpty()
-                                && passwordConfirmValue.value.isNotEmpty()
-                                && passwordConfirmValue.value == passwordValue.value
-                            ) {
-                                navController.navigate(Screen.DoctorScreen.route)
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
-                    modifier = Modifier
-                        .align(CenterHorizontally)
-                        .width(220.dp)
-                        .height(50.dp)
-                        .clip(shape = RoundedCornerShape(26.dp))
-                ) {
-                    Text(
-                        text = "로그인하기",
-                        color = Color.White,
-                        style = MaterialTheme.typography.body1,
-                        fontSize = 20.sp,
-                        modifier = Modifier.fillMaxSize(),
-                        textAlign = TextAlign.Center
-                    )
-                }
-                Spacer(modifier = Modifier.padding(40.dp))
-            }
-        }
-    }
-
-    }
-}
-
-@Composable
-fun MiddleImage(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-    ){
-        Column(
-            modifier = Modifier
-                .align(Center)
-        ){
-            Image(
-                painterResource(id = R.drawable.hospital),
-                contentDescription = "hospital",
-                modifier = Modifier.align(CenterHorizontally).padding(bottom = 20.dp)
-            )
-            Row{
-            Text(
-                text = "의료진, 환자간\n위치 파악 시스템",
-                style = MaterialTheme.typography.body1,
+        scaffoldState = scaffoldState,
+        topBar = {
+            Box(
                 modifier = Modifier
-                    .padding(15.dp)
-                    .align(CenterVertically),
-                color = White,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                text = "아이고",
-                style = MaterialTheme.typography.h2,
-                modifier = Modifier
-                    .align(CenterVertically),
-                color = button_color,
-                textAlign = TextAlign.Center,
-            )
+                    .background(call_color)
+                    .fillMaxWidth()
+            ){
+                Image(
+                    painterResource(id = R.drawable.image_splash),
+                    contentDescription = "image_splash",
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .padding(bottom = if (isLogIn) 100.dp else 0.dp)
+                        .size(50.dp)
+                )
             }
-
-
         }
-    }
-}
-@Composable
-fun LoginRectangular() {
-    val cornerRadius: Dp = 10.dp
-    val cutCornerSize: Dp = 0.dp
-    Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(40.dp)
-            .shadow(elevation = 2.dp, shape = RoundedCornerShape(10.dp))
     ) {
-        val clipPath = Path().apply {
-            lineTo(size.width - cutCornerSize.toPx(), 0f)
-            lineTo(size.width, cutCornerSize.toPx())
-            lineTo(size.width, size.height)
-            lineTo(0f, size.height)
-            close()
-        }
-
-        clipPath(clipPath) {
-            drawRoundRect(
-                color = White,
-                size = size,
-                cornerRadius = CornerRadius(cornerRadius.toPx())
-            )
-        }
-    }
-}
-@Composable
-fun CustomText(
-    text: String,
-    value: MutableState<String>,
-    isPassword: Boolean = false
-){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 10.dp)
-            .padding(end = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = text,
-            modifier = Modifier
-                .padding(start = 15.dp),
-            color = recruit_city
-        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 30.dp)
-                .padding(end = 15.dp)
-                .padding(top = 10.dp)
-                .padding(bottom = 20.dp)
+                .background(call_color),
+            contentAlignment = BottomCenter
         ) {
-            LoginRectangular()
-            if (isPassword){
-                BasicTextField(
-                    value = value.value,
-                    onValueChange = {
-                        value.value = it
-                    },
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth()
-                        .align(TopStart),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    visualTransformation = PasswordVisualTransformation()
-                )
-            }
-            else{
-                BasicTextField(
-                    value = value.value,
-                    onValueChange = {
-                        value.value = it
-                    },
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .align(TopStart),
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.h5
-                )
-            }
+            CollapsingToolbarScaffold(
+                modifier = Modifier.fillMaxSize(),
+                state = state,
+                scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
+                toolbar ={
+                    Box(
+                        modifier = Modifier.fillMaxWidth().pin()
+                    )
+                    MiddleImage(
+                        Modifier
+                            .padding(top = if (isLogIn) 0.dp else 100.dp)
+                            .padding(bottom = 150.dp)
+                            .fillMaxWidth()
+                            .align(Center)
+                            .parallax(0.5f)
+                            .graphicsLayer {
+                                // change alpha of Image as the toolbar expands
+                                alpha = state.toolbarState.progress
+                            }
+                    )
+                }
+            ) {
+            Column(
+                horizontalAlignment = CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
+                    .background(card_color)
+                    .padding(10.dp)
+                    .verticalScroll(rememberScrollState())
+                    .addFocusCleaner(focusManager)
+                    .animateContentSize()
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.padding(if (isLogIn) 30.dp else 10.dp))
 
+                    if (isLogIn){
+                        Text(
+                            text = "로그인",
+                            style = MaterialTheme.typography.h1,
+                            modifier = Modifier.align(CenterHorizontally).clickable { isMaxSize = !isMaxSize }
+                        )
+                    } else{
+                        Text(
+                            text = "회원가입",
+                            style = MaterialTheme.typography.h1,
+                            modifier = Modifier.align(CenterHorizontally).clickable { isMaxSize = !isMaxSize }
+                        )
 
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Divider(
+                        modifier = Modifier
+                            .align(CenterHorizontally)
+                            .width(if (isLogIn) 70.dp else 90.dp)
+                            .height(3.dp)
+                            .background(call_color)
+                    )
+
+                }
+                Spacer(modifier = Modifier.padding(40.dp))
+
+                Column(
+                    horizontalAlignment = CenterHorizontally
+                ) {
+                    if (isLogIn) {
+                        CustomText("아이디   ", logIdValue)
+                        CustomText("패스워드", logPasswordValue, true)
+                    } else {
+                        CustomText("아이디   ", idValue)
+                        CustomText("이메일   ", emailValue)
+                        CustomText("패스워드", passwordValue, true)
+                        CustomText("패스워드", passwordConfirmValue, true)
+                    }
+                    Spacer(modifier = Modifier.padding(30.dp))
+                    Button(
+                        onClick = {
+                            // TODO: 서버로 의료진의 로그인 정보 보내기
+
+                            scope.launch {
+                                if (!isLogIn) {
+                                    if (idValue.value.isEmpty()) {
+                                        IdExcept(idValue.value, scaffoldState)
+                                    }
+                                    else if (emailValue.value.isEmpty()) {
+                                        EmailExcept(emailValue.value, scaffoldState)
+                                    }
+                                    else if (passwordValue.value.isEmpty()) {
+                                        PasswordExcept(passwordValue.value, scaffoldState)
+                                    }
+                                    else if (passwordConfirmValue.value.isEmpty()) {
+                                        PasswordExcept(passwordConfirmValue.value, scaffoldState)
+                                    }
+                                    else if (passwordConfirmValue.value != passwordValue.value) {
+                                        WrongPasswordExcept(
+                                            passwordConfirmValue.value,
+                                            passwordValue.value,
+                                            scaffoldState
+                                        )
+                                    }
+                                    else {
+                                        isLogIn = !isLogIn
+                                    }
+                                } else{
+                                    if (logIdValue.value.isEmpty()) {
+                                        IdExcept(logIdValue.value, scaffoldState)
+                                    }
+                                    else if (logPasswordValue.value.isEmpty()) {
+                                        PasswordExcept(logPasswordValue.value, scaffoldState)
+                                    }
+                                    else {
+                                        navController.navigate(Screen.DoctorScreen.route)
+                                    }
+                                }
+
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
+                        modifier = Modifier
+                            .align(CenterHorizontally)
+                            .width(220.dp)
+                            .height(50.dp)
+                            .clip(shape = RoundedCornerShape(26.dp))
+                    ) {
+                        Text(
+                            text = if (isLogIn) "로그인하기" else "회원가입하기",
+                            color = Color.White,
+                            style = MaterialTheme.typography.h4,
+                            fontSize = 20.sp
+                        )
+                    }
+                    if (isLogIn) Text(
+                        text = "회원가입하기",
+                        style = MaterialTheme.typography.body1,
+                        color = White,
+                        modifier=  Modifier
+                            .align(CenterHorizontally)
+                            .padding(30.dp)
+                            .clickable{
+                                isLogIn = !isLogIn
+                            }
+                    )
+                    //     Spacer(modifier = Modifier.padding(40.dp))
+                }
+            }
         }
+    }
+
     }
 }
