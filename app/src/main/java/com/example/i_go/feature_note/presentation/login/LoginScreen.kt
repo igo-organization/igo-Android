@@ -133,7 +133,7 @@ fun LoginScreen(
                     MiddleImage(
                         Modifier
                             .padding(top = if (isLogIn) 0.dp else 100.dp)
-                            .padding(bottom = 150.dp)
+                            .padding(bottom = 100.dp)
                             .fillMaxWidth()
                             .align(Center)
                             .parallax(0.5f)
