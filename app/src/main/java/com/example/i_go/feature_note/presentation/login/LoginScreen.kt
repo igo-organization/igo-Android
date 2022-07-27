@@ -1,81 +1,38 @@
 package com.example.i_go.feature_note.presentation.login
 
-import android.text.method.PasswordTransformationMethod
-import android.util.Log
-import android.view.animation.OvershootInterpolator
-import android.widget.Scroller
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
+
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
-import androidx.compose.ui.Alignment.Companion.BottomEnd
-import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.End
-import androidx.compose.ui.Alignment.Companion.TopCenter
-import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.onFocusEvent
-import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.i_go.R
 import com.example.i_go.feature_note.presentation.add_edit_patient.addFocusCleaner
-import com.example.i_go.feature_note.presentation.doctors.*
 import com.example.i_go.feature_note.presentation.login.components.CustomText
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.*
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.onebone.toolbar.CollapsingToolbar
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
-import java.net.PasswordAuthentication
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LoginScreen(
     navController: NavController
@@ -104,6 +61,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .background(call_color)
                     .fillMaxWidth()
+                    .clickable { isMaxSize = !isMaxSize }
             ){
                 Image(
                     painterResource(id = R.drawable.image_splash),
@@ -126,6 +84,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
+                toolbarModifier = if (isMaxSize) Modifier.animateContentSize().size(0.dp) else Modifier.animateContentSize(),
                 toolbar ={
                     Box(
                         modifier = Modifier.fillMaxWidth().pin()
@@ -141,6 +100,7 @@ fun LoginScreen(
                                 // change alpha of Image as the toolbar expands
                                 alpha = state.toolbarState.progress
                             }
+                            .clickable { isMaxSize = !isMaxSize }
                     )
                 }
             ) {
