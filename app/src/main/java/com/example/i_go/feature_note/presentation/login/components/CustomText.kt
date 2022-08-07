@@ -68,6 +68,7 @@ fun CustomText(
                         .padding(10.dp)
                         .align(Alignment.TopStart),
                     singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     textStyle = MaterialTheme.typography.h5
                 )
             }
