@@ -159,8 +159,8 @@ fun PatientsScreen(
                     PatientItem(
                         patient = patient,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
+                            .fillMaxWidth(),
+                        onClick = {
                                 navController.navigate(
                                     Screen.AddEditPatientScreen.route +
                                             "?patientId=${patient.id}&patientImage=${patient.image}"

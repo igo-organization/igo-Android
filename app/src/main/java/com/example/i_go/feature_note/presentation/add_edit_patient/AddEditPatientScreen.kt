@@ -237,41 +237,47 @@ fun AddEditPatientScreen(
                         ) {
                             val selectedGender = remember { mutableStateOf("") }
                             Row {
-                                RadioButton(
-                                    selected = (sexState.text == Gender.male || selectedGender.value == Gender.male),
-                                    onClick = {
-                                        selectedGender.value = Gender.male
-                                        viewModel.onEvent(
-                                            AddEditPatientEvent.EnteredSex(
-                                                selectedGender.value
+                                Row (
+                                    modifier = Modifier.weight(1f).align(CenterVertically),
+                                ){
+                                    RadioButton(
+                                        selected = (sexState.text == Gender.male || selectedGender.value == Gender.male),
+                                        onClick = {
+                                            selectedGender.value = Gender.male
+                                            viewModel.onEvent(
+                                                AddEditPatientEvent.EnteredSex(
+                                                    selectedGender.value
+                                                )
                                             )
+                                        },
+                                        colors = RadioButtonDefaults.colors(
+                                            selectedColor = call_color,
+                                            unselectedColor = call_color
                                         )
-                                    },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = call_color,
-                                        unselectedColor = call_color
                                     )
-                                )
-                                Spacer(modifier = Modifier.size(16.dp))
-                                Text(Gender.male)
-                                Spacer(modifier = Modifier.size(16.dp))
-                                RadioButton(
-                                    selected = (sexState.text == Gender.female || selectedGender.value == Gender.female),
-                                    onClick = {
-                                        selectedGender.value = Gender.female
-                                        viewModel.onEvent(
-                                            AddEditPatientEvent.EnteredSex(
-                                                selectedGender.value
+                                    Text( text = Gender.male, modifier = Modifier.align(CenterVertically))
+                                }
+                                Row (
+                                    modifier = Modifier.weight(1f).align(CenterVertically)
+                                ){
+                                    RadioButton(
+                                        selected = (sexState.text == Gender.female || selectedGender.value == Gender.female),
+                                        onClick = {
+                                            selectedGender.value = Gender.female
+                                            viewModel.onEvent(
+                                                AddEditPatientEvent.EnteredSex(
+                                                    selectedGender.value
+                                                )
                                             )
+                                        },
+                                        colors = RadioButtonDefaults.colors(
+                                            selectedColor = call_color,
+                                            unselectedColor = call_color
                                         )
-                                    },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = call_color,
-                                        unselectedColor = call_color
                                     )
-                                )
-                                Spacer(modifier = Modifier.size(16.dp))
-                                Text(Gender.female)
+                                    Text( text = Gender.female, modifier = Modifier.align(CenterVertically))
+                                }
+
                             }
                         }
                     }
@@ -326,7 +332,7 @@ fun AddEditPatientScreen(
                     Text(
                         text = "혈액형",
                         modifier = Modifier
-                            .padding(start = 25.dp, top = 22.dp),
+                            .padding(start = 25.dp, top = 32.dp),
                         color = recruit_city
                     )
                     Box(
@@ -346,82 +352,91 @@ fun AddEditPatientScreen(
                             Column() {
                                 val selectBloodType = remember { mutableStateOf("") }
                                 Row {
-                                    RadioButton(
-                                        selected = (bloodTypeState.text == BloodType.A || selectBloodType.value == BloodType.A),
-                                        onClick = {
-                                            selectBloodType.value = BloodType.A
-                                            viewModel.onEvent(
-                                                AddEditPatientEvent.EnteredBloodType(
-                                                    selectBloodType.value
+                                    Row(
+                                        modifier = Modifier.weight(1f).align(CenterVertically)
+                                    ) {
+                                        RadioButton(
+                                            selected = (bloodTypeState.text == BloodType.A || selectBloodType.value == BloodType.A),
+                                            onClick = {
+                                                selectBloodType.value = BloodType.A
+                                                viewModel.onEvent(
+                                                    AddEditPatientEvent.EnteredBloodType(
+                                                        selectBloodType.value
+                                                    )
                                                 )
+                                            },
+                                            colors = RadioButtonDefaults.colors(
+                                                selectedColor = call_color,
+                                                unselectedColor = call_color
                                             )
-                                        },
-                                        colors = RadioButtonDefaults.colors(
-                                            selectedColor = call_color,
-                                            unselectedColor = call_color
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.size(16.dp))
-                                    Text(BloodType.A)
-                                    Spacer(modifier = Modifier.size(30.dp))
-                                    RadioButton(
-                                        selected = (bloodTypeState.text == BloodType.B || selectBloodType.value == BloodType.B),
-                                        onClick = {
-                                            selectBloodType.value = BloodType.B
-                                            viewModel.onEvent(
-                                                AddEditPatientEvent.EnteredBloodType(
-                                                    selectBloodType.value
+                                        Text(BloodType.A, modifier = Modifier.align(CenterVertically))
+                                    }
+                                    Row(
+                                        modifier = Modifier.weight(1f).align(CenterVertically)
+                                    ) {
+                                        RadioButton(
+                                            selected = (bloodTypeState.text == BloodType.B || selectBloodType.value == BloodType.B),
+                                            onClick = {
+                                                selectBloodType.value = BloodType.B
+                                                viewModel.onEvent(
+                                                    AddEditPatientEvent.EnteredBloodType(
+                                                        selectBloodType.value
+                                                    )
                                                 )
+                                            },
+                                            colors = RadioButtonDefaults.colors(
+                                                selectedColor = call_color,
+                                                unselectedColor = call_color
                                             )
-                                        },
-                                        colors = RadioButtonDefaults.colors(
-                                            selectedColor = call_color,
-                                            unselectedColor = call_color
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.size(25.dp))
-                                    Text(BloodType.B)
+                                        Text(BloodType.B,  modifier = Modifier.align(CenterVertically))
+                                    }
                                 }
-                                Spacer(modifier = Modifier.height(5.dp))
                                 Row {
-                                    RadioButton(
-                                        selected = (bloodTypeState.text == BloodType.O || selectBloodType.value == BloodType.O),
-                                        onClick = {
-                                            selectBloodType.value = BloodType.O
-                                            viewModel.onEvent(
-                                                AddEditPatientEvent.EnteredBloodType(
-                                                    selectBloodType.value
+                                    Row(
+                                        modifier = Modifier.weight(1f).align(CenterVertically)
+                                    ) {
+                                        RadioButton(
+                                            selected = (bloodTypeState.text == BloodType.O || selectBloodType.value == BloodType.O),
+                                            onClick = {
+                                                selectBloodType.value = BloodType.O
+                                                viewModel.onEvent(
+                                                    AddEditPatientEvent.EnteredBloodType(
+                                                        selectBloodType.value
+                                                    )
                                                 )
+                                            },
+                                            colors = RadioButtonDefaults.colors(
+                                                selectedColor = call_color,
+                                                unselectedColor = call_color
                                             )
-                                        },
-                                        colors = RadioButtonDefaults.colors(
-                                            selectedColor = call_color,
-                                            unselectedColor = call_color
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.size(16.dp))
-                                    Text(BloodType.O)
-                                    Spacer(modifier = Modifier.size(27.dp))
-                                    RadioButton(
-                                        selected = (bloodTypeState.text == BloodType.AB || selectBloodType.value == BloodType.AB),
-                                        onClick = {
-                                            selectBloodType.value = BloodType.AB
-                                            viewModel.onEvent(
-                                                AddEditPatientEvent.EnteredBloodType(
-                                                    selectBloodType.value
+                                        Text(BloodType.O, modifier = Modifier.align(CenterVertically))
+                                    }
+                                    Row(
+                                        modifier = Modifier.weight(1f).align(CenterVertically)
+                                    ) {
+                                        RadioButton(
+                                            selected = (bloodTypeState.text == BloodType.AB || selectBloodType.value == BloodType.AB),
+                                            onClick = {
+                                                selectBloodType.value = BloodType.AB
+                                                viewModel.onEvent(
+                                                    AddEditPatientEvent.EnteredBloodType(
+                                                        selectBloodType.value
+                                                    )
                                                 )
+                                            },
+                                            colors = RadioButtonDefaults.colors(
+                                                selectedColor = call_color,
+                                                unselectedColor = call_color
                                             )
-                                        },
-                                        colors = RadioButtonDefaults.colors(
-                                            selectedColor = call_color,
-                                            unselectedColor = call_color
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.size(16.dp))
-                                    Text(BloodType.AB)
+                                        Text(BloodType.AB, modifier = Modifier.align(CenterVertically))
+                                    }
                                 }
                             }
-                            Spacer(modifier = Modifier.height(20.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                             Column(
                                 modifier = Modifier.fillMaxSize(),
                                 verticalArrangement = Arrangement.Center,
@@ -429,41 +444,46 @@ fun AddEditPatientScreen(
                             ) {
                                 val selectRh = remember { mutableStateOf("") }
                                 Row {
-                                    RadioButton(
-                                        selected = (bloodRhState.text == BloodType.Rh_minus || selectRh.value == BloodType.Rh_minus),
-                                        onClick = {
-                                            selectRh.value = BloodType.Rh_minus
-                                            viewModel.onEvent(
-                                                AddEditPatientEvent.EnteredBloodRh(
-                                                    selectRh.value
+                                    Row(
+                                        modifier = Modifier.weight(1f).align(CenterVertically)
+                                    ) {
+                                        RadioButton(
+                                            selected = (bloodRhState.text == BloodType.Rh_minus || selectRh.value == BloodType.Rh_minus),
+                                            onClick = {
+                                                selectRh.value = BloodType.Rh_minus
+                                                viewModel.onEvent(
+                                                    AddEditPatientEvent.EnteredBloodRh(
+                                                        selectRh.value
+                                                    )
                                                 )
+                                            },
+                                            colors = RadioButtonDefaults.colors(
+                                                selectedColor = call_color,
+                                                unselectedColor = call_color
                                             )
-                                        },
-                                        colors = RadioButtonDefaults.colors(
-                                            selectedColor = call_color,
-                                            unselectedColor = call_color
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.size(16.dp))
-                                    Text(BloodType.Rh_minus)
-                                    Spacer(modifier = Modifier.size(23.dp))
-                                    RadioButton(
-                                        selected = (bloodRhState.text == BloodType.Rh_plus || selectRh.value == BloodType.Rh_plus),
-                                        onClick = {
-                                            selectRh.value = BloodType.Rh_plus
-                                            viewModel.onEvent(
-                                                AddEditPatientEvent.EnteredBloodRh(
-                                                    selectRh.value
+                                        Text(BloodType.Rh_minus, modifier = Modifier.align(CenterVertically))
+                                    }
+                                    Row(
+                                        modifier = Modifier.weight(1f).align(CenterVertically)
+                                    ) {
+                                        RadioButton(
+                                            selected = (bloodRhState.text == BloodType.Rh_plus || selectRh.value == BloodType.Rh_plus),
+                                            onClick = {
+                                                selectRh.value = BloodType.Rh_plus
+                                                viewModel.onEvent(
+                                                    AddEditPatientEvent.EnteredBloodRh(
+                                                        selectRh.value
+                                                    )
                                                 )
+                                            },
+                                            colors = RadioButtonDefaults.colors(
+                                                selectedColor = call_color,
+                                                unselectedColor = call_color
                                             )
-                                        },
-                                        colors = RadioButtonDefaults.colors(
-                                            selectedColor = call_color,
-                                            unselectedColor = call_color
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.size(16.dp))
-                                    Text(BloodType.Rh_plus)
+                                        Text(BloodType.Rh_plus, modifier = Modifier.align(CenterVertically))
+                                    }
                                 }
                             }
                         }

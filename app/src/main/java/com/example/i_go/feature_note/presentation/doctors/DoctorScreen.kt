@@ -247,7 +247,7 @@ fun DoctorScreen (
                         .padding(top = 10.dp)
                         .padding(bottom = 10.dp)
                 ) {
-                    MakeRectangular()
+                    MakeRectangular(modifier = Modifier.padding(top = 4.dp))
                     Column(
                         horizontalAlignment = CenterHorizontally,
                         modifier = Modifier.fillMaxSize()
@@ -373,11 +373,11 @@ fun Profile() {
 }
 
 @Composable
-fun MakeRectangular() {
+fun MakeRectangular(modifier: Modifier = Modifier) {
     val cornerRadius: Dp = 10.dp
     val cutCornerSize: Dp = 0.dp
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(40.dp)
             .shadow(elevation = 5.dp, shape = RoundedCornerShape(10.dp))

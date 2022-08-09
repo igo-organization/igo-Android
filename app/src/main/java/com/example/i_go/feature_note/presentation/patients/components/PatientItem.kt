@@ -1,9 +1,6 @@
 package com.example.i_go.feature_note.presentation.patients.components
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +33,7 @@ import com.example.i_go.ui.theme.*
 @Composable
 fun PatientItem(
     patient: Patient,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 26.dp,
     cutCornerSize: Dp = 0.dp,
@@ -46,7 +44,12 @@ fun PatientItem(
             .padding(start = 15.dp)
             .padding(end = 15.dp)
             .padding(top = 15.dp)
+            .clip(RoundedCornerShape(26.dp))
+            .shadow(elevation = 5.dp, shape = RoundedCornerShape(26.dp))
+            .clickable(onClick = onClick)
+
     ) {
+        /*
         Canvas(modifier = Modifier
             .matchParentSize()
             .shadow(elevation = 5.dp, shape = RoundedCornerShape(26.dp))
@@ -67,8 +70,11 @@ fun PatientItem(
                 )
             }
         }
+
+         */
         Row(
             modifier = Modifier
+                .background(card_color)
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
@@ -173,16 +179,18 @@ fun PatientItem(
                 tint = Color.White
             )
         }
-        Button (
+        TextButton (
             onClick = {
                 // TODO: 서버로 신호 주기
             },
-            colors =  ButtonDefaults
-                .buttonColors(backgroundColor = call_color),
+            colors =  ButtonDefaults.buttonColors(backgroundColor = call_color),
             modifier = Modifier
-                    .align(Alignment.BottomEnd)
+                    .align(Alignment.BottomCenter)
+                    .background(call_color)
                     .fillMaxWidth()
-                    .clip(shape = RoundedCornerShape(0.dp, 0.dp, 26.dp, 26.dp))
+                    .height(40.dp)
+                    .clip(shape = RoundedCornerShape(0.dp, 0.dp, 26.dp, 26.dp)),
+            contentPadding = PaddingValues(0.dp)
         ) {
            Text(
                text = "호출하기",

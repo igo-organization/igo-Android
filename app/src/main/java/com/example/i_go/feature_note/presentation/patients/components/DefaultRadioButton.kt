@@ -1,5 +1,6 @@
 package com.example.i_go.feature_note.presentation.patients.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -33,7 +34,6 @@ fun DefaultRadioButton(
                 unselectedColor = call_color
             )
         )
-        Spacer(modifier = Modifier.width(8.dp))
         Text(text = text, style = MaterialTheme.typography.body1, color = recruit_city )
     }
 }
