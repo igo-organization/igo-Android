@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "360763663088",
+    "project_id": "igopush-ca036",
+    "storage_bucket": "igopush-ca036.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:360763663088:android:1acccb203454e0094f1835",
+        "android_client_info": {
+          "package_name": "com.example.i_go"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "360763663088-j9ga6jlpkaanrtkrk9gvjelvlsum1q64.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqEUZxSRPm1RjH5Lul5D3NUk7erkv9C1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "360763663088-j9ga6jlpkaanrtkrk9gvjelvlsum1q64.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
