@@ -16,8 +16,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.i_go.R
+import com.example.i_go.feature_note.presentation.login.LoginViewModel
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.call_color
 import kotlinx.coroutines.delay
@@ -27,7 +29,13 @@ fun SplashScreen (navController: NavController) {
     val scale = remember {
         Animatable (0f)
     }
+    val loginViewModel = hiltViewModel<LoginViewModel>()
+
     LaunchedEffect(key1 = true) {
+        val nextScreen = when (loginViewModel.isLoggedIn()) {
+            true -> Screen.DoctorScreen
+            false -> Screen.LoginScreen
+        }
         scale.animateTo (
             targetValue = 0.3f,
             animationSpec = tween (
@@ -37,9 +45,9 @@ fun SplashScreen (navController: NavController) {
                 }
             )
         )
-        delay(700L)
+        delay(500L)
         navController.popBackStack()
-        navController.navigate(Screen.LoginScreen.route)
+        navController.navigate(nextScreen.route)
     }
     Box(
         contentAlignment = Alignment.Center,

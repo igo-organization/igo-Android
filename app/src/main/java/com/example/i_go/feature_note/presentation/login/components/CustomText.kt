@@ -16,8 +16,9 @@ import com.example.i_go.ui.theme.recruit_city
 
 @Composable
 fun CustomText(
-    text: String,
-    value: MutableState<String>,
+    text: String = "",
+    value: String = "",
+    onValueChange: (String) -> Unit = {},
     isPassword: Boolean = false
 ){
     Row(
@@ -45,10 +46,8 @@ fun CustomText(
             LoginRectangular()
             if (isPassword){
                 BasicTextField(
-                    value = value.value,
-                    onValueChange = {
-                        value.value = it
-                    },
+                    value = value,
+                    onValueChange = onValueChange,
                     modifier = Modifier
                         .padding(10.dp)
                         .fillMaxWidth()
@@ -60,10 +59,8 @@ fun CustomText(
             }
             else{
                 BasicTextField(
-                    value = value.value,
-                    onValueChange = {
-                        value.value = it
-                    },
+                    value = value,
+                    onValueChange = onValueChange,
                     modifier = Modifier
                         .padding(10.dp)
                         .align(Alignment.TopStart),
