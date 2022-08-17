@@ -4,6 +4,7 @@
     package="com.example.i_go">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <application
         android:name=".PatientApp"
         android:allowBackup="false"
@@ -11,9 +12,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/igo_icon_round"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.I_GO">
         <activity
-            android:name=".feature_note.presentation.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.I_GO">
@@ -24,8 +26,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".firebase.TechFirebaseMessageService"
-            android:directBootAware="true" android:exported="false">
+        <service android:name="com.example.i_go.feature_note.firebase.TechFirebaseMessageService"
+            android:directBootAware="true" android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
