@@ -1,43 +1,25 @@
-package com.example.i_go.feature_note.presentation
+package com.example.i_go
 
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
-import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.i_go.R
+import com.example.i_go.feature_note.presentation.SplashScreen
 import com.example.i_go.feature_note.presentation.add_edit_patient.AddEditPatientScreen
 import com.example.i_go.feature_note.presentation.doctors.DoctorScreen
 import com.example.i_go.feature_note.presentation.login.LoginScreen
 import com.example.i_go.feature_note.presentation.patients.PatientsScreen
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.I_GOTheme
-import com.example.i_go.ui.theme.call_color
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -61,8 +43,6 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = Screen.SplashScreen.route
                     ) {
-                        // TODO: 처음 Login하면 이 progress를 걸치지만
-                        // Login이 이미 된 상태면 splash -> patientScreen으로 이동함
                         composable(route = Screen.SplashScreen.route) {
                             SplashScreen(navController = navController)
                         }

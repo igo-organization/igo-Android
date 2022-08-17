@@ -1,9 +1,9 @@
-package com.example.i_go.firebase
+package com.example.i_go.feature_note.firebase
 
 import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.example.i_go.dataStore
+import com.example.i_go.feature_note.data.storage.dataStore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.GlobalScope

@@ -11,8 +11,6 @@ val Context.name_dataStore : DataStore<Preferences> by preferencesDataStore(name
 val Context.major_dataStore : DataStore<Preferences> by preferencesDataStore(name = "Major")
 val Context.facility_dataStore : DataStore<Preferences> by preferencesDataStore(name = "Facility")
 
-val Context.dataStore : DataStore<Preferences> by preferencesDataStore(name = "LocalStore")
-
 
 @HiltAndroidApp
 class PatientApp : Application()

@@ -22,21 +22,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.i_go.R
 import com.example.i_go.feature_note.presentation.patients.components.OrderSection
 import com.example.i_go.feature_note.presentation.patients.components.PatientItem
 import com.example.i_go.feature_note.presentation.util.Screen
-import com.example.i_go.name_dataStore
 import com.example.i_go.ui.theme.button_color
 import com.example.i_go.ui.theme.dark_blue
 import com.example.i_go.ui.theme.primary
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @OptIn(InternalCoroutinesApi::class)
