@@ -51,12 +51,12 @@ fun LoginScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is LoginViewModel.UiEvent.Error -> {
-               //     scaffoldState.snackbarHostState.showSnackbar("로그인 실패")
+                    scaffoldState.snackbarHostState.showSnackbar("로그인 실패")
                     "LOGIN ERROR!!".log()
                 }
                 is LoginViewModel.UiEvent.Login -> {
                     "LOGIN SUCCESS!!".log()
-               //     scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
+                    scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
                     navController.navigate(Screen.DoctorScreen.route)
                 }
             }

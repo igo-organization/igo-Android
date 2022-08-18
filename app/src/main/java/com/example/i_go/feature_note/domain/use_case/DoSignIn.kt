@@ -1,6 +1,5 @@
 package com.example.i_go.feature_note.domain.use_case
 
-import androidx.compose.material.rememberScaffoldState
 import com.example.i_go.feature_note.data.remote.requestDTO.SignInDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.SignInResponseDTO
 import com.example.i_go.feature_note.domain.repository.UserRepository

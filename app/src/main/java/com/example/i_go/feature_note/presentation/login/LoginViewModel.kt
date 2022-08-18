@@ -29,8 +29,8 @@ class LoginViewModel @Inject constructor(
 
     private var _emailPw = mutableStateOf(
         LoginPasswordDTO(
-        username = "1jeongg",
-        password = "jeongggg"
+        username = "user12",
+        password = "pass1212"
     )
     )
     val emailPw: State<LoginPasswordDTO> = _emailPw

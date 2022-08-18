@@ -25,10 +25,10 @@ class SignInViewModel @Inject constructor(
 
     private var _signIn = mutableStateOf(
         SignInDTO(
-            username =  "useruser",
-            password = "passpass",
-            password2 = "passpass",
-            email = "passwer@gmail.com"
+            username =  "user12",
+            password = "pass1212",
+            password2 = "pass1212",
+            email = "pass12@gmail.com"
         )
     )
     val signIn: State<SignInDTO> = _signIn
