@@ -1,9 +1,14 @@
 package com.example.i_go.feature_note.firebase
 
 import android.util.Log
+import android.widget.Toast
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.i_go.R
 import com.example.i_go.feature_note.data.storage.dataStore
+import com.example.i_go.feature_note.domain.util.log
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.GlobalScope
@@ -28,10 +33,22 @@ class TechFirebaseMessageService: FirebaseMessagingService() {
             Log.v("CloudMessage", "Notification Body ${message.notification!!.body}")
 
         }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                "Fetching FCM registration token failed ${task.exception}".log()
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+        }
+        )
     }
+
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        token.log()
         GlobalScope.launch{
             saveGCMToken(token)
         }
