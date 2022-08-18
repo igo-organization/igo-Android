@@ -47,8 +47,10 @@ object AppModule {
                     runBlocking {
                         appContext.dataStore.data.map {
                             it[stringPreferencesKey("user")] }.first()
+                        appContext.dataStore.data.map {
+                            it[stringPreferencesKey("id")] }.first()
                     }
-                }"
+                } "
             )
             .build()
         return@Interceptor chain.proceed(newRequest)

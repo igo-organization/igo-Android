@@ -19,18 +19,19 @@ class TokenStore @Inject constructor(@ApplicationContext context: Context) {
     suspend fun setToken(token: Token) {
         store.edit {
             it[USER_TOKEN] = token.value
-            Log.d("tatata", it[USER_TOKEN].toString())
+            it[USER_ID] = token.id.toString()
         }
     }
 
     fun getToken(): Flow<Token> {
         return store.data.map {
-            Log.d("tatata", Token(it[USER_TOKEN]!!).toString())
             Token(it[USER_TOKEN]!!)
+            Token(it[USER_ID]!!)
         }
     }
 
     companion object {
         private val USER_TOKEN = stringPreferencesKey("user")
+        private val USER_ID = stringPreferencesKey("id")
     }
 }
