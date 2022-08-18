@@ -9,31 +9,21 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.BottomCenter
-import androidx.compose.ui.Alignment.Companion.BottomEnd
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.End
-import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,25 +31,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.i_go.R
 import com.example.i_go.facility_dataStore
-import com.example.i_go.feature_note.presentation.add_edit_patient.AddEditPatientEvent
 import com.example.i_go.feature_note.presentation.add_edit_patient.addFocusCleaner
+import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalViewModel
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.major_dataStore
 import com.example.i_go.name_dataStore
 import com.example.i_go.ui.theme.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @Composable
 fun DoctorScreen (
-    navController : NavHostController
+    navController : NavHostController,
+    hospitalViewModel: HospitalViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -73,9 +63,6 @@ fun DoctorScreen (
     var expanded by remember { mutableStateOf(false) }
 
     // TODO : 요양병원 이름 서버에서 불러오기
-
-    var list = listOf("행복 요양병원", "사랑 요양병원", "나눔 요양병원")
-    var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
     val icon = if (expanded){
         Icons.Filled.KeyboardArrowUp
@@ -124,7 +111,7 @@ fun DoctorScreen (
         if (name.value.isNotEmpty()) nameValue.value = name.value
         if (major.value.isNotEmpty()) majorValue.value = major.value
         if (facility.value.isNotEmpty()) facilityValue.value = facility.value
-        if (facilityValue.value.isEmpty()) facilityValue.value = list[0]
+        if (facilityValue.value.isEmpty()) facilityValue.value = "병원 이름"
     }
 
     Scaffold(
@@ -284,12 +271,12 @@ fun DoctorScreen (
                                 },
                                 modifier = Modifier.width(160.dp)
                             ) {
-                                list.forEach { label ->
+                                hospitalViewModel.state.value.hospitalDTOs.forEach { label ->
                                     DropdownMenuItem(onClick = {
-                                        facilityValue.value = label
+                                        facilityValue.value = label.name.toString()
                                         expanded = false
                                     }) {
-                                        Text(text = label)
+                                        Text(text = label.name.toString())
                                     }
                                 }
                             }

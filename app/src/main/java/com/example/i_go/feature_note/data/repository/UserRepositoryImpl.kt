@@ -4,6 +4,7 @@ import com.example.i_go.feature_note.data.remote.UserAPI
 import com.example.i_go.feature_note.data.remote.requestDTO.LoginPasswordDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.SignInDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.SignInResponseDTO
 import com.example.i_go.feature_note.data.storage.TokenStore
 import com.example.i_go.feature_note.domain.model.Token
@@ -41,5 +42,8 @@ class UserRepositoryImpl @Inject constructor(
         runBlocking(Dispatchers.IO) {
             store.setToken(token)
         }
+    }
+    override suspend fun getHospitals(): Response<List<HospitalDTO>> {
+        return api.getHospitals()
     }
 }

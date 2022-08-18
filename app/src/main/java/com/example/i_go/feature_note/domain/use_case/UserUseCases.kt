@@ -7,5 +7,6 @@ data class UserUseCases @Inject constructor(
     val doSignIn: DoSignIn,
     val getUserInfo: GetUserInfo,
     val getToken: GetToken,
-    val setToken: SetToken
+    val setToken: SetToken,
+    val getHospitals: GetHospitals
 )
