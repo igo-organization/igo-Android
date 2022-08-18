@@ -1,5 +1,6 @@
 package com.example.i_go.feature_note.presentation.login
 
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -38,7 +39,6 @@ class LoginViewModel @Inject constructor(
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
-
     init {
         viewModelScope.launch {
             getUserToken()
@@ -51,7 +51,9 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private suspend fun login() {
+    private suspend fun login(
+        scaffoldState: ScaffoldState
+    ) {
         userUseCases.doLogin(_emailPw.value).collectLatest {
             when (it) {
                 is Resource.Success -> {
@@ -59,10 +61,12 @@ class LoginViewModel @Inject constructor(
                     userUseCases.setToken(token.value)
                     "LoginViewModel에서 확인한 토큰값 : ${it.data!!.value}".log()
                     "LoginViewModel에서 확인한 id값 : ${token.value.id}".log()
+                //    scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
                     _eventFlow.emit(UiEvent.Login)
                 }
                 is Resource.Error -> {
                     "로그인 중 에러 발생 1".log()
+                    scaffoldState.snackbarHostState.showSnackbar("아이디, 비번을 확인해주세요.")
                     _eventFlow.emit(UiEvent.Error("cannot login"))
                 }
                 is Resource.Loading -> {
@@ -94,7 +98,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: LoginEvent) {
+    fun onEvent(event: LoginEvent, scaffoldState: ScaffoldState) {
         when (event) {
             is LoginEvent.EnteredName -> {
                 _emailPw.value = emailPw.value.copy(
@@ -116,9 +120,10 @@ class LoginViewModel @Inject constructor(
                             _eventFlow.emit(UiEvent.Error(message = "모든 칸의 내용을 채워주세요"))
                             return@launch
                         }
-                        login()
+                        login(scaffoldState)
                     } catch (e: Exception) {
                         "로그인 중 에러 발생 2".log()
+                        scaffoldState.snackbarHostState.showSnackbar("로그인 실패")
                         _eventFlow.emit(UiEvent.Error(message = "로그인 중 에러 발생"))
                     }
                 }

@@ -1,7 +1,9 @@
 package com.example.i_go.feature_note.data.remote
 
 import com.example.i_go.feature_note.data.remote.requestDTO.LoginPasswordDTO
+import com.example.i_go.feature_note.data.remote.requestDTO.SignInDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.SignInResponseDTO
 import com.example.i_go.feature_note.domain.model.Token
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -14,6 +16,11 @@ interface UserAPI {
     suspend fun login(
         @Body loginpasswordDTO : LoginPasswordDTO
     ): Response<Token>
+
+    @POST("/users/register/")
+    suspend fun signIn(
+        @Body signInDTO : SignInDTO
+    ): Response<SignInResponseDTO>
 
     @GET("/users/doctor/")
     suspend fun getUserInfo(): Response<UserDTO>

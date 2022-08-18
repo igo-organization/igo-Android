@@ -2,21 +2,17 @@ package com.example.i_go.feature_note.presentation.login
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -39,22 +35,10 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel2: SignInViewModel = hiltViewModel()
 
 ) {
-    LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is LoginViewModel.UiEvent.Error -> {
-                    "LOGIN ERROR!!".log()
-                }
-                is LoginViewModel.UiEvent.Login -> {
-                    "LOGIN SUCCESS!!".log()
-                    navController.navigate(Screen.DoctorScreen.route)
-                }
-            }
-        }
-    }
     val focusManager = LocalFocusManager.current
     var scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
@@ -62,6 +46,34 @@ fun LoginScreen(
     var isLogIn by remember { mutableStateOf(true) }
     var isMaxSize by remember { mutableStateOf(false) }
     val state = rememberCollapsingToolbarScaffoldState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is LoginViewModel.UiEvent.Error -> {
+               //     scaffoldState.snackbarHostState.showSnackbar("로그인 실패")
+                    "LOGIN ERROR!!".log()
+                }
+                is LoginViewModel.UiEvent.Login -> {
+                    "LOGIN SUCCESS!!".log()
+               //     scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
+                    navController.navigate(Screen.DoctorScreen.route)
+                }
+            }
+        }
+        viewModel2.eventFlow.collectLatest { event ->
+            when (event) {
+                is SignInViewModel.UiEvent.Error -> {
+                    scaffoldState.snackbarHostState.showSnackbar("회원가입 실패")
+                    "SignIn ERROR!!".log()
+                }
+                is SignInViewModel.UiEvent.SignIn -> {
+                    "SignIn Success!!".log()
+                    scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
+                }
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -93,11 +105,14 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
-                toolbarModifier = if (isMaxSize) Modifier.animateContentSize()
+                toolbarModifier = if (isMaxSize) Modifier
+                    .animateContentSize()
                     .size(0.dp) else Modifier.animateContentSize(),
                 toolbar = {
                     Box(
-                        modifier = Modifier.fillMaxWidth().pin()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .pin()
                     )
                     MiddleImage(
                         Modifier
@@ -107,7 +122,6 @@ fun LoginScreen(
                             .align(Center)
                             .parallax(0.5f)
                             .graphicsLayer {
-                                // change alpha of Image as the toolbar expands
                                 alpha = state.toolbarState.progress
                             }
                             .clickable { isMaxSize = !isMaxSize }
@@ -136,14 +150,16 @@ fun LoginScreen(
                             Text(
                                 text = "로그인",
                                 style = MaterialTheme.typography.h1,
-                                modifier = Modifier.align(CenterHorizontally)
+                                modifier = Modifier
+                                    .align(CenterHorizontally)
                                     .clickable { isMaxSize = !isMaxSize }
                             )
                         } else {
                             Text(
                                 text = "회원가입",
                                 style = MaterialTheme.typography.h1,
-                                modifier = Modifier.align(CenterHorizontally)
+                                modifier = Modifier
+                                    .align(CenterHorizontally)
                                     .clickable { isMaxSize = !isMaxSize }
                             )
 
@@ -166,41 +182,100 @@ fun LoginScreen(
                         if (isLogIn) {
                             CustomText(
                                 text = "아이디   ",
-                                viewModel.emailPw.value.username,
-                                onValueChange = { viewModel.onEvent(LoginEvent.EnteredName(it)) })
+                                value = viewModel.emailPw.value.username,
+                                onValueChange = {
+                                    viewModel.onEvent(
+                                        LoginEvent.EnteredName(it),
+                                        scaffoldState
+                                    )
+                                })
                             CustomText(
                                 text = "패스워드",
-                                viewModel.emailPw.value.password,
-                                onValueChange = { viewModel.onEvent(LoginEvent.EnteredPassword(it)) },
-                                true
+                                value = viewModel.emailPw.value.password,
+                                onValueChange = {
+                                    viewModel.onEvent(
+                                        LoginEvent.EnteredPassword(it),
+                                        scaffoldState
+                                    )
+                                },
+                                isPassword = true
                             )
                         } else {
-                            CustomText("아이디   ")
-                            CustomText("이메일   ")
-                            CustomText("패스워드")
-                            CustomText("패스워드")
+                            CustomText(
+                                text = "아이디   ",
+                                value = viewModel2.signIn.value.username,
+                                onValueChange = {
+                                    viewModel2.onEvent(
+                                        SignInEvent.EnteredUsername(it),
+                                        scaffoldState
+                                    )
+                                }
+                            )
+                            CustomText(
+                                text = "이메일   ",
+                                value = viewModel2.signIn.value.email,
+                                onValueChange = {
+                                    viewModel2.onEvent(
+                                        SignInEvent.EnteredEmail(it),
+                                        scaffoldState
+                                    )
+                                }
+                            )
+                            CustomText(
+                                text = "패스워드",
+                                value = viewModel2.signIn.value.password,
+                                onValueChange = {
+                                    viewModel2.onEvent(
+                                        SignInEvent.EnteredPassword(it),
+                                        scaffoldState
+                                    )
+                                }
+                            )
+                            CustomText(
+                                text = "패스워드",
+                                value = viewModel2.signIn.value.password2,
+                                onValueChange = {
+                                    viewModel2.onEvent(
+                                        SignInEvent.EnteredPassword2(it),
+                                        scaffoldState
+                                    )
+                                }
+                            )
+                            Text(
+                                text = "[회원가입 조건]\n\nID: 중복 불가, email: 중복 불가\n비밀번호: 이메일 아이디랑 중복되지 않으며 8자 이상, 영어가 있어야 함",
+                                color = primary,
+                                fontSize = 13.sp,
+                                modifier = Modifier.align(End).padding(top = 30.dp)
+                            )
                         }
                         Spacer(modifier = Modifier.padding(30.dp))
                         Button(
                             onClick = {
                                 scope.launch {
                                     if (!isLogIn) {
-                                        //    IdExcept(idValue.value, scaffoldState)
-                                        //     EmailExcept(emailValue.value, scaffoldState)
-                                        //     PasswordExcept(passwordValue.value, scaffoldState)
-                                        //     PasswordExcept(passwordConfirmValue.value, scaffoldState)
-                                        //    WrongPasswordExcept(
-                                        //         passwordConfirmValue.value,
-                                        //        passwordValue.value,
-                                        //         scaffoldState
-                                        //     )
+                                        IdExcept(viewModel2.signIn.value.username, scaffoldState)
+                                        EmailExcept(viewModel2.signIn.value.email, scaffoldState)
+                                        PasswordExcept(
+                                            viewModel2.signIn.value.password,
+                                            scaffoldState
+                                        )
+                                        PasswordExcept(
+                                            viewModel2.signIn.value.password2,
+                                            scaffoldState
+                                        )
+                                        WrongPasswordExcept(
+                                            viewModel2.signIn.value.password,
+                                            viewModel2.signIn.value.password2,
+                                            scaffoldState
+                                        )
+                                        viewModel2.onEvent(SignInEvent.SignIn, scaffoldState)
                                     } else {
                                         IdExcept(viewModel.emailPw.value.username, scaffoldState)
                                         PasswordExcept(
                                             viewModel.emailPw.value.password,
                                             scaffoldState
                                         )
-                                        viewModel.onEvent(LoginEvent.Login)
+                                        viewModel.onEvent(LoginEvent.Login, scaffoldState)
                                     }
                                 }
                             },
@@ -218,10 +293,10 @@ fun LoginScreen(
                                 fontSize = 20.sp
                             )
                         }
-                        if (isLogIn) Text(
-                            text = "회원가입하기",
+                        Text(
+                            text = if (isLogIn) "회원가입하기" else "로그인하기",
                             style = MaterialTheme.typography.body1,
-                            color = White,
+                            color = primary,
                             modifier = Modifier
                                 .align(CenterHorizontally)
                                 .padding(30.dp)
