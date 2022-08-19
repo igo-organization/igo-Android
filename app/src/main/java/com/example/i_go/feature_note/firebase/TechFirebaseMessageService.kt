@@ -34,6 +34,7 @@ class TechFirebaseMessageService: FirebaseMessagingService() {
 
         }
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+
             if (!task.isSuccessful) {
                 "Fetching FCM registration token failed ${task.exception}".log()
                 return@OnCompleteListener
@@ -41,14 +42,13 @@ class TechFirebaseMessageService: FirebaseMessagingService() {
 
             // Get new FCM registration token
             val token = task.result
+            token.log()
         }
         )
     }
 
 
     override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        token.log()
         GlobalScope.launch{
             saveGCMToken(token)
         }

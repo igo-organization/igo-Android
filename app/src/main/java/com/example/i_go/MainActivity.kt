@@ -19,6 +19,8 @@ import com.example.i_go.feature_note.presentation.login.LoginScreen
 import com.example.i_go.feature_note.presentation.patients.PatientsScreen
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.I_GOTheme
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,8 +31,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Firebase.messaging.isAutoInitEnabled = true
 
-        setContent {
+       setContent {
             I_GOTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
