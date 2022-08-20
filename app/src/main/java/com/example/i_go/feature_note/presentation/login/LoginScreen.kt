@@ -22,7 +22,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.i_go.R
 import com.example.i_go.feature_note.domain.util.log
-import com.example.i_go.feature_note.presentation.add_edit_patient.addFocusCleaner
 import com.example.i_go.feature_note.presentation.login.components.CustomText
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.*
@@ -57,7 +56,7 @@ fun LoginScreen(
                 is LoginViewModel.UiEvent.Login -> {
                     "LOGIN SUCCESS!!".log()
                     scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
-                    navController.navigate(Screen.DoctorScreen.route)
+                    navController.navigate(Screen.PatientsScreen.route)
                 }
             }
         }
@@ -138,7 +137,7 @@ fun LoginScreen(
                         .background(card_color)
                         .padding(10.dp)
                         .verticalScroll(rememberScrollState())
-                        .addFocusCleaner(focusManager)
+                    //    .addFocusCleaner(focusManager)
                         .animateContentSize()
                 ) {
                     Column(

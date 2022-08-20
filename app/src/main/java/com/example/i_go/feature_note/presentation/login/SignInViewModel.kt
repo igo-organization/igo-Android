@@ -1,14 +1,12 @@
 package com.example.i_go.feature_note.presentation.login
 
-import android.widget.Toast
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.i_go.feature_note.data.remote.requestDTO.SignInDTO
-import com.example.i_go.feature_note.domain.use_case.UserUseCases
+import com.example.i_go.feature_note.domain.use_case.user.UserUseCases
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -6,7 +6,9 @@ import com.example.i_go.feature_note.data.remote.requestDTO.SignInDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.SignInResponseDTO
+import com.example.i_go.feature_note.data.storage.IdStore
 import com.example.i_go.feature_note.data.storage.TokenStore
+import com.example.i_go.feature_note.domain.model.ID
 import com.example.i_go.feature_note.domain.model.Token
 import com.example.i_go.feature_note.domain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,7 @@ import javax.inject.Singleton
 @Singleton
 class UserRepositoryImpl @Inject constructor(
     private val store: TokenStore,
+    private val idStore: IdStore,
     private val api: UserAPI
 ) : UserRepository {
     override suspend fun doLogin(loginPasswordDTO: LoginPasswordDTO): Response<Token> {
@@ -45,5 +48,17 @@ class UserRepositoryImpl @Inject constructor(
     }
     override suspend fun getHospitals(): Response<List<HospitalDTO>> {
         return api.getHospitals()
+    }
+
+    override fun getID(): ID {
+        return runBlocking(Dispatchers.IO) {
+            idStore.getId().first()
+        }
+    }
+
+    override fun setID(id: ID) {
+        runBlocking(Dispatchers.IO) {
+            idStore.setId(id)
+        }
     }
 }

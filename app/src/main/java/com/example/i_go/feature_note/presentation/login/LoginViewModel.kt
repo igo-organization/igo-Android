@@ -7,8 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.i_go.feature_note.data.remote.requestDTO.LoginPasswordDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
+import com.example.i_go.feature_note.domain.model.ID
 import com.example.i_go.feature_note.domain.model.Token
-import com.example.i_go.feature_note.domain.use_case.UserUseCases
+import com.example.i_go.feature_note.domain.use_case.user.UserUseCases
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +37,7 @@ class LoginViewModel @Inject constructor(
     val emailPw: State<LoginPasswordDTO> = _emailPw
 
     private var token = mutableStateOf(Token())
+    private var id = mutableStateOf(ID())
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -61,7 +63,10 @@ class LoginViewModel @Inject constructor(
                     userUseCases.setToken(token.value)
                     "LoginViewModel에서 확인한 토큰값 : ${it.data!!.value}".log()
                     "LoginViewModel에서 확인한 id값 : ${token.value.id}".log()
-                //    scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
+                    id.value.userId = it.data.id
+                    userUseCases.setId(id.value)
+                    "LoginViewModel에서 확인한 id값2 : ${id.value}".log()
+                    "LoginViewModel에서 확인한 id값3 : ${id.value.userId}".log()
                     _eventFlow.emit(UiEvent.Login)
                 }
                 is Resource.Error -> {
