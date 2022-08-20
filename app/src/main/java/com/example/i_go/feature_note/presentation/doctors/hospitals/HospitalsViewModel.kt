@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.i_go.feature_note.domain.use_case.user.GetHospital
+import com.example.i_go.feature_note.domain.use_case.user.GetHospitals
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,24 +12,24 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HospitalViewModel @Inject constructor(
-    val getHospitalUseCase: GetHospital,
+class HospitalsViewModel @Inject constructor(
+    val getHospitalsUseCase: GetHospitals,
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(HospitalState())
-    val state: State<HospitalState> = _state
+    private val _state = mutableStateOf(HospitalsState())
+    val state: State<HospitalsState> = _state
 
     init {
-        getHospital(1)
+        getHospitals()
     }
 
-    fun getHospital(hospital_id: Int) {
+    fun getHospitals() {
         viewModelScope.launch {
-            getHospitalUseCase(hospital_id).collect() {
+            getHospitalsUseCase().collect() {
                 when (it) {
                     is Resource.Success -> {
                         _state.value =
-                            it.data?.let { HospitalState(hospitalDTO = it) }!!
+                            it.data?.let { HospitalsState(hospitalDTOs = it) }!!
                         "병원 목록 가져오기 성공".log()
                     }
                     is Resource.Error -> "병원 목록 가져오기 실패".log()
