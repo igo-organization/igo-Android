@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.i_go.feature_note.domain.use_case.GetHospitals
+import com.example.i_go.feature_note.domain.use_case.user.GetHospitals
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
 import dagger.hilt.android.lifecycle.HiltViewModel
