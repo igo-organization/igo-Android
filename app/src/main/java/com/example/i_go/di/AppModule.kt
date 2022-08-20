@@ -10,6 +10,7 @@ import com.example.i_go.feature_note.data.repository.UserRepositoryImpl
 import com.example.i_go.feature_note.data.storage.IdStore
 import com.example.i_go.feature_note.data.storage.TokenStore
 import com.example.i_go.feature_note.data.storage.dataStore
+import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.domain.repository.PatientRepository
 import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.util.log
@@ -48,6 +49,12 @@ object AppModule {
                             it[stringPreferencesKey("user")] }.first()
                         appContext.dataStore.data.map {
                             it[stringPreferencesKey("id")] }.first()
+                        appContext.idStore.data.map {
+                            it[stringPreferencesKey("user")] }.first()
+                        appContext.idStore.data.map {
+                            it[stringPreferencesKey("hospital")] }.first()
+                        appContext.idStore.data.map {
+                            it[stringPreferencesKey("patient")] }.first()
                     }
                 } "
             )
