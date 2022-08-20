@@ -4,12 +4,12 @@ import com.example.i_go.feature_note.data.remote.requestDTO.LoginPasswordDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.SignInDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDetailDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.SignInResponseDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.UserResponseDTO
 import com.example.i_go.feature_note.domain.model.Token
-import retrofit2.http.Body
-import retrofit2.http.POST
 import retrofit2.Response
-import retrofit2.http.GET
+import retrofit2.http.*
 
 interface UserAPI {
 
@@ -26,6 +26,19 @@ interface UserAPI {
     @GET("/users/hospital/")
     suspend fun getHospitals(): Response<List<HospitalDTO>>
 
-    @GET("/users/doctor/")
-    suspend fun getUserInfo(): Response<UserDTO>
+    @GET("users/doctor/{hospital_id}")
+    suspend fun getHospital(
+        @Path("hospital_id") hospital_id: Int,
+    ): Response<HospitalDetailDTO>
+
+    @GET("/users/doctor/{doctor_id}")
+    suspend fun getUserInfo(
+        @Path("doctor_id") doctor_id: Int,
+    ): Response<UserResponseDTO>
+
+    @PUT("/users/doctor/{doctor_id}")
+    suspend fun putUserInfo(
+        @Path("doctor_id") doctor_id: Int,
+        @Body userDTO: UserDTO
+    ): Response<UserDTO>
 }

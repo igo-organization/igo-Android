@@ -35,12 +35,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.i_go.R
-import com.example.i_go.facility_dataStore
-import com.example.i_go.feature_note.presentation.add_edit_patient.addFocusCleaner
-import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalViewModel
+import com.example.i_go.feature_note.data.storage.idStore
+import com.example.i_go.feature_note.domain.util.log
+import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalsViewModel
 import com.example.i_go.feature_note.presentation.util.Screen
-import com.example.i_go.major_dataStore
-import com.example.i_go.name_dataStore
 import com.example.i_go.ui.theme.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -49,13 +47,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun DoctorScreen (
     navController : NavHostController,
-    hospitalViewModel: HospitalViewModel = hiltViewModel()
+    hospitalsViewsModel: HospitalsViewModel = hiltViewModel(),
+    doctorViewModel: DoctorViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
     var nameValue = rememberSaveable { mutableStateOf("") }
     var majorValue = rememberSaveable { mutableStateOf("") }
     var facilityValue = rememberSaveable { mutableStateOf("") }
+
     var context = LocalContext.current
     var scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
@@ -70,11 +70,10 @@ fun DoctorScreen (
         Icons.Filled.KeyboardArrowDown
     }
 
-    val nameKey = stringPreferencesKey("doctor_name")
-    var name = flow<String> {
-
-        context.name_dataStore.data.map {
-            it[nameKey]
+    val hospitalKey = stringPreferencesKey("hospital")
+    var hospital = flow<String> {
+        context.idStore.data.map {
+            it[hospitalKey]
         }.collect {
             if (it != null) {
                 this.emit(it)
@@ -82,11 +81,11 @@ fun DoctorScreen (
         }
     }.collectAsState(initial = "")
 
-    val majorKey = stringPreferencesKey("doctor_major")
-    var major = flow<String> {
+    val userIdKey = stringPreferencesKey("user")
+    var userId = flow<String> {
 
-        context.major_dataStore.data.map {
-            it[majorKey]
+        context.idStore.data.map {
+            it[userIdKey]
         }.collect {
             if (it != null) {
                 this.emit(it)
@@ -94,24 +93,10 @@ fun DoctorScreen (
         }
     }.collectAsState(initial = "")
 
-    val facilityKey = stringPreferencesKey("doctor_facility")
-    var facility = flow<String> {
+    "user is ${userId}".log()
 
-        context.facility_dataStore.data.map {
-            it[facilityKey]
-        }.collect {
-            if (it != null) {
-                this.emit(it)
-            }
-        }
-    }.collectAsState(initial = "")
-
-
-    LaunchedEffect(Unit) {
-        if (name.value.isNotEmpty()) nameValue.value = name.value
-        if (major.value.isNotEmpty()) majorValue.value = major.value
-        if (facility.value.isNotEmpty()) facilityValue.value = facility.value
-        if (facilityValue.value.isEmpty()) facilityValue.value = "병원 이름"
+    LaunchedEffect(key1 = true) {
+        doctorViewModel.getUserInfo(if (userId.value.isEmpty()) 1 else userId.value.toInt())
     }
 
     Scaffold(
@@ -121,7 +106,7 @@ fun DoctorScreen (
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .addFocusCleaner(focusManager)
+          //      .addFocusCleaner(focusManager)
         ) {
             Row(
                 modifier = Modifier
@@ -167,9 +152,8 @@ fun DoctorScreen (
                         .padding(bottom = 10.dp)
                 ) {
                     MakeRectangular()
-
                     BasicTextField(
-                        value = nameValue.value,
+                        value = doctorViewModel.state.value.userResponseDTO.name!!,
                         onValueChange = {
                             nameValue.value = it
                         },
@@ -204,7 +188,7 @@ fun DoctorScreen (
                 ) {
                     MakeRectangular()
                     BasicTextField(
-                        value = majorValue.value,
+                        value = doctorViewModel.state.value.userResponseDTO.subjects!!,
                         onValueChange = { majorValue.value = it },
                         modifier = Modifier
                             .padding(10.dp)
@@ -246,7 +230,7 @@ fun DoctorScreen (
                                 ) {
                                 Row {
                                     Text(
-                                        text = facilityValue.value,
+                                        text = doctorViewModel.state.value.userResponseDTO.hospital?.name!!,
                                         modifier = Modifier.align(CenterVertically),
                                         color = Black,
                                         maxLines = 1,
@@ -271,7 +255,7 @@ fun DoctorScreen (
                                 },
                                 modifier = Modifier.width(160.dp)
                             ) {
-                                hospitalViewModel.state.value.hospitalDTOs.forEach { label ->
+                                hospitalsViewsModel.state.value.hospitalDTOs.forEach { label ->
                                     DropdownMenuItem(onClick = {
                                         facilityValue.value = label.name.toString()
                                         expanded = false
@@ -288,11 +272,12 @@ fun DoctorScreen (
             Button(
                 onClick = {
                     // TODO: 서버로 Doctor의 상세 정보 보내기
+                    /*
                     if (name.value.isNotEmpty()){
                         // 수정
                     }else{
                         // 추가
-                    }
+                    }*/
                     scope.launch {
                         if (nameValue.value.isEmpty()){
                             NameExcept(nameValue.value, scaffoldState)
@@ -300,19 +285,11 @@ fun DoctorScreen (
                         else if (majorValue.value.isEmpty()){
                             MajorExcept(majorValue.value, scaffoldState)
                         }
-                        else if (facilityValue.value.isEmpty()){
+                        else if (facilityValue.value == "병원 선택"){
                             FacilityExcept(facilityValue.value, scaffoldState)
                         }
                         else {
-                            saveDoctorName(
-                                context, nameValue.value
-                            )
-                            saveDoctorMajor(
-                                context, majorValue.value
-                            )
-                            saveDoctorFacility(
-                                context, facilityValue.value
-                            )
+
                             navController.navigate(Screen.PatientsScreen.route)
                         }
                     }
@@ -326,7 +303,7 @@ fun DoctorScreen (
                     .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
             ) {
                 Text(
-                    text = if (name.value.isNotEmpty()){ "수정하기" } else{ "저장하기" },
+                    text = "gd",//if (name.value.isNotEmpty()){ "수정하기" } else{ "저장하기" },
                     color = Color.White,
                     style = MaterialTheme.typography.h4,
                     fontSize = 20.sp

@@ -1,6 +1,7 @@
 package com.example.i_go.feature_note.domain.use_case.user
 
 import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.UserResponseDTO
 import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
@@ -13,11 +14,11 @@ import javax.inject.Inject
 class GetUserInfo @Inject constructor(
     private val repository: UserRepository,
 ) {
-    operator fun invoke(): Flow<Resource<UserDTO>> = flow {
+    operator fun invoke(doctor_id: Int): Flow<Resource<UserResponseDTO>> = flow {
 
         try {
             emit(Resource.Loading())
-            val r = repository.getUserInfo()
+            val r = repository.getUserInfo(doctor_id)
             when(r.code()) {
                 200 -> { emit(Resource.Success(r.body()!!)) }
                 else -> {

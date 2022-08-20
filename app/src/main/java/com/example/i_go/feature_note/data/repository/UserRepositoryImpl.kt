@@ -5,7 +5,9 @@ import com.example.i_go.feature_note.data.remote.requestDTO.LoginPasswordDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.SignInDTO
 import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDetailDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.SignInResponseDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.UserResponseDTO
 import com.example.i_go.feature_note.data.storage.IdStore
 import com.example.i_go.feature_note.data.storage.TokenStore
 import com.example.i_go.feature_note.domain.model.ID
@@ -31,8 +33,15 @@ class UserRepositoryImpl @Inject constructor(
         return api.signIn(signInDTO)
     }
 
-    override suspend fun getUserInfo(): Response<UserDTO> {
-        return api.getUserInfo()
+    override suspend fun getUserInfo(doctor_id: Int): Response<UserResponseDTO> {
+        return api.getUserInfo(doctor_id)
+    }
+
+    override suspend fun putUserInfo(
+        doctor_id: Int,
+        userDTO: UserDTO
+    ): Response<UserDTO> {
+        return api.putUserInfo(doctor_id, userDTO)
     }
 
     override fun getUserToken(): Token {
@@ -48,6 +57,11 @@ class UserRepositoryImpl @Inject constructor(
     }
     override suspend fun getHospitals(): Response<List<HospitalDTO>> {
         return api.getHospitals()
+    }
+    override suspend fun getHospital(
+        hospital_id: Int
+    ): Response<HospitalDetailDTO> {
+        return api.getHospital(hospital_id)
     }
 
     override fun getID(): ID {
