@@ -1,54 +1,47 @@
 package com.example.i_go.feature_note.presentation.patients
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.i_go.feature_note.domain.model.Patient
-import com.example.i_go.feature_note.domain.use_case.PatientUseCases
-import com.example.i_go.feature_note.domain.util.OrderType
-import com.example.i_go.feature_note.domain.util.PatientOrder
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
+import com.example.i_go.feature_note.domain.use_case.patient.GetPatients
+import com.example.i_go.feature_note.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PatientsViewModel @Inject constructor (
-    private val patientUseCases: PatientUseCases
+    private val getPatientsUseCases: GetPatients
 ) : ViewModel() {
+
     private val _state = mutableStateOf(PatientsState())
     val state: State<PatientsState> = _state
 
-    private var recentlyDeletedPatient: Patient? = null
+    private var recentlyDeletedPatient: PatientDTO? = null
 
-    private var getPatientsJob: Job? = null
-
+    /*
     init {
-        getPatients(PatientOrder.Date(OrderType.Descending))
+        getPatients(0)
     }
-
-    fun onEvent(event: PatientsEvent) {
+*/
+    fun onEvent(event: PatientsEvent, users_id: Int) {
         when (event) {
-            is PatientsEvent.Order -> {
-                if (state.value.patientOrder::class == event.patientOrder::class &&
-                    state.value.patientOrder.orderType == event.patientOrder.orderType
-                ) {
-                    return
-                }
-                getPatients(event.patientOrder)
-            }
+            /*
             is PatientsEvent.DeletePatients -> {
                 viewModelScope.launch {
-                    patientUseCases.deletePatient(event.patient)
+                    getPatientsUseCases.deletePatient(event.patient)
                     recentlyDeletedPatient = event.patient
                 }
             }
             is PatientsEvent.RestorePatients -> {
                 viewModelScope.launch {
-                    patientUseCases.addPatient(recentlyDeletedPatient ?: return@launch)
+                    getPatientsUseCases.addPatient(recentlyDeletedPatient ?: return@launch)
                     recentlyDeletedPatient = null
                 }
             }
@@ -56,19 +49,26 @@ class PatientsViewModel @Inject constructor (
                 _state.value = state.value.copy(
                     isOrderSectionVisible = !state.value.isOrderSectionVisible
                 )
-            }
+            }*/
         }
     }
 
-    private fun getPatients(patientOrder: PatientOrder) {
-        getPatientsJob?.cancel()
-        getPatientsJob = patientUseCases.getPatients(patientOrder)
-            .onEach { patients ->
-                _state.value = state.value.copy(
-                    patients = patients,
-                    patientOrder = patientOrder
-                )
+    fun getPatients(user_id: Int) {
+        getPatientsUseCases(user_id).onEach { result ->
+            when (result){
+                is Resource.Success -> {
+                    _state.value = result.data?.let { PatientsState(patientDTOS = it) }!!
+                    Log.d("test", "success : ${result.data}")
+                }
+                is Resource.Error -> {
+                    _state.value = PatientsState(error = result.message ?: "An unexpected error occured")
+                    Log.d("test", "error")
+                }
+                is Resource.Loading -> {
+                    _state.value = PatientsState(isLoading = true)
+                    Log.d("test", "loading")
+                }
             }
-            .launchIn(viewModelScope)
+        }.launchIn(viewModelScope)
     }
 }

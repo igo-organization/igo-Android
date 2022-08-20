@@ -1,17 +1,14 @@
 package com.example.i_go.feature_note.presentation.patients
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -22,19 +19,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.i_go.R
-import com.example.i_go.feature_note.presentation.patients.components.OrderSection
+import com.example.i_go.feature_note.data.storage.idStore
+import com.example.i_go.feature_note.domain.repository.UserRepository
+import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.patients.components.PatientItem
 import com.example.i_go.feature_note.presentation.util.Screen
+import com.example.i_go.name_dataStore
 import com.example.i_go.ui.theme.button_color
 import com.example.i_go.ui.theme.dark_blue
 import com.example.i_go.ui.theme.primary
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
-@OptIn(InternalCoroutinesApi::class)
 @ExperimentalAnimationApi
 @Composable
 fun PatientsScreen(
@@ -46,6 +46,25 @@ fun PatientsScreen(
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
+    var context = LocalContext.current
+
+    val nameKey = stringPreferencesKey("user")
+    var name = flow<String> {
+
+        context.idStore.data.map {
+            it[nameKey]
+        }.collect {
+            if (it != null) {
+                this.emit(it)
+            }
+        }
+    }.collectAsState(initial = "")
+
+    name.value.toString().log()
+
+    LaunchedEffect(key1 = true){
+        viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
+    }
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -87,7 +106,7 @@ fun PatientsScreen(
                 )
 
                 Row (
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.End
                 ) {
                     IconButton(
                         onClick = {
@@ -103,7 +122,6 @@ fun PatientsScreen(
                     }
                     IconButton(
                         onClick = {
-                            //viewModel.onEvent(PatientsEvent.ToggleOrderSection)
                             //TODO: 언젠가는 만들 알림뷰
                         },
                     ) {
@@ -114,68 +132,45 @@ fun PatientsScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                    IconButton(
-                        onClick = {
-                            viewModel.onEvent(PatientsEvent.ToggleOrderSection)
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Sort,
-                            contentDescription = "Sort",
-                            tint = dark_blue,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
                 }
             }
             Divider(color = primary, modifier = Modifier.shadow(8.dp), thickness = 2.dp)
 
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                item{
-                    AnimatedVisibility(
-                        visible = state.isOrderSectionVisible,
-                        enter = fadeIn() + slideInVertically(),
-                        exit = fadeOut() + slideOutVertically()
-                    ) {
-                        OrderSection(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 11.dp)
-                                .padding(bottom = 5.dp),
-                            patientOrder = state.patientOrder,
-                            onOrderChange = {
-                                viewModel.onEvent(PatientsEvent.Order(it))
+                viewModel.state.value.patientDTOS.forEach {
+                    item {
+                        PatientItem(
+                            name = it.name!!,
+                            gender = it.gender!!,
+                            blood_type = it.blood_type!!,
+                            disease = it.disease!!,
+                            image = it.image!!,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                // navController.navigate(
+                                //Screen.AddEditPatientScreen.route +
+                                //    "?patientId=${patient.id}&patientImage=${patient.image}"
+                                ///)
+                            },
+                            onDeleteClick = {
+                                /*
+                                viewModel.onEvent(PatientsEvent.DeletePatients(patient))
+                                scope.launch {
+                                    val result = scaffoldState.snackbarHostState.showSnackbar(
+
+                                        message = "환자가 삭제되었습니다.",
+                                        actionLabel = "취소하기"
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        viewModel.onEvent(PatientsEvent.RestorePatients)
+                                    }
+                                }*/
                             }
                         )
                     }
                 }
-                items(state.patients) { patient ->
-                    PatientItem(
-                        patient = patient,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        onClick = {
-                                navController.navigate(
-                                    Screen.AddEditPatientScreen.route +
-                                            "?patientId=${patient.id}&patientImage=${patient.image}"
-                                )
-                            },
-                        onDeleteClick = {
-                            viewModel.onEvent(PatientsEvent.DeletePatients(patient))
-                            scope.launch {
-                                val result = scaffoldState.snackbarHostState.showSnackbar(
 
-                                    message = "환자가 삭제되었습니다.",
-                                    actionLabel = "취소하기"
-                                )
-                                if (result == SnackbarResult.ActionPerformed) {
-                                    viewModel.onEvent(PatientsEvent.RestorePatients)
-                                }
-                            }
-                        }
-                    )
-                }
 
             }
         }

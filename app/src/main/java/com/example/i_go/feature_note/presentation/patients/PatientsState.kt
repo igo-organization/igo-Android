@@ -1,11 +1,9 @@
 package com.example.i_go.feature_note.presentation.patients
 
-import com.example.i_go.feature_note.domain.model.Patient
-import com.example.i_go.feature_note.domain.util.OrderType
-import com.example.i_go.feature_note.domain.util.PatientOrder
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 
 data class PatientsState (
-    val patients: List<Patient> = emptyList(),
-    val patientOrder: PatientOrder = PatientOrder.Date(OrderType.Descending),
-    val isOrderSectionVisible: Boolean = false
+    val isLoading: Boolean = false,
+    val patientDTOS: List<PatientByIdDTO> = emptyList(),
+    val error: String = "",
 )
