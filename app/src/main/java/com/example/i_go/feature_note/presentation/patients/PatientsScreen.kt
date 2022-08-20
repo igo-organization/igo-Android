@@ -28,7 +28,6 @@ import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.patients.components.PatientItem
 import com.example.i_go.feature_note.presentation.util.Screen
-import com.example.i_go.name_dataStore
 import com.example.i_go.ui.theme.button_color
 import com.example.i_go.ui.theme.dark_blue
 import com.example.i_go.ui.theme.primary
@@ -59,8 +58,6 @@ fun PatientsScreen(
             }
         }
     }.collectAsState(initial = "")
-
-    name.value.toString().log()
 
     LaunchedEffect(key1 = true){
         viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
