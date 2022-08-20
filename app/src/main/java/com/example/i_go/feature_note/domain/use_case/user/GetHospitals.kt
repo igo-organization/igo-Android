@@ -1,4 +1,4 @@
-package com.example.i_go.feature_note.domain.use_case
+package com.example.i_go.feature_note.domain.use_case.user
 
 import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDTO
 import com.example.i_go.feature_note.domain.repository.UserRepository

@@ -1,7 +1,7 @@
-package com.example.i_go.feature_note.domain.use_case
+package com.example.i_go.feature_note.domain.use_case.user
 
-import com.example.i_go.feature_note.data.remote.requestDTO.SignInDTO
-import com.example.i_go.feature_note.data.remote.responseDTO.SignInResponseDTO
+import com.example.i_go.feature_note.data.remote.requestDTO.LoginPasswordDTO
+import com.example.i_go.feature_note.domain.model.Token
 import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
@@ -10,19 +10,19 @@ import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import javax.inject.Inject
 
-class DoSignIn @Inject constructor(
+class DoLogin @Inject constructor(
     private val repository: UserRepository
 ) {
-    operator fun invoke(signInDTO: SignInDTO): Flow<Resource<SignInResponseDTO>> = flow {
+    operator fun invoke(loginPasswordDTO: LoginPasswordDTO): Flow<Resource<Token>> = flow {
         try {
             emit(Resource.Loading())
-            val r = repository.doSignIn(signInDTO)
+            val r = repository.doLogin(loginPasswordDTO)
             when(r.code()) {
-                201 -> {
+                200 -> {
+                    "성공".log()
                     emit(Resource.Success(r.body()!!))
                 }
                 else -> {
-                    emit(Resource.Error("회원가입 실패"))
                     "usecase ERROR ${r.code()}: ${r.errorBody().toString()}".log()
                 }
             }

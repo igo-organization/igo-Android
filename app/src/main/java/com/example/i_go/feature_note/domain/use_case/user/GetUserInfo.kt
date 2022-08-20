@@ -1,32 +1,32 @@
-package com.example.i_go.feature_note.domain.use_case
+package com.example.i_go.feature_note.domain.use_case.user
 
-import com.example.i_go.feature_note.data.remote.requestDTO.LoginPasswordDTO
-import com.example.i_go.feature_note.domain.model.Token
+import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
 import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class DoLogin @Inject constructor(
-    private val repository: UserRepository
+class GetUserInfo @Inject constructor(
+    private val repository: UserRepository,
 ) {
-    operator fun invoke(loginPasswordDTO: LoginPasswordDTO): Flow<Resource<Token>> = flow {
+    operator fun invoke(): Flow<Resource<UserDTO>> = flow {
+
         try {
             emit(Resource.Loading())
-            val r = repository.doLogin(loginPasswordDTO)
+            val r = repository.getUserInfo()
             when(r.code()) {
-                200 -> {
-                    "성공".log()
-                    emit(Resource.Success(r.body()!!))
-                }
+                200 -> { emit(Resource.Success(r.body()!!)) }
                 else -> {
                     "usecase ERROR ${r.code()}: ${r.errorBody().toString()}".log()
                 }
             }
 
+        } catch(e: HttpException) {
+            emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))
         } catch(e: IOException) {
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
