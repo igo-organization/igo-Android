@@ -25,14 +25,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.ColorUtils
-import com.example.i_go.R
-import com.example.i_go.feature_note.domain.model.Patient
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
 import com.example.i_go.ui.theme.*
 
 @Composable
 fun PatientItem(
-    patient: Patient,
+    name: String = "",
+    gender: Boolean = true,
+    age: Int = 0,
+    blood_type: Int = 0,
+    disease: String = "",
+    image: Int = 0,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 26.dp,
@@ -49,7 +53,7 @@ fun PatientItem(
             .clickable(onClick = onClick)
 
     ) {
-        /*
+
         Canvas(modifier = Modifier
             .matchParentSize()
             .shadow(elevation = 5.dp, shape = RoundedCornerShape(26.dp))
@@ -71,7 +75,7 @@ fun PatientItem(
             }
         }
 
-         */
+
         Row(
             modifier = Modifier
                 .background(card_color)
@@ -85,7 +89,7 @@ fun PatientItem(
                             .background(White)
             ) {
                 Image(
-                    painterResource(id = Patient.patient_image_real[patient.image]),
+                    painterResource(id = PatientByIdDTO.patient_image_real[image]),
                     contentDescription = "painting",
                     modifier = Modifier
                         .padding(start = 5.dp)
@@ -102,7 +106,7 @@ fun PatientItem(
             ){
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = patient.name,
+                    text = name,
                     style = MaterialTheme.typography.h4,
                     color = MaterialTheme.colors.onSurface,
                     maxLines = 1,
@@ -114,7 +118,7 @@ fun PatientItem(
                         .padding(start = 8.dp)
                 ) {
                     Text(
-                        text = patient.sex,
+                        text = if (gender) "남자" else "여자",
                         style = MaterialTheme.typography.body1,
                         color = text_gray,
                         maxLines = 1,
@@ -127,7 +131,7 @@ fun PatientItem(
                         maxLines = 1
                     )
                     Text(
-                        text = patient.age,
+                        text = age.toString() + '세',
                         style = MaterialTheme.typography.body1,
                         color = text_gray,
                         maxLines = 1,
@@ -140,7 +144,7 @@ fun PatientItem(
                         maxLines = 1
                     )
                     Text(
-                        text = patient.blood_type,
+                        text = ConvertBlood(blood_type),
                         style = MaterialTheme.typography.body1,
                         color = text_gray,
                         maxLines = 1,
@@ -153,7 +157,7 @@ fun PatientItem(
                         maxLines = 1
                     )
                     Text(
-                        text = patient.disease,
+                        text = disease,
                         style = MaterialTheme.typography.body1,
                         color = text_gray,
                         maxLines = 1,
@@ -200,4 +204,15 @@ fun PatientItem(
         }
 
     }
+}
+fun ConvertBlood(
+    blood: Int
+): String {
+    var message = ""
+    if (blood == 0) message = "A형"
+    if (blood == 1) message = "B형"
+    if (blood == 2) message = "O형"
+    if (blood == 3) message = "AB형"
+
+    return message
 }
