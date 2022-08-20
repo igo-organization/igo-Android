@@ -1,19 +1,17 @@
 package com.example.i_go.di
 
-import android.app.Application
 import android.content.Context
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.room.Room
 import com.example.i_go.feature_note._constants.Const.RemoteConst.BASE_URL
-import com.example.i_go.feature_note.data.data_source.PatientDatabase
+import com.example.i_go.feature_note.data.remote.PatientAPI
 import com.example.i_go.feature_note.data.remote.UserAPI
 import com.example.i_go.feature_note.data.repository.PatientRepositoryImpl
 import com.example.i_go.feature_note.data.repository.UserRepositoryImpl
+import com.example.i_go.feature_note.data.storage.IdStore
 import com.example.i_go.feature_note.data.storage.TokenStore
 import com.example.i_go.feature_note.data.storage.dataStore
 import com.example.i_go.feature_note.domain.repository.PatientRepository
 import com.example.i_go.feature_note.domain.repository.UserRepository
-import com.example.i_go.feature_note.domain.use_case.*
 import com.example.i_go.feature_note.domain.util.log
 import dagger.Module
 import dagger.Provides
@@ -33,6 +31,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    // 인터셉터 제공
     @Provides
     @Singleton
     fun provideAuthInterceptor(
@@ -84,14 +83,11 @@ object AppModule {
             .build()
     }
 
+    // patient api 제공
     @Provides
     @Singleton
-    fun providePatientDatabase(app: Application): PatientDatabase {
-        return Room.databaseBuilder(
-            app,
-            PatientDatabase::class.java,
-            PatientDatabase.DATABASE_NAME
-        ).build()
+    fun providePatientsApi(retrofit: Retrofit): PatientAPI {
+        return retrofit.create(PatientAPI::class.java)
     }
 
     // user api 제공
@@ -101,27 +97,17 @@ object AppModule {
         return retrofit.create(UserAPI::class.java)
     }
 
-
+    // USER repository 제공
     @Provides
     @Singleton
-    fun providePatientRepository(db: PatientDatabase): PatientRepository {
-        return PatientRepositoryImpl(db.patientDao)
+    fun provideUserRepository(store: TokenStore, idStore: IdStore, api: UserAPI): UserRepository {
+        return UserRepositoryImpl(store, idStore, api)
     }
 
+    // patient repository 제공
     @Provides
     @Singleton
-    fun providePatientUseCases(repository: PatientRepository): PatientUseCases {
-        return PatientUseCases(
-            getPatients = GetPatients(repository),
-            deletePatient = DeletePatient(repository),
-            addPatient = AddPatient(repository),
-            getPatient = GetPatient(repository)
-        )
-    }
-    // recruitings repository 제공
-    @Provides
-    @Singleton
-    fun provideUserRepository(store: TokenStore, api: UserAPI): UserRepository {
-        return UserRepositoryImpl(store, api)
+    fun providePatientRepository(api: PatientAPI): PatientRepository {
+        return PatientRepositoryImpl(api)
     }
 }
