@@ -22,14 +22,14 @@ interface PatientAPI {
     ): Response<PatientDTO>
 
     // 8 환자 한 명 조회
-    @GET("users/doctor/{doctor_id}/patient/{patient_id}")
+    @GET("users/doctor/{doctor_id}/patient/{patient_id}/")
     suspend fun getPatientById(
         @Path ("doctor_id") doctor_id: Int,
         @Path ("patient_id") patient_id: Int,
     ): Response<PatientByIdDTO>
 
     // 9 환자 수정
-    @PUT("users/doctor/{doctor_id}/patient/{patient_id}")
+    @PUT("users/doctor/{doctor_id}/patient/{patient_id}/")
     suspend fun putPatient(
         @Path ("doctor_id") doctor_id: Int,
         @Path ("patient_id") patient_id: Int,
@@ -37,7 +37,7 @@ interface PatientAPI {
     ): Response<PatientDTO>
 
     // 10 환자 삭제
-    @DELETE("users/doctor/{doctor_id}/patient/{patient_id}")
+    @DELETE("users/doctor/{doctor_id}/patient/{patient_id}/")
     suspend fun deletePatient(
         @Path ("doctor_id") doctor_id: Int,
         @Path ("patient_id") patient_id: Int

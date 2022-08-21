@@ -12,8 +12,8 @@ interface UserRepository {
     suspend fun doLogin(emailPw: LoginPasswordDTO): Response<Token>
     suspend fun doSignIn(signInDTO: SignInDTO): Response<SignInResponseDTO>
 
-    //suspend fun getUserInfo(doctor_id: Int): Response<UserResponseDTO>
-    suspend fun putUserInfo(doctor_id: Int, userDTO: UserDTO): Response<UserResponseDTO>
+    suspend fun getUserInfo(doctor_id: Int): Response<UserResponseDTO>
+    suspend fun putUserInfo(doctor_id: Int, userDTO: UserDTO): Response<UserDTO>
 
     fun getUserToken(): Token
     fun setUserToken(token: Token)

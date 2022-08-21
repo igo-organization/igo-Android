@@ -32,17 +32,15 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun doSignIn(signInDTO: SignInDTO): Response<SignInResponseDTO> {
         return api.signIn(signInDTO)
     }
-/*
+
     override suspend fun getUserInfo(doctor_id: Int): Response<UserResponseDTO> {
         return api.getUserInfo(doctor_id)
     }
 
- */
-
     override suspend fun putUserInfo(
         doctor_id: Int,
         userDTO: UserDTO
-    ): Response<UserResponseDTO> {
+    ): Response<UserDTO> {
         return api.putUserInfo(doctor_id, userDTO)
     }
 
