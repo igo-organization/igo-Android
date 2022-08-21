@@ -26,19 +26,19 @@ interface UserAPI {
     @GET("/users/hospital/")
     suspend fun getHospitals(): Response<List<HospitalDTO>>
 
-    @GET("users/doctor/{hospital_id}")
+    @GET("users/hospital/{hospital_id}/")
     suspend fun getHospital(
         @Path("hospital_id") hospital_id: Int,
     ): Response<HospitalDetailDTO>
-/*
-    @GET("/users/doctor/{doctor_id}")
+
+    @GET("/users/doctor/{doctor_id}/")
     suspend fun getUserInfo(
         @Path("doctor_id") doctor_id: Int,
     ): Response<UserResponseDTO>
-*/
-    @PUT("/users/doctor/{doctor_id}")
+
+    @PUT("/users/doctor/{doctor_id}/")
     suspend fun putUserInfo(
         @Path("doctor_id") doctor_id: Int,
         @Body userDTO: UserDTO
-    ): Response<UserResponseDTO>
+    ): Response<UserDTO>
 }
