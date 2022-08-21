@@ -33,7 +33,7 @@ fun SplashScreen (navController: NavController) {
 
     LaunchedEffect(key1 = true) {
         val nextScreen = when (loginViewModel.isLoggedIn()) {
-            true -> Screen.DoctorScreen
+            true -> Screen.PatientsScreen
             false -> Screen.LoginScreen
         }
         scale.animateTo (
