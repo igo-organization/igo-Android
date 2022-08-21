@@ -33,8 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.i_go.R
+import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
 import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalsViewModel
@@ -50,7 +52,7 @@ import kotlinx.coroutines.launch
 fun DoctorScreen (
     navController : NavHostController,
     hospitalsViewsModel: HospitalsViewModel = hiltViewModel(),
-    doctorViewModel: DoctorViewModel = hiltViewModel()
+    doctorViewModel: RealDoctorViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -60,16 +62,6 @@ fun DoctorScreen (
 
     var expanded by remember { mutableStateOf(false) }
 
-    var nameValue = doctorViewModel.doctor.value.name
-    var majorValue = doctorViewModel.doctor.value.subjects
-    var facilityValue = doctorViewModel.doctor.value.hospital
-
-    var list = listOf(1)
-    /*
-    var name = doctorViewModel.state.value.userResponseDTO.name
-    var major = doctorViewModel.state.value.userResponseDTO.subjects
-    var facility = doctorViewModel.state.value.userResponseDTO.hospital?.id
-*/
     val icon = if (expanded){
         Icons.Filled.KeyboardArrowUp
     } else {
@@ -88,27 +80,28 @@ fun DoctorScreen (
         }
     }.collectAsState(initial = "")
 
+    "짜잔 userId이름 ${userId.value}".log()
+
+
     LaunchedEffect(key1 = true) {
-   //     doctorViewModel.getUserInfo(if (userId.value.isEmpty()) 1 else userId.value.toInt())
-/*
-        if (!name.isNullOrBlank()) nameValue = name
-        if (!major.isNullOrBlank()) majorValue = major
-        if (facility != null) facilityValue = facility!!
-*/
+       // doctorViewModel.setUserId(if (userId.value.toInt())
+       // doctorViewModel.setUserInfo(if (userId.value.isEmpty()) 1 else userId.value.toInt())
+
         doctorViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is DoctorViewModel.UiEvent.ShowSnackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar("의료진 저장 실패")
-                    "의료진 ERROR!!".log()
-                }
-                is DoctorViewModel.UiEvent.SaveDoctor -> {
+                is RealDoctorViewModel.UiEvent.SaveDoctor -> {
+                    scaffoldState.snackbarHostState.showSnackbar("의료진 저장")
                     "의료진 SUCCESS!!".log()
-                    scaffoldState.snackbarHostState.showSnackbar("의료진 저장 성공")
+                }
+                is RealDoctorViewModel.UiEvent.ShowSnackbar -> {
+                    "의료진 ERROR!!".log()
+                    scaffoldState.snackbarHostState.showSnackbar("의료진 저장 실패")
                     navController.navigate(Screen.PatientsScreen.route)
                 }
             }
         }
     }
+
 
     Scaffold(
         scaffoldState = scaffoldState
@@ -162,8 +155,9 @@ fun DoctorScreen (
                         .padding(bottom = 10.dp)
                 ) {
                     MakeRectangular()
+                    "ㅋㅋㅋㅋㅋ: ${doctorViewModel.user.value.name}".log()
                     BasicTextField(
-                        value = doctorViewModel.doctor.value.name,
+                        value = doctorViewModel.user.value.name,
                         onValueChange = {
                             doctorViewModel.onEvent(DoctorEvent.EnteredName(it), userId.value.toInt())
                         },
@@ -198,7 +192,7 @@ fun DoctorScreen (
                 ) {
                     MakeRectangular()
                     BasicTextField(
-                        value = doctorViewModel.doctor.value.subjects,
+                        value = doctorViewModel.user.value.subjects,
                         onValueChange = {
                             doctorViewModel.onEvent(DoctorEvent.EnteredMajor(it), userId.value.toInt())
                         },
@@ -242,7 +236,7 @@ fun DoctorScreen (
                                 ) {
                                 Row {
                                     Text(
-                                        text = doctorViewModel.doctor.value.hospital.toString(),
+                                        text = doctorViewModel.user.value.hospital.toString(),
                                         modifier = Modifier.align(CenterVertically),
                                         color = Black,
                                         maxLines = 1,
@@ -267,15 +261,7 @@ fun DoctorScreen (
                                 },
                                 modifier = Modifier.width(160.dp)
                             ) {
-                                list.forEach { label ->
-                                    DropdownMenuItem(onClick = {
-                                        doctorViewModel.onEvent(DoctorEvent.EnteredHospital(label), userId.value.toInt())
-                                        expanded = false
-                                    }) {
-                                        Text(text = label.toString())
-                                    }
-                                }
-                                /*
+
                                 hospitalsViewsModel.state.value.hospitalDTOs.forEach { label ->
                                     DropdownMenuItem(onClick = {
                                         doctorViewModel.onEvent(DoctorEvent.EnteredHospital(label.id!!), userId.value.toInt())
@@ -284,8 +270,6 @@ fun DoctorScreen (
                                         Text(text = label.name.toString())
                                     }
                                 }
-
-                                 */
                             }
                         }
                     }
@@ -327,7 +311,7 @@ fun DoctorScreen (
                     .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
             ) {
                 Text(
-                    text = if (nameValue.isNotEmpty()){ "수정하기" } else{ "저장하기" },
+                    text = if (doctorViewModel.user.value.name.isNotBlank()){ "수정하기" } else{ "저장하기" },
                     color = Color.White,
                     style = MaterialTheme.typography.h4,
                     fontSize = 20.sp

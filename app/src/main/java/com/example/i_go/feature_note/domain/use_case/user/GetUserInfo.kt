@@ -20,7 +20,9 @@ class GetUserInfo @Inject constructor(
             emit(Resource.Loading())
             val r = repository.getUserInfo(doctor_id)
             when(r.code()) {
-                200 -> { emit(Resource.Success(r.body()!!)) }
+                200 -> {
+                    emit(Resource.Success(r.body()!!))
+                }
                 else -> {
                     "usecase ERROR ${r.code()}: ${r.errorBody().toString()}".log()
                 }

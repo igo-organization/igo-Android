@@ -14,7 +14,7 @@ import javax.inject.Inject
 class PutUserInfo @Inject constructor(
     private val repository: UserRepository,
 ) {
-    operator fun invoke(doctor_id: Int, userDTO: UserDTO): Flow<Resource<UserResponseDTO>> = flow {
+    operator fun invoke(doctor_id: Int, userDTO: UserDTO): Flow<Resource<UserDTO>> = flow {
         try {
             emit(Resource.Loading())
             val r = repository.putUserInfo(doctor_id, userDTO)
