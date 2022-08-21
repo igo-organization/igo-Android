@@ -38,8 +38,10 @@ import com.example.i_go.R
 import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalsViewModel
+import com.example.i_go.feature_note.presentation.login.LoginViewModel
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -52,34 +54,27 @@ fun DoctorScreen (
 ) {
     val focusManager = LocalFocusManager.current
 
-    var nameValue = rememberSaveable { mutableStateOf("") }
-    var majorValue = rememberSaveable { mutableStateOf("") }
-    var facilityValue = rememberSaveable { mutableStateOf("") }
-
     var context = LocalContext.current
     var scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
 
     var expanded by remember { mutableStateOf(false) }
 
-    // TODO : 요양병원 이름 서버에서 불러오기
+    var nameValue = doctorViewModel.doctor.value.name
+    var majorValue = doctorViewModel.doctor.value.subjects
+    var facilityValue = doctorViewModel.doctor.value.hospital
 
+    var list = listOf(1)
+    /*
+    var name = doctorViewModel.state.value.userResponseDTO.name
+    var major = doctorViewModel.state.value.userResponseDTO.subjects
+    var facility = doctorViewModel.state.value.userResponseDTO.hospital?.id
+*/
     val icon = if (expanded){
         Icons.Filled.KeyboardArrowUp
     } else {
         Icons.Filled.KeyboardArrowDown
     }
-
-    val hospitalKey = stringPreferencesKey("hospital")
-    var hospital = flow<String> {
-        context.idStore.data.map {
-            it[hospitalKey]
-        }.collect {
-            if (it != null) {
-                this.emit(it)
-            }
-        }
-    }.collectAsState(initial = "")
 
     val userIdKey = stringPreferencesKey("user")
     var userId = flow<String> {
@@ -93,10 +88,26 @@ fun DoctorScreen (
         }
     }.collectAsState(initial = "")
 
-    "user is ${userId}".log()
-
     LaunchedEffect(key1 = true) {
-        doctorViewModel.getUserInfo(if (userId.value.isEmpty()) 1 else userId.value.toInt())
+   //     doctorViewModel.getUserInfo(if (userId.value.isEmpty()) 1 else userId.value.toInt())
+/*
+        if (!name.isNullOrBlank()) nameValue = name
+        if (!major.isNullOrBlank()) majorValue = major
+        if (facility != null) facilityValue = facility!!
+*/
+        doctorViewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is DoctorViewModel.UiEvent.ShowSnackbar -> {
+                    scaffoldState.snackbarHostState.showSnackbar("의료진 저장 실패")
+                    "의료진 ERROR!!".log()
+                }
+                is DoctorViewModel.UiEvent.SaveDoctor -> {
+                    "의료진 SUCCESS!!".log()
+                    scaffoldState.snackbarHostState.showSnackbar("의료진 저장 성공")
+                    navController.navigate(Screen.PatientsScreen.route)
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -106,7 +117,6 @@ fun DoctorScreen (
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-          //      .addFocusCleaner(focusManager)
         ) {
             Row(
                 modifier = Modifier
@@ -114,7 +124,7 @@ fun DoctorScreen (
                     .padding(8.dp),
 
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
                 Text(
                     modifier = Modifier
@@ -134,7 +144,7 @@ fun DoctorScreen (
                     .fillMaxWidth()
                     .padding(start = 10.dp)
                     .padding(end = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
@@ -153,9 +163,9 @@ fun DoctorScreen (
                 ) {
                     MakeRectangular()
                     BasicTextField(
-                        value = doctorViewModel.state.value.userResponseDTO.name!!,
+                        value = doctorViewModel.doctor.value.name,
                         onValueChange = {
-                            nameValue.value = it
+                            doctorViewModel.onEvent(DoctorEvent.EnteredName(it), userId.value.toInt())
                         },
                         modifier = Modifier
                             .padding(10.dp)
@@ -170,7 +180,7 @@ fun DoctorScreen (
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp, end = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
                 Text(
                     text = "전공",
@@ -188,8 +198,10 @@ fun DoctorScreen (
                 ) {
                     MakeRectangular()
                     BasicTextField(
-                        value = doctorViewModel.state.value.userResponseDTO.subjects!!,
-                        onValueChange = { majorValue.value = it },
+                        value = doctorViewModel.doctor.value.subjects,
+                        onValueChange = {
+                            doctorViewModel.onEvent(DoctorEvent.EnteredMajor(it), userId.value.toInt())
+                        },
                         modifier = Modifier
                             .padding(10.dp)
                             .align(BottomCenter),
@@ -202,7 +214,7 @@ fun DoctorScreen (
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp, end = 5.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
                 Text(
                     text = "시설",
@@ -230,7 +242,7 @@ fun DoctorScreen (
                                 ) {
                                 Row {
                                     Text(
-                                        text = doctorViewModel.state.value.userResponseDTO.hospital?.name!!,
+                                        text = doctorViewModel.doctor.value.hospital.toString(),
                                         modifier = Modifier.align(CenterVertically),
                                         color = Black,
                                         maxLines = 1,
@@ -255,14 +267,25 @@ fun DoctorScreen (
                                 },
                                 modifier = Modifier.width(160.dp)
                             ) {
+                                list.forEach { label ->
+                                    DropdownMenuItem(onClick = {
+                                        doctorViewModel.onEvent(DoctorEvent.EnteredHospital(label), userId.value.toInt())
+                                        expanded = false
+                                    }) {
+                                        Text(text = label.toString())
+                                    }
+                                }
+                                /*
                                 hospitalsViewsModel.state.value.hospitalDTOs.forEach { label ->
                                     DropdownMenuItem(onClick = {
-                                        facilityValue.value = label.name.toString()
+                                        doctorViewModel.onEvent(DoctorEvent.EnteredHospital(label.id!!), userId.value.toInt())
                                         expanded = false
                                     }) {
                                         Text(text = label.name.toString())
                                     }
                                 }
+
+                                 */
                             }
                         }
                     }
@@ -279,31 +302,32 @@ fun DoctorScreen (
                         // 추가
                     }*/
                     scope.launch {
-                        if (nameValue.value.isEmpty()){
-                            NameExcept(nameValue.value, scaffoldState)
+                        /*
+                        if (doctorViewModel.state.value.userDTO.name!!.isEmpty()){
+                            NameExcept(doctorViewModel.state.value.userDTO.name!!, scaffoldState)
                         }
-                        else if (majorValue.value.isEmpty()){
-                            MajorExcept(majorValue.value, scaffoldState)
+                        else if (doctorViewModel.state.value.userDTO.subjects!!.isEmpty()){
+                            NameExcept(doctorViewModel.state.value.userDTO.subjects!!, scaffoldState)
                         }
-                        else if (facilityValue.value == "병원 선택"){
-                            FacilityExcept(facilityValue.value, scaffoldState)
+                        else if (doctorViewModel.state.value.userDTO.hospital != 0){
+                            NameExcept(doctorViewModel.state.value.userDTO.hospital?.name!!, scaffoldState)
                         }
-                        else {
-
-                            navController.navigate(Screen.PatientsScreen.route)
-                        }
+                        else {*/
+                        doctorViewModel.onEvent(DoctorEvent.SaveDoctor, userId.value.toInt())
+                       //     navController.navigate(Screen.PatientsScreen.route)
+                      //  }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(CenterHorizontally)
                     .padding(20.dp)
                     .width(220.dp)
                     .height(50.dp)
                     .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
             ) {
                 Text(
-                    text = "gd",//if (name.value.isNotEmpty()){ "수정하기" } else{ "저장하기" },
+                    text = if (nameValue.isNotEmpty()){ "수정하기" } else{ "저장하기" },
                     color = Color.White,
                     style = MaterialTheme.typography.h4,
                     fontSize = 20.sp
