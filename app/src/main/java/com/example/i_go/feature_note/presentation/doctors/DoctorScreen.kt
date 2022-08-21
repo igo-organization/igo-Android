@@ -33,14 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.i_go.R
-import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
 import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.domain.util.log
+import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalViewModel
 import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalsViewModel
-import com.example.i_go.feature_note.presentation.login.LoginViewModel
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.*
 import kotlinx.coroutines.flow.collectLatest
@@ -52,7 +50,8 @@ import kotlinx.coroutines.launch
 fun DoctorScreen (
     navController : NavHostController,
     hospitalsViewsModel: HospitalsViewModel = hiltViewModel(),
-    doctorViewModel: RealDoctorViewModel = hiltViewModel()
+    hospitalViewModel: HospitalViewModel = hiltViewModel(),
+    doctorViewModel: DoctorViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -80,23 +79,20 @@ fun DoctorScreen (
         }
     }.collectAsState(initial = "")
 
-    "짜잔 userId이름 ${userId.value}".log()
-
 
     LaunchedEffect(key1 = true) {
-       // doctorViewModel.setUserId(if (userId.value.toInt())
-       // doctorViewModel.setUserInfo(if (userId.value.isEmpty()) 1 else userId.value.toInt())
+        doctorViewModel.getUserInfo(if (userId.value.isEmpty()) 1 else userId.value.toInt())
 
         doctorViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is RealDoctorViewModel.UiEvent.SaveDoctor -> {
+                is DoctorViewModel.UiEvent.SaveDoctor -> {
                     scaffoldState.snackbarHostState.showSnackbar("의료진 저장")
                     "의료진 SUCCESS!!".log()
+                    navController.navigate(Screen.PatientsScreen.route)
                 }
-                is RealDoctorViewModel.UiEvent.ShowSnackbar -> {
+                is DoctorViewModel.UiEvent.ShowSnackbar -> {
                     "의료진 ERROR!!".log()
                     scaffoldState.snackbarHostState.showSnackbar("의료진 저장 실패")
-                    navController.navigate(Screen.PatientsScreen.route)
                 }
             }
         }
@@ -155,7 +151,6 @@ fun DoctorScreen (
                         .padding(bottom = 10.dp)
                 ) {
                     MakeRectangular()
-                    "ㅋㅋㅋㅋㅋ: ${doctorViewModel.user.value.name}".log()
                     BasicTextField(
                         value = doctorViewModel.user.value.name,
                         onValueChange = {
@@ -236,7 +231,7 @@ fun DoctorScreen (
                                 ) {
                                 Row {
                                     Text(
-                                        text = doctorViewModel.user.value.hospital.toString(),
+                                        text = hospitalViewModel.getHospitalDetail(doctorViewModel.user.value.hospital).name!!,
                                         modifier = Modifier.align(CenterVertically),
                                         color = Black,
                                         maxLines = 1,
@@ -263,11 +258,12 @@ fun DoctorScreen (
                             ) {
 
                                 hospitalsViewsModel.state.value.hospitalDTOs.forEach { label ->
-                                    DropdownMenuItem(onClick = {
+                                    DropdownMenuItem(
+                                        onClick = {
                                         doctorViewModel.onEvent(DoctorEvent.EnteredHospital(label.id!!), userId.value.toInt())
                                         expanded = false
                                     }) {
-                                        Text(text = label.name.toString())
+                                        Text(text = label.name!!)
                                     }
                                 }
                             }
