@@ -89,7 +89,7 @@ fun PatientItem(
                             .background(White)
             ) {
                 Image(
-                    painterResource(id = PatientByIdDTO.patient_image_real[image]),
+                    painterResource(id = PatientByIdDTO.patient_image_real[image-1]),
                     contentDescription = "painting",
                     modifier = Modifier
                         .padding(start = 5.dp)
