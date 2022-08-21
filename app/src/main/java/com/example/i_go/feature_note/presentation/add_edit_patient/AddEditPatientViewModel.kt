@@ -5,9 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.i_go.feature_note.domain.model.InvalidNoteException
-import com.example.i_go.feature_note.domain.model.Patient
-import com.example.i_go.feature_note.domain.use_case.PatientUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,9 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditPatientViewModel @Inject constructor (
-    private val patientUseCases: PatientUseCases,
+   // private val patientUseCases: PatientUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    /*
     private val _patientName = mutableStateOf(PatientTextFieldState(
         hint = "홍길동"
     ))
@@ -193,5 +191,5 @@ class AddEditPatientViewModel @Inject constructor (
     sealed class UiEvent {
         data class ShowSnackbar(val message: String): UiEvent()
         object SaveNote: UiEvent()
-    }
+    }*/
 }

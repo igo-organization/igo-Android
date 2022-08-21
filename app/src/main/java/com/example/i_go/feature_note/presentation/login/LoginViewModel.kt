@@ -25,18 +25,15 @@ class LoginViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    private var _user = mutableStateOf(UserDTO())
-    val user: State<UserDTO> = _user
-
-    private var _emailPw = mutableStateOf(
+    private var _emailPw = mutableStateOf( // 주는 애
         LoginPasswordDTO(
-        username = "user12",
-        password = "pass1212"
+        username = "user0007",
+        password = "pass0007"
     )
     )
     val emailPw: State<LoginPasswordDTO> = _emailPw
 
-    private var token = mutableStateOf(Token())
+    private var token = mutableStateOf(Token()) // 받는 애
     private var id = mutableStateOf(ID())
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
@@ -76,22 +73,6 @@ class LoginViewModel @Inject constructor(
                 }
                 is Resource.Loading -> {
                     "토큰 값 가져오는 중...".log()
-                }
-            }
-        }
-    }
-
-    suspend fun getUserInfo() {
-        userUseCases.getUserInfo().collect() {
-            when (it) {
-                is Resource.Success -> {
-                    _user.value = it.data!!
-                }
-                is Resource.Error -> {
-                    "유저 정보 가져오는 중 에러 발생".log()
-                }
-                is Resource.Loading -> {
-                    "유저 정보 가져오는 중...".log()
                 }
             }
         }

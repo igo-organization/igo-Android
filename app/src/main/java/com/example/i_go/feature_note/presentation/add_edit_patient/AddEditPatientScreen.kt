@@ -6,13 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -35,12 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.i_go.feature_note.domain.model.Patient.Companion.patientImages
-import com.example.i_go.feature_note.domain.model.Patient.Companion.patient_image_real
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.PatientMap
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.TransparentHintTextField
 import com.example.i_go.feature_note.presentation.doctors.MakeRectangular
-import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -54,7 +47,7 @@ fun AddEditPatientScreen(
     navController: NavController,
     patientImage: Int,
     viewModel: AddEditPatientViewModel = hiltViewModel()
-) {
+) {}/*
     val nameState = viewModel.patientName.value
     val sexState = viewModel.patientSex.value
     val ageState = viewModel.patientAge.value
@@ -70,7 +63,7 @@ fun AddEditPatientScreen(
 
     val pagerState = rememberPagerState(
         pageCount = 5,
-        initialPage = if (patientImage >= 0) patientImage else patientImages.random()
+    //    initialPage = if (patientImage >= 0) patientImage else patientImages.random()
     )
 
 
@@ -153,7 +146,8 @@ fun AddEditPatientScreen(
                             ) {
                                 Image(
                                     painterResource(
-                                        id = patient_image_real[page]
+                                        id = 0
+                                  //     id = patient_image_real[page]
                                     ),
                                     contentDescription = "painting"
                                 )
@@ -649,3 +643,4 @@ object BloodType{
     const val Rh_minus = "Rh -"
     const val Rh_plus = "Rh +"
 }
+*/

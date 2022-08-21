@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,11 +26,11 @@ class PatientsViewModel @Inject constructor (
 
     private var recentlyDeletedPatient: PatientDTO? = null
 
-    /*
+
     init {
         getPatients(0)
     }
-*/
+
     fun onEvent(event: PatientsEvent, users_id: Int) {
         when (event) {
             /*
@@ -49,7 +50,9 @@ class PatientsViewModel @Inject constructor (
                 _state.value = state.value.copy(
                     isOrderSectionVisible = !state.value.isOrderSectionVisible
                 )
-            }*/
+            }
+
+             */
         }
     }
 

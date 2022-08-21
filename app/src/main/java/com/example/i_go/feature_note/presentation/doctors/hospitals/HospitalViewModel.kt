@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDetailDTO
 import com.example.i_go.feature_note.domain.use_case.user.GetHospital
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
@@ -20,7 +21,7 @@ class HospitalViewModel @Inject constructor(
     val state: State<HospitalState> = _state
 
     init {
-        getHospital(1)
+       getHospital(1)
     }
 
     fun getHospital(hospital_id: Int) {
@@ -30,12 +31,17 @@ class HospitalViewModel @Inject constructor(
                     is Resource.Success -> {
                         _state.value =
                             it.data?.let { HospitalState(hospitalDTO = it) }!!
-                        "병원 목록 가져오기 성공".log()
+                        "병원 가져오기 성공".log()
                     }
-                    is Resource.Error -> "병원 목록 가져오기 실패".log()
-                    is Resource.Loading -> "병원 목록 가져오는 중".log()
+                    is Resource.Error -> "병원 가져오기 실패".log()
+                    is Resource.Loading -> "병원 가져오는 중".log()
                 }
             }
         }
+    }
+
+    fun getHospitalDetail(hospital_id: Int): HospitalDetailDTO {
+        getHospital(hospital_id)
+        return state.value.hospitalDTO
     }
 }
