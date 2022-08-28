@@ -13,32 +13,39 @@ import retrofit2.http.*
 
 interface UserAPI {
 
-    @POST("/users/login/")
-    suspend fun login(
-        @Body loginpasswordDTO : LoginPasswordDTO
-    ): Response<Token>
-
-    @POST("/users/register/")
-    suspend fun signIn(
-        @Body signInDTO : SignInDTO
-    ): Response<SignInResponseDTO>
-
-    @GET("/users/hospital/")
+    // 1. 병원 전체 조회
+    @GET("hospital/")
     suspend fun getHospitals(): Response<List<HospitalDTO>>
 
-    @GET("users/hospital/{hospital_id}/")
+    // 2. 병원 1개 조회
+    @GET("hospital/{hospital_id}/")
     suspend fun getHospital(
         @Path("hospital_id") hospital_id: Int,
     ): Response<HospitalDetailDTO>
 
-    @GET("/users/doctor/{doctor_id}/")
-    suspend fun getUserInfo(
-        @Path("doctor_id") doctor_id: Int,
-    ): Response<UserResponseDTO>
+    // 3. 회원가입
+    @POST("register/")
+    suspend fun signIn(
+        @Body signInDTO : SignInDTO
+    ): Response<SignInResponseDTO>
 
-    @PUT("/users/doctor/{doctor_id}/")
+    // 4. 로그인
+    @POST("login/")
+    suspend fun login(
+        @Body loginpasswordDTO : LoginPasswordDTO
+    ): Response<Token>
+
+    // 5. 의료진 프로필 수정
+    @PUT("doctor/{doctor_id}/")
     suspend fun putUserInfo(
         @Path("doctor_id") doctor_id: Int,
         @Body userDTO: UserDTO
     ): Response<UserDTO>
+
+    // 6. 의료진 프로필 조회
+    @GET("doctor/{doctor_id}/")
+    suspend fun getUserInfo(
+        @Path("doctor_id") doctor_id: Int,
+    ): Response<UserResponseDTO>
+
 }
