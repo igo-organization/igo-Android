@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,8 +30,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO.Companion.patient_image_real
+import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.PatientMap
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.TransparentHintTextField
 import com.example.i_go.feature_note.presentation.doctors.MakeRectangular
@@ -40,14 +44,16 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun AddEditPatientScreen(
     navController: NavController,
-    patientImage: Int,
+    doctorId: Int,
     viewModel: AddEditPatientViewModel = hiltViewModel()
-) {}/*
+) {
     val nameState = viewModel.patientName.value
     val sexState = viewModel.patientSex.value
     val ageState = viewModel.patientAge.value
@@ -63,11 +69,21 @@ fun AddEditPatientScreen(
 
     val pagerState = rememberPagerState(
         pageCount = 5,
-    //    initialPage = if (patientImage >= 0) patientImage else patientImages.random()
     )
-
+    var context = LocalContext.current
+    val doctorIdKey = stringPreferencesKey("user")
+    var doctorId = flow<String> {
+        context.idStore.data.map {
+            it[doctorIdKey]
+        }.collect {
+            if (it != null) {
+                this.emit(it)
+            }
+        }
+    }.collectAsState(initial = "")
 
     LaunchedEffect(key1 = true) {
+        viewModel.getPatient(if (doctorId.value.isEmpty()) 1 else doctorId.value.toInt())
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is AddEditPatientViewModel.UiEvent.ShowSnackbar -> {
@@ -146,8 +162,7 @@ fun AddEditPatientScreen(
                             ) {
                                 Image(
                                     painterResource(
-                                        id = 0
-                                  //     id = patient_image_real[page]
+                                        id = patient_image_real[page]
                                     ),
                                     contentDescription = "painting"
                                 )
@@ -192,10 +207,10 @@ fun AddEditPatientScreen(
                                 .focusRequester(focusRequester = focusRequester),
 
                             onValueChange = {
-                                viewModel.onEvent(AddEditPatientEvent.EnteredName(it))
+                                viewModel.onEvent(AddEditPatientEvent.EnteredName(it), doctorId.value.toInt())
                             },
                             onFocusChange = {
-                                viewModel.onEvent(AddEditPatientEvent.ChangeNameFocus(it))
+                                viewModel.onEvent(AddEditPatientEvent.ChangeNameFocus(it), doctorId.value.toInt())
                             },
                             isHintVisible = nameState.isHintVisible,
                             singleLine = true,
@@ -241,7 +256,8 @@ fun AddEditPatientScreen(
                                             viewModel.onEvent(
                                                 AddEditPatientEvent.EnteredSex(
                                                     selectedGender.value
-                                                )
+                                                ),
+                                                doctorId.value.toInt()
                                             )
                                         },
                                         colors = RadioButtonDefaults.colors(
@@ -261,7 +277,8 @@ fun AddEditPatientScreen(
                                             viewModel.onEvent(
                                                 AddEditPatientEvent.EnteredSex(
                                                     selectedGender.value
-                                                )
+                                                ),
+                                                doctorId.value.toInt()
                                             )
                                         },
                                         colors = RadioButtonDefaults.colors(
@@ -306,10 +323,10 @@ fun AddEditPatientScreen(
                                 .focusRequester(focusRequester = focusRequester),
 
                             onValueChange = {
-                                viewModel.onEvent(AddEditPatientEvent.EnteredAge(it))
+                                viewModel.onEvent(AddEditPatientEvent.EnteredAge(it), doctorId.value.toInt())
                             },
                             onFocusChange = {
-                                viewModel.onEvent(AddEditPatientEvent.ChangeAgeFocus(it))
+                                viewModel.onEvent(AddEditPatientEvent.ChangeAgeFocus(it), doctorId.value.toInt())
                             },
                             isHintVisible = ageState.isHintVisible,
                             singleLine = true,
@@ -356,7 +373,7 @@ fun AddEditPatientScreen(
                                                 viewModel.onEvent(
                                                     AddEditPatientEvent.EnteredBloodType(
                                                         selectBloodType.value
-                                                    )
+                                                    ), doctorId.value.toInt()
                                                 )
                                             },
                                             colors = RadioButtonDefaults.colors(
@@ -376,7 +393,7 @@ fun AddEditPatientScreen(
                                                 viewModel.onEvent(
                                                     AddEditPatientEvent.EnteredBloodType(
                                                         selectBloodType.value
-                                                    )
+                                                    ), doctorId.value.toInt()
                                                 )
                                             },
                                             colors = RadioButtonDefaults.colors(
@@ -398,7 +415,7 @@ fun AddEditPatientScreen(
                                                 viewModel.onEvent(
                                                     AddEditPatientEvent.EnteredBloodType(
                                                         selectBloodType.value
-                                                    )
+                                                    ), doctorId.value.toInt()
                                                 )
                                             },
                                             colors = RadioButtonDefaults.colors(
@@ -418,7 +435,7 @@ fun AddEditPatientScreen(
                                                 viewModel.onEvent(
                                                     AddEditPatientEvent.EnteredBloodType(
                                                         selectBloodType.value
-                                                    )
+                                                    ), doctorId.value.toInt()
                                                 )
                                             },
                                             colors = RadioButtonDefaults.colors(
@@ -448,7 +465,7 @@ fun AddEditPatientScreen(
                                                 viewModel.onEvent(
                                                     AddEditPatientEvent.EnteredBloodRh(
                                                         selectRh.value
-                                                    )
+                                                    ), doctorId.value.toInt()
                                                 )
                                             },
                                             colors = RadioButtonDefaults.colors(
@@ -468,7 +485,7 @@ fun AddEditPatientScreen(
                                                 viewModel.onEvent(
                                                     AddEditPatientEvent.EnteredBloodRh(
                                                         selectRh.value
-                                                    )
+                                                    ), doctorId.value.toInt()
                                                 )
                                             },
                                             colors = RadioButtonDefaults.colors(
@@ -514,10 +531,10 @@ fun AddEditPatientScreen(
                                 .focusRequester(focusRequester = focusRequester),
 
                             onValueChange = {
-                                viewModel.onEvent(AddEditPatientEvent.EnteredDiseases(it))
+                                viewModel.onEvent(AddEditPatientEvent.EnteredDiseases(it), doctorId.value.toInt())
                             },
                             onFocusChange = {
-                                viewModel.onEvent(AddEditPatientEvent.ChangeDiseasesFocus(it))
+                                viewModel.onEvent(AddEditPatientEvent.ChangeDiseasesFocus(it), doctorId.value.toInt())
                             },
                             isHintVisible = diseasesState.isHintVisible,
                             singleLine = true,
@@ -578,10 +595,10 @@ fun AddEditPatientScreen(
                                 .focusRequester(focusRequester = focusRequester),
 
                             onValueChange = {
-                                viewModel.onEvent(AddEditPatientEvent.EnteredExtra(it))
+                                viewModel.onEvent(AddEditPatientEvent.EnteredExtra(it), doctorId.value.toInt())
                             },
                             onFocusChange = {
-                                viewModel.onEvent(AddEditPatientEvent.ChangeExtraFocus(it))
+                                viewModel.onEvent(AddEditPatientEvent.ChangeExtraFocus(it), doctorId.value.toInt())
                             },
                             isHintVisible = extraState.isHintVisible,
 
@@ -599,8 +616,8 @@ fun AddEditPatientScreen(
                         }else{
                             // 추가하기
                         }
-                        viewModel.onEvent(AddEditPatientEvent.ChangeImage(pagerState.currentPage))
-                        viewModel.onEvent(AddEditPatientEvent.SavePatient)
+                        viewModel.onEvent(AddEditPatientEvent.ChangeImage(pagerState.currentPage), doctorId.value.toInt())
+                        viewModel.onEvent(AddEditPatientEvent.SavePatient, doctorId.value.toInt())
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
                     modifier = Modifier
@@ -643,4 +660,3 @@ object BloodType{
     const val Rh_minus = "Rh -"
     const val Rh_plus = "Rh +"
 }
-*/

@@ -5,18 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
+import com.example.i_go.feature_note.domain.use_case.patient.PatientUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddEditPatientViewModel @Inject constructor (
-   // private val patientUseCases: PatientUseCases,
+    private val patientUseCases: PatientUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    /*
+
     private val _patientName = mutableStateOf(PatientTextFieldState(
         hint = "홍길동"
     ))
@@ -46,53 +49,64 @@ class AddEditPatientViewModel @Inject constructor (
     ))
     val patientExtra: State<PatientTextFieldState> = _patientExtra
 
-    private val _patientImage = mutableStateOf(Patient.patientImages.random())
+    private val _patientImage = mutableStateOf(PatientDTO.patientImages.random())
     val patientImage: State<Int> = _patientImage
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    private val _state = mutableStateOf(PatientState())
+    val state: State<PatientState> = _state
+
     private var currentPatientId: Int? = null
 
     init {
         savedStateHandle.get<Int>("patientId")?.let { patientId ->
-            if(patientId != -1) {
+            if(patientId > 0) {
                 viewModelScope.launch {
-                    patientUseCases.getPatient(patientId)?.also { patient ->
-                        currentPatientId = patient.id
-                        _patientName.value = patientName.value.copy(
-                            text = patient.name,
-                            isHintVisible = false
-                        )
-                        _patientSex.value = _patientSex.value.copy(
-                            text = patient.sex
-                        )
-                        _patientAge.value = _patientAge.value.copy(
-                            text = patient.age,
-                            isHintVisible = false
-                        )
-                        _patientBloodType.value = _patientBloodType.value.copy(
-                            text = patient.blood_type
-                        )
-                        _patientBloodRh.value = _patientBloodType.value.copy(
-                            text = patient.blood_rh
-                        )
-                        _patientDiseases.value = _patientDiseases.value.copy(
-                            text = patient.disease,
-                            isHintVisible = false
-                        )
-                        _patientExtra.value = _patientExtra.value.copy(
-                            text = patient.extra,
-                            isHintVisible = false
-                        )
-
-                        _patientImage.value = patient.image
-                    }
-                }
+                    getPatient(patientId)
             }
         }
     }
-    fun onEvent(event: AddEditPatientEvent) {
+    }
+    fun getPatient(patient_id: Int){
+        patientUseCases.getPatientById(
+            patient_id,
+            state.value.patientByIdDTO.id!!,
+            state.value.patientByIdDTO
+        ).onEach { patient ->
+            currentPatientId = patient.data?.id
+            _patientName.value = patientName.value.copy(
+                text = patient.data?.name!!,
+                isHintVisible = false
+            )
+            _patientSex.value = _patientSex.value.copy(
+                bool_text = patient.data.gender!!
+            )
+            _patientAge.value = _patientAge.value.copy(
+                text = patient.data.age.toString(),
+                isHintVisible = false
+            )
+            _patientBloodType.value = _patientBloodType.value.copy(
+                int_text = patient.data.blood_type!!
+            )
+            _patientBloodRh.value = _patientBloodType.value.copy(
+                int_text = patient.data.blood_type
+            )
+            _patientDiseases.value = _patientDiseases.value.copy(
+                text = patient.data.disease!!,
+                isHintVisible = false
+            )
+            _patientExtra.value = _patientExtra.value.copy(
+                text = patient.data.extra!!,
+                isHintVisible = false
+            )
+
+            _patientImage.value = patient.data.image!!
+
+        }
+    }
+    fun onEvent(event: AddEditPatientEvent, doctor_id: Int) {
         when(event) {
             is AddEditPatientEvent.EnteredName -> {
                 _patientName.value = patientName.value.copy(
@@ -161,22 +175,20 @@ class AddEditPatientViewModel @Inject constructor (
                 viewModelScope.launch {
                     try {
                         patientUseCases.addPatient(
-                            Patient(
+                            doctor_id,
+                            PatientDTO(
                                 name = patientName.value.text,
-                                sex = patientSex.value.text,
-                                age = patientAge.value.text,
-                                blood_type = patientBloodType.value.text,
-                                blood_rh = patientBloodRh.value.text,
+                                gender = patientSex.value.bool_text,
+                                age = patientAge.value.text.toInt(),
+                                blood_type = patientBloodType.value.int_text,
+                                blood_rh = patientBloodRh.value.bool_text,
                                 disease = patientDiseases.value.text,
                                 extra = patientExtra.value.text,
-
-                                timestamp = System.currentTimeMillis(),
                                 image = patientImage.value,
-                                id = currentPatientId
                             )
                         )
                         _eventFlow.emit(UiEvent.SaveNote)
-                    } catch(e: InvalidNoteException) {
+                    } catch(e: Exception) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
                                 message = e.message ?: "환자 정보를 저장할 수 없습니다."
@@ -191,5 +203,5 @@ class AddEditPatientViewModel @Inject constructor (
     sealed class UiEvent {
         data class ShowSnackbar(val message: String): UiEvent()
         object SaveNote: UiEvent()
-    }*/
+    }
 }

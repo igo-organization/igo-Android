@@ -60,26 +60,26 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(
                             route = Screen.AddEditPatientScreen.route +
-                                    "?patientId={patientId}&patientImage={patientImage}",
+                                    "?patientId={patientId}&doctorId={doctorId}",
                             arguments = listOf(
                                 navArgument(
-                                    name = "patientId"
+                                    name = "doctorId"
                                 ) {
                                     type = NavType.IntType
                                     defaultValue = -1
                                 },
                                 navArgument(
-                                    name = "patientImage"
+                                    name = "doctorId"
                                 ) {
                                     type = NavType.IntType
                                     defaultValue = -1
                                 }
                             )
                         ) {
-                            val image = it.arguments?.getInt("patientImage") ?: -1
+                            val doctorId = it.arguments?.getInt("doctorId") ?: -1
                             AddEditPatientScreen(
                                 navController = navController,
-                                patientImage = image
+                                doctorId = doctorId
                             )
                         }
                     }
