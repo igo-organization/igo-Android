@@ -8,9 +8,16 @@ import retrofit2.Response
 interface PatientRepository {
     suspend fun getPatients(doctor_id: Int): Response<List<PatientByIdDTO>>
 
-    suspend fun getPatientById(id: Int): PatientDTO?
+    suspend fun getPatientById(
+        doctor_id: Int,
+        patient_id: Int,
+        patientByIdDTO: PatientByIdDTO
+    ): Response<PatientByIdDTO>
 
-    suspend fun insertPatient(patient: PatientDTO)
+    suspend fun insertPatient(
+        doctor_id: Int,
+        patient: PatientDTO
+    ): Response <PatientDTO>
 
     suspend fun deletePatient(
         doctor_id: Int,

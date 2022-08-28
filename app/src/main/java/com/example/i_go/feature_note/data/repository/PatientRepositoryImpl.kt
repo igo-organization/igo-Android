@@ -3,6 +3,7 @@ package com.example.i_go.feature_note.data.repository
 import com.example.i_go.feature_note.data.remote.PatientAPI
 import com.example.i_go.feature_note.data.remote.responseDTO.*
 import com.example.i_go.feature_note.domain.repository.PatientRepository
+import dagger.multibindings.IntoMap
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,12 +17,19 @@ class PatientRepositoryImpl @Inject constructor(
         return api.getPatients(doctor_id)
     }
 
-    override suspend fun getPatientById(id: Int): PatientDTO? {
-        TODO("Not yet implemented")
+    override suspend fun getPatientById(
+        doctor_id: Int,
+        patient_id: Int,
+        patientByIdDTO: PatientByIdDTO
+    ): Response<PatientByIdDTO> {
+        return api.getPatientById(doctor_id, patient_id, patientByIdDTO)
     }
 
-    override suspend fun insertPatient(patient: PatientDTO) {
-        TODO("Not yet implemented")
+    override suspend fun insertPatient(
+        doctor_id: Int,
+        patient: PatientDTO
+    ): Response<PatientDTO> {
+        return api.insertPatient(doctor_id, patient)
     }
 
     override suspend fun deletePatient(
