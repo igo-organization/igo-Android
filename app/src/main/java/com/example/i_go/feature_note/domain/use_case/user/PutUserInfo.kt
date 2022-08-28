@@ -30,10 +30,8 @@ class PutUserInfo @Inject constructor(
             }
 
         } catch(e: HttpException) {
-            "tlfv".log()
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured"))
         } catch(e: IOException) {
-            "힝".log()
             emit(Resource.Error("Couldn't reach server. Check your internet connection."))
         }
     }

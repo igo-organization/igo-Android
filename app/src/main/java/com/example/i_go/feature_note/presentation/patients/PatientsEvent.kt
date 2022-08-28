@@ -1,9 +1,9 @@
 package com.example.i_go.feature_note.presentation.patients
 
-import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 
 sealed class PatientsEvent {
-    data class DeletePatients(val patient: PatientDTO): PatientsEvent()
+    object DeletePatient: PatientsEvent()
     object RestorePatients: PatientsEvent()
     object ToggleOrderSection: PatientsEvent()
 }
