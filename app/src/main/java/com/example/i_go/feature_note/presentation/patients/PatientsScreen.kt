@@ -7,10 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -33,6 +30,7 @@ import com.example.i_go.ui.theme.dark_blue
 import com.example.i_go.ui.theme.primary
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
 @Composable
@@ -44,7 +42,6 @@ fun PatientsScreen(
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
-
     var context = LocalContext.current
 
     val nameKey = stringPreferencesKey("user")
@@ -151,17 +148,28 @@ fun PatientsScreen(
                                 ///)
                             },
                             onDeleteClick = {
-                                /*
-                                viewModel.onEvent(PatientsEvent.DeletePatients(patient))
+                                viewModel.onEvent(
+                                    PatientsEvent.DeletePatient,
+                                    doctor_id = name.value.toInt(),
+                                    patient_id = it.id!!
+                                )
+                                scope.launch{
+                                    val result = scaffoldState.snackbarHostState.showSnackbar(
+                                        message = "환자가 삭제되었습니다.",
+                                        actionLabel = "취소하기"
+                                    )
+                                    viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
+                                }
+                            /*
                                 scope.launch {
                                     val result = scaffoldState.snackbarHostState.showSnackbar(
 
                                         message = "환자가 삭제되었습니다.",
                                         actionLabel = "취소하기"
-                                    )
+                                    )/*
                                     if (result == SnackbarResult.ActionPerformed) {
                                         viewModel.onEvent(PatientsEvent.RestorePatients)
-                                    }
+                                    }*/
                                 }*/
                             }
                         )

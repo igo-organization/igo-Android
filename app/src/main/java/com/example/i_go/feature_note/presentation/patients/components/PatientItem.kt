@@ -170,7 +170,6 @@ fun PatientItem(
         }
 
         IconButton(
-            // TODO: Patient 정보 삭제하기
             onClick = onDeleteClick,
             modifier = Modifier
                 .align(Alignment.TopEnd)

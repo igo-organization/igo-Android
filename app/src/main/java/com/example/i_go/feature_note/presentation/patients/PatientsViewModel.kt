@@ -6,9 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
 import com.example.i_go.feature_note.domain.use_case.patient.GetPatients
+import com.example.i_go.feature_note.domain.use_case.patient.PatientUseCases
 import com.example.i_go.feature_note.domain.util.Resource
+import com.example.i_go.feature_note.domain.util.log
+import com.example.i_go.feature_note.presentation.login.LoginViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -18,46 +22,41 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PatientsViewModel @Inject constructor (
-    private val getPatientsUseCases: GetPatients
+    private val patientUseCases: PatientUseCases
 ) : ViewModel() {
 
     private val _state = mutableStateOf(PatientsState())
     val state: State<PatientsState> = _state
 
-    private var recentlyDeletedPatient: PatientDTO? = null
+    private var recentlyDeletedPatient: PatientByIdDTO? = null
 
 
     init {
         getPatients(0)
     }
 
-    fun onEvent(event: PatientsEvent, users_id: Int) {
+    fun onEvent(event: PatientsEvent, doctor_id: Int, patient_id: Int) {
         when (event) {
-            /*
-            is PatientsEvent.DeletePatients -> {
-                viewModelScope.launch {
-                    getPatientsUseCases.deletePatient(event.patient)
-                    recentlyDeletedPatient = event.patient
-                }
+            is PatientsEvent.DeletePatient -> {
+
+                patientUseCases.deletePatient(doctor_id, patient_id).onEach {
+
+                }.launchIn(viewModelScope)
+               //     recentlyDeletedPatient = event.patient
+
             }
+            /*
             is PatientsEvent.RestorePatients -> {
                 viewModelScope.launch {
                     getPatientsUseCases.addPatient(recentlyDeletedPatient ?: return@launch)
                     recentlyDeletedPatient = null
                 }
-            }
-            is PatientsEvent.ToggleOrderSection -> {
-                _state.value = state.value.copy(
-                    isOrderSectionVisible = !state.value.isOrderSectionVisible
-                )
-            }
-
-             */
+            }*/
         }
     }
 
     fun getPatients(user_id: Int) {
-        getPatientsUseCases(user_id).onEach { result ->
+        patientUseCases.getPatients(user_id).onEach { result ->
             when (result){
                 is Resource.Success -> {
                     _state.value = result.data?.let { PatientsState(patientDTOS = it) }!!
@@ -74,4 +73,5 @@ class PatientsViewModel @Inject constructor (
             }
         }.launchIn(viewModelScope)
     }
+
 }
