@@ -41,7 +41,8 @@ fun PatientItem(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 26.dp,
     cutCornerSize: Dp = 0.dp,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit = {},
+    onCallClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -183,9 +184,7 @@ fun PatientItem(
             )
         }
         TextButton (
-            onClick = {
-                // TODO: 서버로 신호 주기
-            },
+            onClick = onCallClick,
             colors =  ButtonDefaults.buttonColors(backgroundColor = call_color),
             modifier = Modifier
                     .align(Alignment.BottomCenter)

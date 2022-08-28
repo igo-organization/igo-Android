@@ -4,18 +4,26 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -26,6 +34,7 @@ import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.patients.components.PatientItem
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.button_color
+import com.example.i_go.ui.theme.call_color
 import com.example.i_go.ui.theme.dark_blue
 import com.example.i_go.ui.theme.primary
 import kotlinx.coroutines.flow.flow
@@ -55,6 +64,9 @@ fun PatientsScreen(
             }
         }
     }.collectAsState(initial = "")
+
+    val openDialog = remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = true){
         viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
@@ -129,7 +141,50 @@ fun PatientsScreen(
                 }
             }
             Divider(color = primary, modifier = Modifier.shadow(8.dp), thickness = 2.dp)
-
+            if (openDialog.value){
+                AlertDialog(
+                    onDismissRequest = { openDialog.value = false},
+                    title = {
+                        Text(
+                            text = "환자에게 보낼 메시지를 입력해주세요.",
+                            style = MaterialTheme.typography.body1,
+                            fontSize = 20.sp,
+                            color = primary
+                        )
+                    },
+                    text = {
+                        Column{
+                            Spacer(modifier = Modifier.height(20.dp))
+                            BasicTextField(
+                                value = text,
+                                onValueChange = { text = it },
+                                modifier = Modifier
+                                        .padding(10.dp)
+                                        .align(CenterHorizontally),
+                                textStyle = MaterialTheme.typography.body1,
+                                singleLine = true,
+                            )
+                            Divider(
+                                modifier = Modifier.padding(bottom = 20.dp).fillMaxWidth().height(1.dp),
+                                color = call_color
+                            )
+                        }
+                   },
+                    confirmButton = {
+                        Box {
+                            Button(
+                                modifier = Modifier.align(Center),
+                                onClick = {
+                                    openDialog.value = false
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = call_color)
+                            ) {
+                                Text("호출하기", style = MaterialTheme.typography.h4, color = White)
+                            }
+                        }
+                    },
+                )
+            }
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 viewModel.state.value.patientDTOS.forEach {
@@ -160,17 +215,9 @@ fun PatientsScreen(
                                     )
                                     viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
                                 }
-                            /*
-                                scope.launch {
-                                    val result = scaffoldState.snackbarHostState.showSnackbar(
-
-                                        message = "환자가 삭제되었습니다.",
-                                        actionLabel = "취소하기"
-                                    )/*
-                                    if (result == SnackbarResult.ActionPerformed) {
-                                        viewModel.onEvent(PatientsEvent.RestorePatients)
-                                    }*/
-                                }*/
+                            },
+                            onCallClick = {
+                                openDialog.value = true
                             }
                         )
                     }
