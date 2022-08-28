@@ -8,38 +8,46 @@ import retrofit2.http.*
 
 interface PatientAPI {
 
-    // 6 전체 환자 조회
-    @GET("users/doctor/{doctor_id}/patient/")
+    // 7. 전체 환자 조회
+    @GET("doctor/{doctor_id}/patient/")
     suspend fun getPatients(
         @Path ("doctor_id") doctor_id: Int
     ): Response<List<PatientByIdDTO>>
 
-    //7 환자 생성
-    @POST("users/doctor/{doctor_id}/patient/")
+    // 8. 환자 생성
+    @POST("/doctor/{doctor_id}/patient/")
     suspend fun postPatient(
         @Path ("doctor_id") doctor_id: Int,
         @Body patientDTO: PatientDTO
     ): Response<PatientDTO>
 
-    // 8 환자 한 명 조회
-    @GET("users/doctor/{doctor_id}/patient/{patient_id}/")
+    // 9. 환자 한 명 조회
+    @GET("doctor/{doctor_id}/patient/{patient_id}/")
     suspend fun getPatientById(
         @Path ("doctor_id") doctor_id: Int,
         @Path ("patient_id") patient_id: Int,
     ): Response<PatientByIdDTO>
 
-    // 9 환자 수정
-    @PUT("users/doctor/{doctor_id}/patient/{patient_id}/")
+    // 10. 환자 수정
+    @PUT("doctor/{doctor_id}/patient/{patient_id}/")
     suspend fun putPatient(
         @Path ("doctor_id") doctor_id: Int,
         @Path ("patient_id") patient_id: Int,
         @Body patientDTO: PatientDTO
     ): Response<PatientDTO>
 
-    // 10 환자 삭제
-    @DELETE("users/doctor/{doctor_id}/patient/{patient_id}/")
+    // 11. 환자 삭제
+    @DELETE("doctor/{doctor_id}/patient/{patient_id}/")
     suspend fun deletePatient(
         @Path ("doctor_id") doctor_id: Int,
         @Path ("patient_id") patient_id: Int
+    ): Response<PatientMessageDTO>
+
+    // 12. 의료진 -> 환자 호출
+    @POST("call/doctor/{doctor_id}/patient/{patient_id}/")
+    suspend fun callPatient(
+        @Path ("doctor_id") doctor_id: Int,
+        @Path ("patient_id") patient_id: Int,
+        @Body messageDTO: PatientMessageDTO
     ): Response<PatientMessageDTO>
 }

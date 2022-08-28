@@ -30,4 +30,12 @@ class PatientRepositoryImpl @Inject constructor(
     ): Response<PatientMessageDTO> {
         return api.deletePatient(doctor_id, patient_id)
     }
+
+    override suspend fun  callPatient(
+        doctor_id: Int,
+        patient_id: Int,
+        messageDTO: PatientMessageDTO
+    ): Response<PatientMessageDTO> {
+        return api.callPatient(doctor_id, patient_id, messageDTO)
+    }
 }
