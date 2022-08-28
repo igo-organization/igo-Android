@@ -1,6 +1,6 @@
 package com.example.i_go.feature_note.domain.use_case.patient
 
-import com.example.i_go.feature_note.data.remote.responseDTO.PatientDeleteDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientMessageDTO
 import com.example.i_go.feature_note.domain.repository.PatientRepository
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class DeletePatient @Inject constructor(
     private val repository: PatientRepository
 ) {
-    operator fun invoke(doctor_id: Int, patient_id: Int): Flow<Resource<PatientDeleteDTO>> = flow {
+    operator fun invoke(doctor_id: Int, patient_id: Int): Flow<Resource<PatientMessageDTO>> = flow {
         try {
             emit(Resource.Loading())
             val r = repository.deletePatient(doctor_id, patient_id)

@@ -2,8 +2,7 @@ package com.example.i_go.feature_note.data.remote
 
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
-import com.example.i_go.feature_note.data.remote.responseDTO.PatientDeleteDTO
-import kotlinx.coroutines.flow.Flow
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientMessageDTO
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -42,5 +41,5 @@ interface PatientAPI {
     suspend fun deletePatient(
         @Path ("doctor_id") doctor_id: Int,
         @Path ("patient_id") patient_id: Int
-    ): Response<PatientDeleteDTO>
+    ): Response<PatientMessageDTO>
 }

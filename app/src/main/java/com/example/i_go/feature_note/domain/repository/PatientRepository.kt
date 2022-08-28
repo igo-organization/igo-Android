@@ -2,7 +2,7 @@ package com.example.i_go.feature_note.domain.repository
 
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
-import com.example.i_go.feature_note.data.remote.responseDTO.PatientDeleteDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientMessageDTO
 import retrofit2.Response
 
 interface PatientRepository {
@@ -15,5 +15,5 @@ interface PatientRepository {
     suspend fun deletePatient(
         doctor_id: Int,
         patient_id: Int
-    ): Response<PatientDeleteDTO>
+    ): Response<PatientMessageDTO>
 }
