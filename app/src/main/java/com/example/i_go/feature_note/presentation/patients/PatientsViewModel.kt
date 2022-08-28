@@ -6,12 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.i_go.feature_note.data.remote.requestDTO.LoginPasswordDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientMessageDTO
 import com.example.i_go.feature_note.domain.use_case.patient.GetPatients
 import com.example.i_go.feature_note.domain.use_case.patient.PatientUseCases
 import com.example.i_go.feature_note.domain.util.Resource
 import com.example.i_go.feature_note.domain.util.log
+import com.example.i_go.feature_note.presentation.login.LoginEvent
 import com.example.i_go.feature_note.presentation.login.LoginViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -30,6 +33,9 @@ class PatientsViewModel @Inject constructor (
 
     private var recentlyDeletedPatient: PatientByIdDTO? = null
 
+    private var _message = mutableStateOf(PatientMessageDTO(message = ""))
+    val message: State<PatientMessageDTO> = _message
+
 
     init {
         getPatients(0)
@@ -37,12 +43,20 @@ class PatientsViewModel @Inject constructor (
 
     fun onEvent(event: PatientsEvent, doctor_id: Int, patient_id: Int) {
         when (event) {
+            is PatientsEvent.EnteredText -> {
+                _message.value = message.value.copy(
+                    message = event.message
+                )
+            }
             is PatientsEvent.DeletePatient -> {
 
-                patientUseCases.deletePatient(doctor_id, patient_id).onEach {
-
-                }.launchIn(viewModelScope)
+                patientUseCases.deletePatient(doctor_id, patient_id).launchIn(viewModelScope)
                //     recentlyDeletedPatient = event.patient
+
+            }
+            is PatientsEvent.CallPatient -> {
+                patientUseCases.callPatient(doctor_id, patient_id, message.value).launchIn(viewModelScope)
+                //     recentlyDeletedPatient = event.patient
 
             }
             /*

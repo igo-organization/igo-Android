@@ -66,7 +66,7 @@ fun PatientsScreen(
     }.collectAsState(initial = "")
 
     val openDialog = remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("") }
+    var patientId by remember { mutableStateOf(1) }
 
     LaunchedEffect(key1 = true){
         viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
@@ -156,8 +156,10 @@ fun PatientsScreen(
                         Column{
                             Spacer(modifier = Modifier.height(20.dp))
                             BasicTextField(
-                                value = text,
-                                onValueChange = { text = it },
+                                value = viewModel.message.value.message!!,
+                                onValueChange = {
+                                    viewModel.onEvent(PatientsEvent.EnteredText(it), name.value.toInt(), patientId)
+                                },
                                 modifier = Modifier
                                         .padding(10.dp)
                                         .align(CenterHorizontally),
@@ -175,6 +177,12 @@ fun PatientsScreen(
                             Button(
                                 modifier = Modifier.align(Center),
                                 onClick = {
+                                    "소ㅑㄴ ${patientId}".log()
+                                    viewModel.onEvent(
+                                        PatientsEvent.CallPatient,
+                                        doctor_id = name.value.toInt(),
+                                        patient_id = patientId,
+                                    )
                                     openDialog.value = false
                                 },
                                 colors = ButtonDefaults.buttonColors(backgroundColor = call_color)
@@ -218,6 +226,7 @@ fun PatientsScreen(
                             },
                             onCallClick = {
                                 openDialog.value = true
+                                patientId = it.id!!
                             }
                         )
                     }
