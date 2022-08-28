@@ -1,8 +1,10 @@
 package com.example.i_go.feature_note.data.repository
 
 import com.example.i_go.feature_note.data.remote.PatientAPI
+import com.example.i_go.feature_note.data.remote.responseDTO.HospitalDetailDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientDeleteDTO
 import com.example.i_go.feature_note.domain.repository.PatientRepository
 import retrofit2.Response
 import javax.inject.Inject
@@ -25,7 +27,10 @@ class PatientRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun deletePatient(patient: PatientDTO) {
-        TODO("Not yet implemented")
+    override suspend fun deletePatient(
+        doctor_id: Int,
+        patient_id: Int
+    ): Response<PatientDeleteDTO> {
+        return api.deletePatient(doctor_id, patient_id)
     }
 }

@@ -5,4 +5,5 @@ import javax.inject.Inject
 
 data class PatientUseCases @Inject constructor(
     val getPatients: GetPatients,
+    val deletePatient: DeletePatient
 )

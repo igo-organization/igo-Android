@@ -2,6 +2,7 @@ package com.example.i_go.feature_note.domain.repository
 
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientDeleteDTO
 import retrofit2.Response
 
 interface PatientRepository {
@@ -11,5 +12,8 @@ interface PatientRepository {
 
     suspend fun insertPatient(patient: PatientDTO)
 
-    suspend fun deletePatient(patient: PatientDTO)
+    suspend fun deletePatient(
+        doctor_id: Int,
+        patient_id: Int
+    ): Response<PatientDeleteDTO>
 }
