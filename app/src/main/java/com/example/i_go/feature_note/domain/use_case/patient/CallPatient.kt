@@ -19,7 +19,7 @@ class CallPatient @Inject constructor(
             val r = repository.callPatient(doctor_id, patient_id, messageDTO)
             when(r.code()) {
                 200 -> {
-                    "this is new".log()
+                    "patient call success".log()
                     emit(Resource.Success(r.body()!!))
                 }
                 else -> r.errorBody().toString().log()

@@ -177,7 +177,6 @@ fun PatientsScreen(
                             Button(
                                 modifier = Modifier.align(Center),
                                 onClick = {
-                                    "소ㅑㄴ ${patientId}".log()
                                     viewModel.onEvent(
                                         PatientsEvent.CallPatient,
                                         doctor_id = name.value.toInt(),
@@ -205,10 +204,10 @@ fun PatientsScreen(
                             image = it.image!!,
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                // navController.navigate(
-                                //Screen.AddEditPatientScreen.route +
-                                //    "?patientId=${patient.id}&patientImage=${patient.image}"
-                                ///)
+                                 navController.navigate(
+                                Screen.AddEditPatientScreen.route +
+                                    "?patientId=${it.id}&doctorId=${name.value.toInt()}"
+                                 )
                             },
                             onDeleteClick = {
                                 viewModel.onEvent(
