@@ -25,8 +25,7 @@ interface PatientAPI {
     @GET("doctor/{doctor_id}/patient/{patient_id}/")
     suspend fun getPatientById(
         @Path ("doctor_id") doctor_id: Int,
-        @Path ("patient_id") patient_id: Int,
-        @Body patientByIdDTO: PatientByIdDTO
+        @Path ("patient_id") patient_id: Int
     ): Response<PatientByIdDTO>
 
     // 10. 환자 수정

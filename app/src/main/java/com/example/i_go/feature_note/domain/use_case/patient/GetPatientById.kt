@@ -13,11 +13,11 @@ import javax.inject.Inject
 class GetPatientById @Inject constructor(
     private val repository: PatientRepository,
 ) {
-    operator fun invoke(doctor_id: Int, patient_id: Int, patientByIdDTO: PatientByIdDTO): Flow<Resource<PatientByIdDTO>> = flow {
+    operator fun invoke(doctor_id: Int, patient_id: Int): Flow<Resource<PatientByIdDTO>> = flow {
 
         try {
             emit(Resource.Loading())
-            val r = repository.getPatientById(doctor_id, patient_id, patientByIdDTO)
+            val r = repository.getPatientById(doctor_id, patient_id)
             when(r.code()) {
                 200 -> {
                     Log.d("test", r.body()!!.toString())

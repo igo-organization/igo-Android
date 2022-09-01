@@ -10,8 +10,7 @@ interface PatientRepository {
 
     suspend fun getPatientById(
         doctor_id: Int,
-        patient_id: Int,
-        patientByIdDTO: PatientByIdDTO
+        patient_id: Int
     ): Response<PatientByIdDTO>
 
     suspend fun insertPatient(

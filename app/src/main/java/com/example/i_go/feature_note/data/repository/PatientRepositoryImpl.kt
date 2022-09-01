@@ -19,10 +19,9 @@ class PatientRepositoryImpl @Inject constructor(
 
     override suspend fun getPatientById(
         doctor_id: Int,
-        patient_id: Int,
-        patientByIdDTO: PatientByIdDTO
+        patient_id: Int
     ): Response<PatientByIdDTO> {
-        return api.getPatientById(doctor_id, patient_id, patientByIdDTO)
+        return api.getPatientById(doctor_id, patient_id)
     }
 
     override suspend fun insertPatient(
