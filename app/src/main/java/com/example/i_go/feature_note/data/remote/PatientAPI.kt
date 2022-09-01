@@ -15,7 +15,7 @@ interface PatientAPI {
     ): Response<List<PatientByIdDTO>>
 
     // 8. 환자 생성
-    @POST("/doctor/{doctor_id}/patient/")
+    @POST("doctor/{doctor_id}/patient/")
     suspend fun insertPatient(
         @Path ("doctor_id") doctor_id: Int,
         @Body patientDTO: PatientDTO
