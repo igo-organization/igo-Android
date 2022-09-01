@@ -1,5 +1,6 @@
 package com.example.i_go.feature_note.presentation.add_edit_patient
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -7,10 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
 import com.example.i_go.feature_note.domain.use_case.patient.PatientUseCases
+import com.example.i_go.feature_note.domain.util.Resource
+import com.example.i_go.feature_note.domain.util.log
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,55 +59,70 @@ class AddEditPatientViewModel @Inject constructor (
     private val _state = mutableStateOf(PatientState())
     val state: State<PatientState> = _state
 
-    private var currentPatientId: Int? = null
+    var patientId = mutableStateOf(0)
+    var doctorId = mutableStateOf(0)
 
     init {
-        savedStateHandle.get<Int>("patientId")?.let { patientId ->
-            if(patientId > 0) {
+        savedStateHandle.get<Int>("patientId")?.let { patient_id ->
+            if(patient_id > 0) {
                 viewModelScope.launch {
-                    getPatient(patientId)
+                    patientId.value = patient_id
+                }
             }
         }
     }
+    fun setDoctorId(doctor_id: Int){
+        doctorId.value = doctor_id
     }
-    fun getPatient(patient_id: Int){
+    fun getPatient(doctor_id: Int){
         patientUseCases.getPatientById(
-            patient_id,
-            state.value.patientByIdDTO.id!!,
-            state.value.patientByIdDTO
+            doctor_id,
+            patientId.value
         ).onEach { patient ->
-            currentPatientId = patient.data?.id
-            _patientName.value = patientName.value.copy(
-                text = patient.data?.name!!,
-                isHintVisible = false
-            )
-            _patientSex.value = _patientSex.value.copy(
-                bool_text = patient.data.gender!!
-            )
-            _patientAge.value = _patientAge.value.copy(
-                text = patient.data.age.toString(),
-                isHintVisible = false
-            )
-            _patientBloodType.value = _patientBloodType.value.copy(
-                int_text = patient.data.blood_type!!
-            )
-            _patientBloodRh.value = _patientBloodType.value.copy(
-                int_text = patient.data.blood_type
-            )
-            _patientDiseases.value = _patientDiseases.value.copy(
-                text = patient.data.disease!!,
-                isHintVisible = false
-            )
-            _patientExtra.value = _patientExtra.value.copy(
-                text = patient.data.extra!!,
-                isHintVisible = false
-            )
+            when (patient) {
+                is Resource.Success -> {
+                    _patientName.value = patientName.value.copy(
+                        text = patient.data?.name!!,
+                        isHintVisible = false
+                    )
+                    _patientSex.value = _patientSex.value.copy(
+                        bool_text = patient.data.gender!!
+                    )
+                    _patientAge.value = _patientAge.value.copy(
+                        text = patient.data.age.toString(),
+                        isHintVisible = false
+                    )
+                    _patientBloodType.value = _patientBloodType.value.copy(
+                        int_text = patient.data.blood_type!!
+                    )
+                    _patientBloodRh.value = _patientBloodType.value.copy(
+                        int_text = patient.data.blood_type
+                    )
+                    _patientDiseases.value = _patientDiseases.value.copy(
+                        text = patient.data.disease!!,
+                        isHintVisible = false
+                    )
+                    _patientExtra.value = _patientExtra.value.copy(
+                        text = patient.data.extra!!,
+                        isHintVisible = false
+                    )
+                    _patientImage.value = patient.data.image!!
+                }
+                is Resource.Error -> {
+                    _state.value =
+                        PatientState(error = patient.message ?: "An unexpected error occured")
+                    Log.d("test", "error")
+                }
+                is Resource.Loading -> {
+                    _state.value = PatientState(isLoading = true)
+                    Log.d("test", "loading")
 
-            _patientImage.value = patient.data.image!!
-
-        }
+                }
+            }
+        }.launchIn(viewModelScope)
     }
-    fun onEvent(event: AddEditPatientEvent, doctor_id: Int) {
+
+    fun onEvent(event: AddEditPatientEvent) {
         when(event) {
             is AddEditPatientEvent.EnteredName -> {
                 _patientName.value = patientName.value.copy(
@@ -174,20 +190,68 @@ class AddEditPatientViewModel @Inject constructor (
             is AddEditPatientEvent.SavePatient -> {
                 viewModelScope.launch {
                     try {
-                        patientUseCases.addPatient(
-                            doctor_id,
-                            PatientDTO(
-                                name = patientName.value.text,
-                                gender = patientSex.value.bool_text,
-                                age = patientAge.value.text.toInt(),
-                                blood_type = patientBloodType.value.int_text,
-                                blood_rh = patientBloodRh.value.bool_text,
-                                disease = patientDiseases.value.text,
-                                extra = patientExtra.value.text,
-                                image = patientImage.value,
-                            )
-                        )
-                        _eventFlow.emit(UiEvent.SaveNote)
+                        if (patientId.value <= 0) {
+                            "Hello".log()
+                            doctorId.value.toString().log()
+                            patientUseCases.addPatient(
+                                doctorId.value,
+                                PatientDTO(
+                                    name = patientName.value.text,
+                                    gender = patientSex.value.bool_text,
+                                    age = patientAge.value.text.toInt(),
+                                    blood_type = patientBloodType.value.int_text,
+                                    blood_rh = patientBloodRh.value.bool_text,
+                                    disease = patientDiseases.value.text,
+                                    extra = patientExtra.value.text,
+                                    image = patientImage.value,
+                                )
+                            ).collectLatest {
+                                when (it){
+                                    is Resource.Success -> {
+                                        "HIHI".log()
+                                        _eventFlow.emit(UiEvent.SaveNote)
+                                    }
+                                    is Resource.Error -> {
+                                        "환자 정보 저장 중 에러 발생 1".log()
+                                        _eventFlow.emit(UiEvent.ShowSnackbar("cannot save"))
+                                    }
+                                    is Resource.Loading -> {
+                                        "환자 정보 값 가져오는 중...".log()
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            "THis is new thing".log()
+                            patientUseCases.putPatient(
+                                doctorId.value,
+                                patientId.value,
+                                PatientDTO(
+                                    name = patientName.value.text,
+                                    gender = patientSex.value.bool_text,
+                                    age = patientAge.value.text.toInt(),
+                                    blood_type = patientBloodType.value.int_text,
+                                    blood_rh = patientBloodRh.value.bool_text,
+                                    disease = patientDiseases.value.text,
+                                    extra = patientExtra.value.text,
+                                    image = patientImage.value + 1,
+                                )
+                            ).collectLatest {
+                                when (it){
+                                    is Resource.Success -> {
+                                        "HIHI".log()
+                                        _eventFlow.emit(UiEvent.SaveNote)
+                                    }
+                                    is Resource.Error -> {
+                                        "환자 정보 저장 중 에러 발생 1".log()
+                                        _eventFlow.emit(UiEvent.ShowSnackbar("cannot save"))
+                                    }
+                                    is Resource.Loading -> {
+                                        "환자 정보 값 가져오는 중...".log()
+                                    }
+                                }
+                            }
+                        }
                     } catch(e: Exception) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
