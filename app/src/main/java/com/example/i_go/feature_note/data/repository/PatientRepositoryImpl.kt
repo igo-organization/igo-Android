@@ -31,6 +31,14 @@ class PatientRepositoryImpl @Inject constructor(
         return api.insertPatient(doctor_id, patient)
     }
 
+    override suspend fun putPatient(
+        doctor_id: Int,
+        patient_id: Int,
+        patientDTO: PatientDTO
+    ): Response<PatientDTO>{
+        return api.putPatient(doctor_id, patient_id, patientDTO)
+    }
+
     override suspend fun deletePatient(
         doctor_id: Int,
         patient_id: Int

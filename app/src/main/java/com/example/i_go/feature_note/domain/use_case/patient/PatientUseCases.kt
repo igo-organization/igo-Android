@@ -8,5 +8,6 @@ data class PatientUseCases @Inject constructor(
     val deletePatient: DeletePatient,
     val callPatient: CallPatient,
     val addPatient: AddPatient,
+    val putPatient: PutPatient,
     val getPatientById: GetPatientById
 )

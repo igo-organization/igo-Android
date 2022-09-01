@@ -18,6 +18,12 @@ interface PatientRepository {
         patient: PatientDTO
     ): Response <PatientDTO>
 
+    suspend fun putPatient(
+        doctor_id: Int,
+        patient_id: Int,
+        patient: PatientDTO
+    ): Response <PatientDTO>
+
     suspend fun deletePatient(
         doctor_id: Int,
         patient_id: Int
