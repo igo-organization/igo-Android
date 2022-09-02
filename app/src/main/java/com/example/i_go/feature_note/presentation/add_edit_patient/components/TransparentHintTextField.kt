@@ -3,6 +3,7 @@ package com.example.i_go.feature_note.presentation.add_edit_patient.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ fun TransparentHintTextField(
     onValueChange: (String) -> Unit,
     textStyle: TextStyle = TextStyle(),
     singleLine: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onFocusChange: (FocusState) -> Unit
 ) {
     Box(
@@ -37,7 +39,8 @@ fun TransparentHintTextField(
                 .onFocusChanged {
                     onFocusChange(it)
                 },
-            maxLines = if (singleLine) 1 else 8
+            maxLines = if (singleLine) 1 else 8,
+            keyboardOptions = keyboardOptions
         )
         if(isHintVisible) {
             Text(text = hint, modifier = Modifier.fillMaxWidth(), style = textStyle, textAlign = TextAlign.Center, color = dark_gray)

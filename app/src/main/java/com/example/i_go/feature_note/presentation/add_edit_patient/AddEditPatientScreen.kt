@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -321,16 +323,16 @@ fun AddEditPatientScreen(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .focusRequester(focusRequester = focusRequester),
-
                             onValueChange = {
-                                viewModel.onEvent(AddEditPatientEvent.EnteredAge(it))
+                                if (ageState.text.length < 3) viewModel.onEvent(AddEditPatientEvent.EnteredAge(it))
                             },
                             onFocusChange = {
                                 viewModel.onEvent(AddEditPatientEvent.ChangeAgeFocus(it))
                             },
                             isHintVisible = ageState.isHintVisible,
                             singleLine = true,
-                            textStyle = MaterialTheme.typography.body1
+                            textStyle = MaterialTheme.typography.body1,
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                         )
                     }
                 }
@@ -628,7 +630,7 @@ fun AddEditPatientScreen(
                         .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
                 ) {
                     Text(
-                        text = if(nameState.text.isNotEmpty()){ "수정하기" } else{ "추가하기" },
+                        text = if(viewModel.patientId.value > 0){ "수정하기" } else{ "추가하기" },
                         color = Color.White,
                         style = MaterialTheme.typography.h4,
                         fontSize = 20.sp
