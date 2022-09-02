@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO.Companion.patient_image_real
 import com.example.i_go.feature_note.data.storage.idStore
+import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.PatientMap
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.TransparentHintTextField
 import com.example.i_go.feature_note.presentation.doctors.MakeRectangular
@@ -134,7 +135,7 @@ fun AddEditPatientScreen(
                     .addFocusCleaner(focusManager)
                     .verticalScroll(rememberScrollState())
             ) {
-                PatientMap(Modifier, x = 50, y = 270)
+                PatientMap(Modifier)
                 Spacer(modifier = Modifier.height(10.dp))
                 Divider(
                     modifier = Modifier.fillMaxWidth().height(1.5.dp).shadow(2.dp),
