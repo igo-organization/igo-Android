@@ -1,6 +1,7 @@
 package com.example.i_go.feature_note.presentation.patients
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -33,10 +34,7 @@ import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.patients.components.PatientItem
 import com.example.i_go.feature_note.presentation.util.Screen
-import com.example.i_go.ui.theme.button_color
-import com.example.i_go.ui.theme.call_color
-import com.example.i_go.ui.theme.dark_blue
-import com.example.i_go.ui.theme.primary
+import com.example.i_go.ui.theme.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -161,13 +159,16 @@ fun PatientsScreen(
                                     viewModel.onEvent(PatientsEvent.EnteredText(it), name.value.toInt(), patientId)
                                 },
                                 modifier = Modifier
-                                        .padding(10.dp)
-                                        .align(CenterHorizontally),
+                                    .padding(10.dp)
+                                    .align(CenterHorizontally),
                                 textStyle = MaterialTheme.typography.body1,
                                 singleLine = true,
                             )
                             Divider(
-                                modifier = Modifier.padding(bottom = 20.dp).fillMaxWidth().height(1.dp),
+                                modifier = Modifier
+                                    .padding(bottom = 20.dp)
+                                    .fillMaxWidth()
+                                    .height(1.dp),
                                 color = call_color
                             )
                         }
@@ -230,8 +231,24 @@ fun PatientsScreen(
                         )
                     }
                 }
-
-
+                item {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.align(CenterHorizontally).fillMaxWidth().padding(vertical = 78.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        Image(
+                            painter = painterResource(id = R.drawable.empty),
+                            contentDescription = "empty",
+                            modifier = Modifier.padding(vertical = 10.dp).size(80.dp)
+                        )
+                        Text(
+                            text = "아직 환자가\n등록되지 않았습니다.",
+                            style = MaterialTheme.typography.body1,
+                            color = text_gray
+                        )
+                    }
+                }
             }
         }
     }
