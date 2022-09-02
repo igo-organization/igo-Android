@@ -204,9 +204,9 @@ fun PatientsScreen(
                             image = it.image!!,
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                 navController.navigate(
+                                navController.navigate(
                                 Screen.AddEditPatientScreen.route +
-                                    "?patientId=${it.id}&doctorId=${name.value.toInt()}"
+                                    "?patientId=${it.id}"
                                  )
                             },
                             onDeleteClick = {
