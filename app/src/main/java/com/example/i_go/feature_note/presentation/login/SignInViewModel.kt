@@ -33,7 +33,7 @@ class SignInViewModel @Inject constructor(
         userUseCases.doSignIn(_signIn.value).collectLatest {
             when (it) {
                 is Resource.Success -> {
-                    scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
+               //     scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
                     _eventFlow.emit(UiEvent.SignIn)
                 }
                 is Resource.Error -> {

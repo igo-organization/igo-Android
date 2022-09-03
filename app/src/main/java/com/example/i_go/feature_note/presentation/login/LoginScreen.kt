@@ -56,7 +56,7 @@ fun LoginScreen(
                 }
                 is LoginViewModel.UiEvent.Login -> {
                     "LOGIN SUCCESS!!".log()
-                    scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
+                //    scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
                     navController.navigate(Screen.DoctorScreen.route)
                 }
             }
@@ -69,7 +69,7 @@ fun LoginScreen(
                 }
                 is SignInViewModel.UiEvent.SignIn -> {
                     "SignIn Success!!".log()
-                    scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
+               //     scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
                 }
             }
         }

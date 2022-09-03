@@ -87,7 +87,7 @@ fun DoctorScreen (
         doctorViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is DoctorViewModel.UiEvent.SaveDoctor -> {
-                    scaffoldState.snackbarHostState.showSnackbar("의료진 저장")
+               //     scaffoldState.snackbarHostState.showSnackbar("의료진 저장")
                     "의료진 SUCCESS!!".log()
                     navController.navigate(Screen.PatientsScreen.route)
                 }
