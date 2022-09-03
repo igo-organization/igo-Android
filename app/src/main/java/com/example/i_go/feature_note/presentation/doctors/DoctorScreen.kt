@@ -308,7 +308,7 @@ fun DoctorScreen (
                     .clip(shape = RoundedCornerShape(26.dp, 26.dp, 26.dp, 26.dp))
             ) {
                 Text(
-                    text = if (doctorViewModel.user.value.name.isNotBlank()){ "수정하기" } else{ "저장하기" },
+                    text = if (doctorViewModel.state.value.userResponseDTO.name!!.isNotEmpty()){ "수정하기" } else{ "저장하기" },
                     color = Color.White,
                     style = MaterialTheme.typography.h4,
                     fontSize = 20.sp
