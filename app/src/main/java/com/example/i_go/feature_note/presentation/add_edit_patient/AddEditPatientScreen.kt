@@ -42,6 +42,7 @@ import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.PatientMap
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.TransparentHintTextField
 import com.example.i_go.feature_note.presentation.doctors.MakeRectangular
+import com.example.i_go.feature_note.presentation.util.addFocusCleaner
 import com.example.i_go.ui.theme.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -646,15 +647,6 @@ fun AddEditPatientScreen(
               //  Spacer(modifier = Modifier.height(100.dp))
             }
         }
-    }
-}
-
-fun Modifier.addFocusCleaner(focusManager: FocusManager, doOnClear: () -> Unit = {}): Modifier {
-    return this.pointerInput(Unit) {
-        detectTapGestures(onTap = {
-            doOnClear()
-            focusManager.clearFocus()
-        })
     }
 }
 object Gender{

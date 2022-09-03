@@ -40,6 +40,7 @@ import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalViewModel
 import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalsViewModel
 import com.example.i_go.feature_note.presentation.util.Screen
+import com.example.i_go.feature_note.presentation.util.addFocusCleaner
 import com.example.i_go.ui.theme.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
@@ -106,12 +107,12 @@ fun DoctorScreen (
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .addFocusCleaner(focusManager)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = CenterVertically
             ) {
