@@ -39,6 +39,7 @@ import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalViewModel
 import com.example.i_go.feature_note.presentation.doctors.hospitals.HospitalsViewModel
+import com.example.i_go.feature_note.presentation.util.ExceptionMessage
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.feature_note.presentation.util.addFocusCleaner
 import com.example.i_go.ui.theme.*
@@ -275,28 +276,10 @@ fun DoctorScreen (
             Spacer(modifier = Modifier.height(40.dp))
             Button(
                 onClick = {
-                    // TODO: 서버로 Doctor의 상세 정보 보내기
-                    /*
-                    if (name.value.isNotEmpty()){
-                        // 수정
-                    }else{
-                        // 추가
-                    }*/
                     scope.launch {
-                        /*
-                        if (doctorViewModel.state.value.userDTO.name!!.isEmpty()){
-                            NameExcept(doctorViewModel.state.value.userDTO.name!!, scaffoldState)
-                        }
-                        else if (doctorViewModel.state.value.userDTO.subjects!!.isEmpty()){
-                            NameExcept(doctorViewModel.state.value.userDTO.subjects!!, scaffoldState)
-                        }
-                        else if (doctorViewModel.state.value.userDTO.hospital != 0){
-                            NameExcept(doctorViewModel.state.value.userDTO.hospital?.name!!, scaffoldState)
-                        }
-                        else {*/
-                        doctorViewModel.onEvent(DoctorEvent.SaveDoctor, userId.value.toInt())
-                       //     navController.navigate(Screen.PatientsScreen.route)
-                      //  }
+                        if (doctorViewModel.user.value.name.isEmpty()) ExceptionMessage(doctorViewModel.user.value.name, "이름을 입력해주세요", scaffoldState)
+                        else if (doctorViewModel.user.value.subjects.isEmpty())  ExceptionMessage(doctorViewModel.user.value.subjects, "전공을 입력해주세요", scaffoldState)
+                        else doctorViewModel.onEvent(DoctorEvent.SaveDoctor, userId.value.toInt())
                     }
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = call_color),

@@ -23,7 +23,9 @@ import androidx.navigation.NavController
 import com.example.i_go.R
 import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.login.components.CustomText
+import com.example.i_go.feature_note.presentation.util.ExceptionMessage
 import com.example.i_go.feature_note.presentation.util.Screen
+import com.example.i_go.feature_note.presentation.util.WrongPasswordExcept
 import com.example.i_go.feature_note.presentation.util.addFocusCleaner
 import com.example.i_go.ui.theme.*
 import kotlinx.coroutines.flow.collectLatest
@@ -56,7 +58,7 @@ fun LoginScreen(
                 }
                 is LoginViewModel.UiEvent.Login -> {
                     "LOGIN SUCCESS!!".log()
-                //    scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
+                    //    scaffoldState.snackbarHostState.showSnackbar("로그인 성공")
                     navController.navigate(Screen.DoctorScreen.route)
                 }
             }
@@ -69,7 +71,7 @@ fun LoginScreen(
                 }
                 is SignInViewModel.UiEvent.SignIn -> {
                     "SignIn Success!!".log()
-               //     scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
+                    //     scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
                 }
             }
         }
@@ -255,29 +257,37 @@ fun LoginScreen(
                             onClick = {
                                 scope.launch {
                                     if (!isLogIn) {
-                                        IdExcept(viewModel2.signIn.value.username, scaffoldState)
-                                        EmailExcept(viewModel2.signIn.value.email, scaffoldState)
-                                        PasswordExcept(
+                                        if (viewModel2.signIn.value.username.isEmpty()) ExceptionMessage(
+                                            viewModel2.signIn.value.username,
+                                            "아이디를 입력해주세요.",
+                                            scaffoldState
+                                        )
+                                        else if (viewModel2.signIn.value.email.isEmpty()) ExceptionMessage(
+                                            viewModel2.signIn.value.email,
+                                            "이메일을 입력해주세요.",
+                                            scaffoldState
+                                        )
+                                        else if (viewModel2.signIn.value.password.isEmpty()) ExceptionMessage(
                                             viewModel2.signIn.value.password,
+                                            "패스워드를 입력해주세요.",
                                             scaffoldState
                                         )
-                                        PasswordExcept(
+                                        else if (viewModel2.signIn.value.password2.isEmpty()) ExceptionMessage(
                                             viewModel2.signIn.value.password2,
+                                            "패스워드2를 입력해주세요.",
                                             scaffoldState
                                         )
-                                        WrongPasswordExcept(
-                                            viewModel2.signIn.value.password,
-                                            viewModel2.signIn.value.password2,
-                                            scaffoldState
-                                        )
-                                        viewModel2.onEvent(SignInEvent.SignIn, scaffoldState)
+                                        else if (viewModel2.signIn.value.password != viewModel2.signIn.value.password2) {
+                                            WrongPasswordExcept(
+                                                viewModel2.signIn.value.password,
+                                                viewModel2.signIn.value.password2,
+                                                scaffoldState
+                                            )
+                                        } else viewModel2.onEvent(SignInEvent.SignIn, scaffoldState)
                                     } else {
-                                        IdExcept(viewModel.emailPw.value.username, scaffoldState)
-                                        PasswordExcept(
-                                            viewModel.emailPw.value.password,
-                                            scaffoldState
-                                        )
-                                        viewModel.onEvent(LoginEvent.Login, scaffoldState)
+                                        if (viewModel.emailPw.value.username.isEmpty()) ExceptionMessage(viewModel.emailPw.value.username, "아이디를 입력해주세요.", scaffoldState)
+                                        else if (viewModel.emailPw.value.password.isEmpty()) ExceptionMessage(viewModel.emailPw.value.password, "패스워드를 입력해주세요.", scaffoldState)
+                                        else viewModel.onEvent(LoginEvent.Login, scaffoldState)
                                     }
                                 }
                             },

@@ -23,6 +23,7 @@ class DoLogin @Inject constructor(
                     emit(Resource.Success(r.body()!!))
                 }
                 else -> {
+                    emit(Resource.Error("login failed"))
                     "usecase ERROR ${r.code()}: ${r.errorBody().toString()}".log()
                 }
             }

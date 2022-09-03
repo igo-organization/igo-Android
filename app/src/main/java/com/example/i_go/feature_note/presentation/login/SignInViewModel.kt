@@ -33,7 +33,7 @@ class SignInViewModel @Inject constructor(
         userUseCases.doSignIn(_signIn.value).collectLatest {
             when (it) {
                 is Resource.Success -> {
-               //     scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
+                    scaffoldState.snackbarHostState.showSnackbar("회원가입 성공")
                     _eventFlow.emit(UiEvent.SignIn)
                 }
                 is Resource.Error -> {
@@ -76,7 +76,7 @@ class SignInViewModel @Inject constructor(
                         signIn(scaffoldState = scaffoldState)
                     } catch (e: Exception) {
                         "회원가입 중 에러 발생ㅇ".log()
-                        _eventFlow.emit(UiEvent.Error(message = "회원가입 중 에러 발생ㅇㅇ"))
+                        _eventFlow.emit(UiEvent.Error(message = "회원가입 중 에러 발생"))
                     }
                 }
             }

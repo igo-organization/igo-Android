@@ -63,7 +63,7 @@ class LoginViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     "로그인 중 에러 발생 1".log()
-                    scaffoldState.snackbarHostState.showSnackbar("아이디, 비번을 확인해주세요.")
+                    scaffoldState.snackbarHostState.showSnackbar("아이디, 비밀번호를 확인해주세요.")
                     _eventFlow.emit(UiEvent.Error("cannot login"))
                 }
                 is Resource.Loading -> {
@@ -101,6 +101,7 @@ class LoginViewModel @Inject constructor(
                             _eventFlow.emit(UiEvent.Error(message = "모든 칸의 내용을 채워주세요"))
                             return@launch
                         }
+                        "Hello this is login".log()
                         login(scaffoldState)
                     } catch (e: Exception) {
                         "로그인 중 에러 발생 2".log()

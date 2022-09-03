@@ -42,6 +42,7 @@ import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.PatientMap
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.TransparentHintTextField
 import com.example.i_go.feature_note.presentation.doctors.MakeRectangular
+import com.example.i_go.feature_note.presentation.util.ExceptionMessage
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.feature_note.presentation.util.addFocusCleaner
 import com.example.i_go.ui.theme.*
@@ -52,6 +53,7 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -105,7 +107,7 @@ fun AddEditPatientScreen(
                 is AddEditPatientViewModel.UiEvent.ShowSnackbar -> {
                     "this come fail".log()
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message
+                        message = "환자 저장 실패"
                     )
                 }
             }
@@ -623,8 +625,16 @@ fun AddEditPatientScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = {
-                        viewModel.onEvent(AddEditPatientEvent.ChangeImage(pagerState.currentPage),)// doctorId.value.toInt())
-                        viewModel.onEvent(AddEditPatientEvent.SavePatient)
+                        scope.launch {
+                            if (nameState.text.isEmpty()) ExceptionMessage(nameState.text, "이름을 입력해주세요.", scaffoldState)
+                            else if (ageState.text.isEmpty()) ExceptionMessage(ageState.text, "나이를 입력해주세요.", scaffoldState)
+                            else if (diseasesState.text.isEmpty()) ExceptionMessage(diseasesState.text, "질병을 입력해주세요.", scaffoldState)
+                            else if (extraState.text.isEmpty()) ExceptionMessage(extraState.text, "기타사항을 입력해주세요.", scaffoldState)
+                            else {
+                                viewModel.onEvent(AddEditPatientEvent.ChangeImage(pagerState.currentPage))
+                                viewModel.onEvent(AddEditPatientEvent.SavePatient)
+                            }
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
                     modifier = Modifier
