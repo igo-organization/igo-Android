@@ -19,7 +19,7 @@ class AddPatient @Inject constructor(
             emit(Resource.Loading())
             val r = repository.insertPatient(doctor_id, patientDTO)
             when(r.code()) {
-                200 -> {
+                201 -> {
                     "patient add success".log()
                     emit(Resource.Success(r.body()!!))
                 }
