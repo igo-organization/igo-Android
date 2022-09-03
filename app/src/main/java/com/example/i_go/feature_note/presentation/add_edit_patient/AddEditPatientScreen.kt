@@ -42,6 +42,7 @@ import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.PatientMap
 import com.example.i_go.feature_note.presentation.add_edit_patient.components.TransparentHintTextField
 import com.example.i_go.feature_note.presentation.doctors.MakeRectangular
+import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.feature_note.presentation.util.addFocusCleaner
 import com.example.i_go.ui.theme.*
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -94,15 +95,18 @@ fun AddEditPatientScreen(
     LaunchedEffect(key1 = true) {
         viewModel.setDoctorId(if (doctorId.value.toInt() < 1) 1 else doctorId.value.toInt())
         viewModel.getPatient(if (doctorId.value.toInt() < 1) 1 else doctorId.value.toInt())
+
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
+                is AddEditPatientViewModel.UiEvent.SavePatient -> {
+                    "HI sucess".log()
+                    navController.navigate(Screen.PatientsScreen.route)
+                }
                 is AddEditPatientViewModel.UiEvent.ShowSnackbar -> {
+                    "this come fail".log()
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )
-                }
-                is AddEditPatientViewModel.UiEvent.SaveNote -> {
-                    navController.navigateUp()
                 }
             }
         }
@@ -619,15 +623,8 @@ fun AddEditPatientScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = {
-                        // TODO: 서버로 Patient의 상세 정보 보내기
-
-                        if(nameState.text.isNotEmpty()){
-                            // 수정하기
-                        }else{
-                            // 추가하기
-                        }
                         viewModel.onEvent(AddEditPatientEvent.ChangeImage(pagerState.currentPage),)// doctorId.value.toInt())
-                        viewModel.onEvent(AddEditPatientEvent.SavePatient,) //doctorId.value.toInt())
+                        viewModel.onEvent(AddEditPatientEvent.SavePatient)
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = call_color),
                     modifier = Modifier

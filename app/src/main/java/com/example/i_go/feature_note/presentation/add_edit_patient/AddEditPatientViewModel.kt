@@ -123,6 +123,68 @@ class AddEditPatientViewModel @Inject constructor (
         }.launchIn(viewModelScope)
     }
 
+    private suspend fun addPatient(){
+        "Hello".log()
+        doctorId.value.toString().log()
+        patientUseCases.addPatient(
+            doctorId.value,
+            PatientDTO(
+                name = patientName.value.text,
+                gender = patientSex.value.bool_text,
+                age = patientAge.value.text.toInt(),
+                blood_type = patientBloodType.value.int_text,
+                blood_rh = patientBloodRh.value.bool_text,
+                disease = patientDiseases.value.text,
+                extra = patientExtra.value.text,
+                image = patientImage.value + 1,
+            )
+        ).collectLatest {
+            when (it){
+                is Resource.Success -> {
+                    "HIHI".log()
+                    _eventFlow.emit(UiEvent.SavePatient)
+                }
+                is Resource.Error -> {
+                    "환자 정보 저장 중 에러 발생 1".log()
+                    _eventFlow.emit(UiEvent.ShowSnackbar("cannot save"))
+                }
+                is Resource.Loading -> {
+                    "환자 정보 값 가져오는 중...".log()
+                }
+            }
+        }
+    }
+    private suspend fun putPatient(){
+        "THis is new thing".log()
+        patientUseCases.putPatient(
+            doctorId.value,
+            patientId.value,
+            PatientDTO(
+                name = patientName.value.text,
+                gender = patientSex.value.bool_text,
+                age = patientAge.value.text.toInt(),
+                blood_type = patientBloodType.value.int_text,
+                blood_rh = patientBloodRh.value.bool_text,
+                disease = patientDiseases.value.text,
+                extra = patientExtra.value.text,
+                image = patientImage.value + 1,
+            )
+        ).collectLatest {
+            when (it){
+                is Resource.Success -> {
+                    "HIHI2".log()
+                    _eventFlow.emit(UiEvent.SavePatient)
+                }
+                is Resource.Error -> {
+                    "환자 정보 저장 중 에러 발생 1".log()
+                    _eventFlow.emit(UiEvent.ShowSnackbar("cannot save"))
+                }
+                is Resource.Loading -> {
+                    "환자 정보 값 가져오는 중...".log()
+                }
+            }
+        }
+    }
     fun onEvent(event: AddEditPatientEvent) {
         when(event) {
             is AddEditPatientEvent.EnteredName -> {
@@ -191,68 +253,9 @@ class AddEditPatientViewModel @Inject constructor (
             is AddEditPatientEvent.SavePatient -> {
                 viewModelScope.launch {
                     try {
-                        if (patientId.value <= 0) {
-                            "Hello".log()
-                            doctorId.value.toString().log()
-                            patientUseCases.addPatient(
-                                doctorId.value,
-                                PatientDTO(
-                                    name = patientName.value.text,
-                                    gender = patientSex.value.bool_text,
-                                    age = patientAge.value.text.toInt(),
-                                    blood_type = patientBloodType.value.int_text,
-                                    blood_rh = patientBloodRh.value.bool_text,
-                                    disease = patientDiseases.value.text,
-                                    extra = patientExtra.value.text,
-                                    image = patientImage.value + 1,
-                                )
-                            ).collectLatest {
-                                when (it){
-                                    is Resource.Success -> {
-                                        "HIHI".log()
-                                        _eventFlow.emit(UiEvent.SaveNote)
-                                    }
-                                    is Resource.Error -> {
-                                        "환자 정보 저장 중 에러 발생 1".log()
-                                        _eventFlow.emit(UiEvent.ShowSnackbar("cannot save"))
-                                    }
-                                    is Resource.Loading -> {
-                                        "환자 정보 값 가져오는 중...".log()
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            "THis is new thing".log()
-                            patientUseCases.putPatient(
-                                doctorId.value,
-                                patientId.value,
-                                PatientDTO(
-                                    name = patientName.value.text,
-                                    gender = patientSex.value.bool_text,
-                                    age = patientAge.value.text.toInt(),
-                                    blood_type = patientBloodType.value.int_text,
-                                    blood_rh = patientBloodRh.value.bool_text,
-                                    disease = patientDiseases.value.text,
-                                    extra = patientExtra.value.text,
-                                    image = patientImage.value + 1,
-                                )
-                            ).collectLatest {
-                                when (it){
-                                    is Resource.Success -> {
-                                        "HIHI".log()
-                                        _eventFlow.emit(UiEvent.SaveNote)
-                                    }
-                                    is Resource.Error -> {
-                                        "환자 정보 저장 중 에러 발생 1".log()
-                                        _eventFlow.emit(UiEvent.ShowSnackbar("cannot save"))
-                                    }
-                                    is Resource.Loading -> {
-                                        "환자 정보 값 가져오는 중...".log()
-                                    }
-                                }
-                            }
-                        }
+                        if (patientId.value <= 0) addPatient()
+                        else putPatient()
+
                     } catch(e: Exception) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
@@ -267,6 +270,6 @@ class AddEditPatientViewModel @Inject constructor (
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String): UiEvent()
-        object SaveNote: UiEvent()
+        object SavePatient: UiEvent()
     }
 }
