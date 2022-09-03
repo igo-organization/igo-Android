@@ -229,7 +229,8 @@ fun LoginScreen(
                                         SignInEvent.EnteredPassword(it),
                                         scaffoldState
                                     )
-                                }
+                                },
+                                isPassword = true
                             )
                             CustomText(
                                 text = "패스워드",
@@ -239,7 +240,8 @@ fun LoginScreen(
                                         SignInEvent.EnteredPassword2(it),
                                         scaffoldState
                                     )
-                                }
+                                },
+                                isPassword = true
                             )
                             Text(
                                 text = "[회원가입 조건]\n\nID: 중복 불가, email: 중복 불가\n비밀번호: 이메일 아이디랑 중복되지 않으며 8자 이상, 영어가 있어야 함",
