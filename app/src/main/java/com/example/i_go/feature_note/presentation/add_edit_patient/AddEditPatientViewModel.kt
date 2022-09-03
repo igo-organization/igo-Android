@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
 import com.example.i_go.feature_note.domain.use_case.patient.PatientUseCases
 import com.example.i_go.feature_note.domain.util.Resource
@@ -50,7 +51,7 @@ class AddEditPatientViewModel @Inject constructor (
     ))
     val patientExtra: State<PatientTextFieldState> = _patientExtra
 
-    private val _patientImage = mutableStateOf(PatientDTO.patientImages.random())
+    private val _patientImage = mutableStateOf(PatientByIdDTO.patientImages.random())
     val patientImage: State<Int> = _patientImage
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
@@ -137,7 +138,7 @@ class AddEditPatientViewModel @Inject constructor (
             }
             is AddEditPatientEvent.EnteredSex -> {
                 _patientSex.value = _patientSex.value.copy(
-                    text = event.value
+                    bool_text = event.value == "남자"
                 )
             }
             is AddEditPatientEvent.EnteredAge -> {
@@ -153,12 +154,12 @@ class AddEditPatientViewModel @Inject constructor (
             }
             is AddEditPatientEvent.EnteredBloodType -> {
                 _patientBloodType.value = _patientBloodType.value.copy(
-                    text = event.value
+                    int_text = if(event.value == "A형") 0 else if (event.value == "B형") 1 else if (event.value == "O형") 2 else 3
                 )
             }
             is AddEditPatientEvent.EnteredBloodRh -> {
                 _patientBloodRh.value = _patientBloodRh.value.copy(
-                    text = event.value
+                    bool_text = event.value == "Rh +"
                 )
             }
             is AddEditPatientEvent.EnteredDiseases -> {
@@ -203,7 +204,7 @@ class AddEditPatientViewModel @Inject constructor (
                                     blood_rh = patientBloodRh.value.bool_text,
                                     disease = patientDiseases.value.text,
                                     extra = patientExtra.value.text,
-                                    image = patientImage.value,
+                                    image = patientImage.value + 1,
                                 )
                             ).collectLatest {
                                 when (it){

@@ -11,11 +11,4 @@ data class PatientDTO(
     val disease: String? = null,
     val extra: String? = null,
     val image: Int? = null,
-) {
-    companion object {
-        val patientImages = listOf(0,1,2,3,4)
-        val patient_image_real = listOf(
-            R.drawable.old_woman, R.drawable.old_man,
-            R.drawable.multivitamin, R.drawable.wheelchair, R.drawable.medical_bed)
-    }
-}
+)

@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO.Companion.patient_image_real
 import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.domain.util.log
@@ -54,6 +55,7 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun AddEditPatientScreen(
     navController: NavController,
+    patientImage: Int,
     viewModel: AddEditPatientViewModel = hiltViewModel()
 ) {
     val nameState = viewModel.patientName.value
@@ -69,9 +71,13 @@ fun AddEditPatientScreen(
     val focusRequester by remember { mutableStateOf(FocusRequester()) }
     val focusManager = LocalFocusManager.current
 
+    "HIHI this is image zz".log()
+    patientImage.toString().log()
     val pagerState = rememberPagerState(
         pageCount = 5,
+        initialPage = if (patientImage > 0) patientImage-1 else PatientByIdDTO.patientImages.random()
     )
+
     var context = LocalContext.current
     val doctorIdKey = stringPreferencesKey("user")
     var doctorId = flow<String> {
@@ -114,7 +120,7 @@ fun AddEditPatientScreen(
                     .padding(8.dp),
 
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
                 Text(
                     modifier = Modifier
@@ -253,7 +259,6 @@ fun AddEditPatientScreen(
                                     modifier = Modifier.weight(1f).align(CenterVertically),
                                 ){
                                     RadioButton(
-                                        selected = (sexState.text == Gender.male || selectedGender.value == Gender.male),
                                         onClick = {
                                             selectedGender.value = Gender.male
                                             viewModel.onEvent(
@@ -263,6 +268,7 @@ fun AddEditPatientScreen(
                                                 //doctorId.value.toInt()
                                             )
                                         },
+                                        selected = (sexState.bool_text || selectedGender.value == Gender.male),
                                         colors = RadioButtonDefaults.colors(
                                             selectedColor = call_color,
                                             unselectedColor = call_color
@@ -274,7 +280,6 @@ fun AddEditPatientScreen(
                                     modifier = Modifier.weight(1f).align(CenterVertically)
                                 ){
                                     RadioButton(
-                                        selected = (sexState.text == Gender.female || selectedGender.value == Gender.female),
                                         onClick = {
                                             selectedGender.value = Gender.female
                                             viewModel.onEvent(
@@ -284,6 +289,7 @@ fun AddEditPatientScreen(
                                                 //doctorId.value.toInt()
                                             )
                                         },
+                                        selected = (!sexState.bool_text || selectedGender.value == "여자"),
                                         colors = RadioButtonDefaults.colors(
                                             selectedColor = call_color,
                                             unselectedColor = call_color
@@ -370,7 +376,6 @@ fun AddEditPatientScreen(
                                         modifier = Modifier.weight(1f).align(CenterVertically)
                                     ) {
                                         RadioButton(
-                                            selected = (bloodTypeState.text == BloodType.A || selectBloodType.value == BloodType.A),
                                             onClick = {
                                                 selectBloodType.value = BloodType.A
                                                 viewModel.onEvent(
@@ -379,6 +384,7 @@ fun AddEditPatientScreen(
                                                     ), //doctorId.value.toInt()
                                                 )
                                             },
+                                            selected = (bloodTypeState.int_text == 0 || selectBloodType.value == BloodType.A),
                                             colors = RadioButtonDefaults.colors(
                                                 selectedColor = call_color,
                                                 unselectedColor = call_color
@@ -390,7 +396,6 @@ fun AddEditPatientScreen(
                                         modifier = Modifier.weight(1f).align(CenterVertically)
                                     ) {
                                         RadioButton(
-                                            selected = (bloodTypeState.text == BloodType.B || selectBloodType.value == BloodType.B),
                                             onClick = {
                                                 selectBloodType.value = BloodType.B
                                                 viewModel.onEvent(
@@ -399,6 +404,7 @@ fun AddEditPatientScreen(
                                                     ), //doctorId.value.toInt()
                                                 )
                                             },
+                                            selected = (bloodTypeState.int_text == 1 || selectBloodType.value == BloodType.B),
                                             colors = RadioButtonDefaults.colors(
                                                 selectedColor = call_color,
                                                 unselectedColor = call_color
@@ -412,7 +418,6 @@ fun AddEditPatientScreen(
                                         modifier = Modifier.weight(1f).align(CenterVertically)
                                     ) {
                                         RadioButton(
-                                            selected = (bloodTypeState.text == BloodType.O || selectBloodType.value == BloodType.O),
                                             onClick = {
                                                 selectBloodType.value = BloodType.O
                                                 viewModel.onEvent(
@@ -421,6 +426,7 @@ fun AddEditPatientScreen(
                                                     ), //doctorId.value.toInt()
                                                 )
                                             },
+                                            selected = (bloodTypeState.int_text == 2 || selectBloodType.value == BloodType.O),
                                             colors = RadioButtonDefaults.colors(
                                                 selectedColor = call_color,
                                                 unselectedColor = call_color
@@ -432,7 +438,6 @@ fun AddEditPatientScreen(
                                         modifier = Modifier.weight(1f).align(CenterVertically)
                                     ) {
                                         RadioButton(
-                                            selected = (bloodTypeState.text == BloodType.AB || selectBloodType.value == BloodType.AB),
                                             onClick = {
                                                 selectBloodType.value = BloodType.AB
                                                 viewModel.onEvent(
@@ -441,6 +446,7 @@ fun AddEditPatientScreen(
                                                     ), //doctorId.value.toInt()
                                                 )
                                             },
+                                            selected = (bloodTypeState.int_text == 3 || selectBloodType.value == BloodType.AB),
                                             colors = RadioButtonDefaults.colors(
                                                 selectedColor = call_color,
                                                 unselectedColor = call_color
@@ -462,7 +468,6 @@ fun AddEditPatientScreen(
                                         modifier = Modifier.weight(1f).align(CenterVertically)
                                     ) {
                                         RadioButton(
-                                            selected = (bloodRhState.text == BloodType.Rh_minus || selectRh.value == BloodType.Rh_minus),
                                             onClick = {
                                                 selectRh.value = BloodType.Rh_minus
                                                 viewModel.onEvent(
@@ -471,6 +476,7 @@ fun AddEditPatientScreen(
                                                     ), //doctorId.value.toInt()
                                                 )
                                             },
+                                            selected = (!bloodRhState.bool_text || selectRh.value == BloodType.Rh_minus),
                                             colors = RadioButtonDefaults.colors(
                                                 selectedColor = call_color,
                                                 unselectedColor = call_color
@@ -482,7 +488,6 @@ fun AddEditPatientScreen(
                                         modifier = Modifier.weight(1f).align(CenterVertically)
                                     ) {
                                         RadioButton(
-                                            selected = (bloodRhState.text == BloodType.Rh_plus || selectRh.value == BloodType.Rh_plus),
                                             onClick = {
                                                 selectRh.value = BloodType.Rh_plus
                                                 viewModel.onEvent(
@@ -491,6 +496,7 @@ fun AddEditPatientScreen(
                                                     ), //doctorId.value.toInt()
                                                 )
                                             },
+                                            selected = (bloodRhState.bool_text || selectRh.value == BloodType.Rh_plus),
                                             colors = RadioButtonDefaults.colors(
                                                 selectedColor = call_color,
                                                 unselectedColor = call_color
