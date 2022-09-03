@@ -199,6 +199,7 @@ fun PatientsScreen(
                     item {
                         PatientItem(
                             name = it.name!!,
+                            age = it.age!!,
                             gender = it.gender!!,
                             blood_type = it.blood_type!!,
                             disease = it.disease!!,
@@ -207,7 +208,7 @@ fun PatientsScreen(
                             onClick = {
                                 navController.navigate(
                                 Screen.AddEditPatientScreen.route +
-                                    "?patientId=${it.id}"
+                                    "?patientId=${it.id}&patientImage=${it.image}"
                                  )
                             },
                             onDeleteClick = {
