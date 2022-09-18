@@ -1,5 +1,7 @@
 package com.example.i_go.feature_note.presentation.add_edit_patient.components
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -40,6 +42,16 @@ fun PatientMap (
         }
     }.collectAsState(initial = "")
 
+    val IMAGE: SharedPreferences =
+        context.getSharedPreferences("image", Context.MODE_PRIVATE)
+    val image_con = remember { mutableStateOf("") }
+
+    if (!IMAGE.getString("image", "").toString().isBlank()) {
+        image_con.value = IMAGE.getString("image", "").toString()
+        IMAGE.edit().putString("image", "").apply()
+    }
+    "이미지는 ${image_con.value}".log()
+    var image_arr = image_con.value.split(",")
 
     val hospital = hospitalViewModel.getHospitalDetail(if (hospitalId.value.isNotEmpty()) hospitalId.value.toInt() else 1)
     val painter = rememberImagePainter(data = hospital.drawing, builder = {crossfade(true)})
@@ -70,7 +82,6 @@ fun PatientMap (
         station_y_4.value = if(hospital.station_y_4!! > 0) hospital.station_y_4 else 1
 
     } catch(e: Exception){
-        "망했지롱".log()
     }
     Box(
         modifier = Modifier

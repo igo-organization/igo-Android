@@ -1,5 +1,7 @@
 package com.example.i_go.feature_note.presentation.patients
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -35,6 +37,7 @@ import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.patients.components.PatientItem
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -63,8 +66,29 @@ fun PatientsScreen(
         }
     }.collectAsState(initial = "")
 
+    "Name is ${name.value}".log()
+    val TITLE: SharedPreferences =
+        context.getSharedPreferences("title", Context.MODE_PRIVATE)
+
+    val BODY: SharedPreferences =
+        context.getSharedPreferences("body", Context.MODE_PRIVATE)
+
+    val IMAGE: SharedPreferences =
+        context.getSharedPreferences("image", Context.MODE_PRIVATE)
+
+    "This is pref1: ${TITLE.getString("title", "").toString()}".log()
+    "This is pref1: ${BODY.getString("body", "").toString()}".log()
+    "This is pref1: ${IMAGE.getString("image", "").toString()}".log()
+
+    if (!IMAGE.getString("image", "").isNullOrBlank()){
+        navController.navigate(Screen.AddEditPatientScreen.route +
+                "?patientId=${3}&patientImage=${2}")
+
+    }
+
     val openDialog = remember { mutableStateOf(false) }
     var patientId by remember { mutableStateOf(1) }
+
 
     LaunchedEffect(key1 = true){
         viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
@@ -235,13 +259,18 @@ fun PatientsScreen(
                 item {
                     Column(
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.align(CenterHorizontally).fillMaxWidth().padding(vertical = 78.dp),
+                        modifier = Modifier
+                            .align(CenterHorizontally)
+                            .fillMaxWidth()
+                            .padding(vertical = 78.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
                         Image(
                             painter = painterResource(id = R.drawable.empty),
                             contentDescription = "empty",
-                            modifier = Modifier.padding(vertical = 10.dp).size(80.dp)
+                            modifier = Modifier
+                                .padding(vertical = 10.dp)
+                                .size(80.dp)
                         )
                         Text(
                             text = "아직 환자가\n등록되지 않았습니다.",

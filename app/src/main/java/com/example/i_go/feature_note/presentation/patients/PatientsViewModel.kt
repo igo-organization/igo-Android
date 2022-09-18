@@ -18,6 +18,7 @@ import com.example.i_go.feature_note.presentation.login.LoginEvent
 import com.example.i_go.feature_note.presentation.login.LoginViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -74,6 +75,7 @@ class PatientsViewModel @Inject constructor (
             when (result){
                 is Resource.Success -> {
                     _state.value = result.data?.let { PatientsState(patientDTOS = it) }!!
+                    "hi".log()
                     Log.d("test", "success : ${result.data}")
                 }
                 is Resource.Error -> {
@@ -85,6 +87,7 @@ class PatientsViewModel @Inject constructor (
                     Log.d("test", "loading")
                 }
             }
+           // delay(5000L)
         }.launchIn(viewModelScope)
     }
 

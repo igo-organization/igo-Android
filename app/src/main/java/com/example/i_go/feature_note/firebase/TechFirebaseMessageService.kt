@@ -1,13 +1,12 @@
 package com.example.i_go.feature_note.firebase
 
-import android.annotation.SuppressLint
-import android.app.PendingIntent
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
-import android.os.PowerManager
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.navigation.compose.rememberNavController
 import com.example.i_go.MainActivity
 import com.example.i_go.feature_note.data.storage.dataStore
 import com.example.i_go.feature_note.domain.util.log
@@ -19,13 +18,17 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class TechFirebaseMessageService: FirebaseMessagingService() {
+class TechFirebaseMessageService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val mBuilder = NotificationCompat.Builder(this)
+
+        "Tech 진입".log()
         Log.v("CloudMessage", "From ${message.from}")
         "this is cloudsMessage ${message.data}".log()
-
+        "value is ${message.data.values}".log()
         if (message.data.isNotEmpty()){
             "Message Data ${message.data}".log()
         }
@@ -34,10 +37,27 @@ class TechFirebaseMessageService: FirebaseMessagingService() {
         }
 
         if (message.notification != null) {
-            "Notification ${message.notification}".log()
-            "Notification Title ${message.notification!!.title}".log()
-            "Notification Body ${message.notification!!.body}".log()
-            "Notification Body ${message.notification!!.imageUrl}".log()
+
+            val title = getSharedPreferences("title", Context.MODE_PRIVATE)
+            var editor = title.edit()
+            editor.putString("title",message.notification!!.title)
+            editor.apply()
+
+            val body = getSharedPreferences("body", Context.MODE_PRIVATE)
+            editor = body.edit()
+            editor.putString("body",message.notification!!.body)
+            editor.apply()
+
+            val image = getSharedPreferences("image", Context.MODE_PRIVATE)
+            editor = image.edit()
+            editor.putString("image",message.notification!!.imageUrl.toString())
+            editor.apply()
+
+            "This is Note: ${title.getString("title", "defaultTitle")}".log()
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+
         }
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
 
@@ -46,19 +66,11 @@ class TechFirebaseMessageService: FirebaseMessagingService() {
                 return@OnCompleteListener
             }
 
-            // Get new FCM registration token
             val token = task.result
             token.log()
 
         }
         )
-        // 알림 오면 화면 깨우기
-        val pm = getSystemService(POWER_SERVICE) as PowerManager
-        @SuppressLint("InvalidWakeLockTag") val wakeLock = pm.newWakeLock(
-            PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-            "TAG"
-        )
-        wakeLock.acquire(3000)
     }
 
 

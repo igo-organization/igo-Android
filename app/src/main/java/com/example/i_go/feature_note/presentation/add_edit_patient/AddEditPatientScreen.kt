@@ -1,5 +1,7 @@
 package com.example.i_go.feature_note.presentation.add_edit_patient
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -50,6 +52,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -75,14 +78,13 @@ fun AddEditPatientScreen(
     val focusRequester by remember { mutableStateOf(FocusRequester()) }
     val focusManager = LocalFocusManager.current
 
-    "HIHI this is image zz".log()
     patientImage.toString().log()
     val pagerState = rememberPagerState(
         pageCount = 5,
         initialPage = if (patientImage > 0) patientImage-1 else PatientByIdDTO.patientImages.random()
     )
-
     var context = LocalContext.current
+
     val doctorIdKey = stringPreferencesKey("user")
     var doctorId = flow<String> {
         context.idStore.data.map {
@@ -112,6 +114,7 @@ fun AddEditPatientScreen(
                 }
             }
         }
+
     }
     Scaffold(
         scaffoldState = scaffoldState
