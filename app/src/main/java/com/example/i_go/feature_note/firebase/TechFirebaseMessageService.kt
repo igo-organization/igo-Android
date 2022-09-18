@@ -1,11 +1,14 @@
 package com.example.i_go.feature_note.firebase
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.Intent
 import android.os.PowerManager
 import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.compose.rememberNavController
+import com.example.i_go.MainActivity
 import com.example.i_go.feature_note.data.storage.dataStore
 import com.example.i_go.feature_note.domain.util.log
 import com.google.android.gms.tasks.OnCompleteListener
@@ -34,6 +37,7 @@ class TechFirebaseMessageService: FirebaseMessagingService() {
             "Notification ${message.notification}".log()
             "Notification Title ${message.notification!!.title}".log()
             "Notification Body ${message.notification!!.body}".log()
+            "Notification Body ${message.notification!!.imageUrl}".log()
         }
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
 
