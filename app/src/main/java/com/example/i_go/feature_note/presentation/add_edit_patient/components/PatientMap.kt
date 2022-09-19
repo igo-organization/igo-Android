@@ -42,16 +42,27 @@ fun PatientMap (
         }
     }.collectAsState(initial = "")
 
-    val IMAGE: SharedPreferences =
-        context.getSharedPreferences("image", Context.MODE_PRIVATE)
-    val image_con = remember { mutableStateOf("") }
+    val patientId = remember { mutableStateOf(0) }
+    val ID_FCM: SharedPreferences =
+        context.getSharedPreferences("ID_FCM", Context.MODE_PRIVATE)
 
-    if (!IMAGE.getString("image", "").toString().isBlank()) {
-        image_con.value = IMAGE.getString("image", "").toString()
-        IMAGE.edit().putString("image", "").apply()
+    val X_FCM: SharedPreferences =
+        context.getSharedPreferences("X_FCM", Context.MODE_PRIVATE)
+
+    val Y_FCM: SharedPreferences =
+        context.getSharedPreferences("Y_FCM", Context.MODE_PRIVATE)
+
+    val x_fcm = X_FCM.getString("X_FCM", "").toString()
+    val y_fcm = Y_FCM.getString("Y_FCM", "").toString()
+    "fcm data on Screen - id: ${ID_FCM.getString("ID_FCM", "").toString()}".log()
+    "fcm data on Screen - x : $x_fcm".log()
+    "fcm data on Screen - y : $y_fcm".log()
+
+    if (ID_FCM.getString("ID_FCM", "").toString().isNotBlank()) {
+        patientId.value = ID_FCM.getString("ID_FCM", "")!!.toInt()
+        ID_FCM.edit().putString("ID_FCM", "").apply()
     }
-    "이미지는 ${image_con.value}".log()
-    var image_arr = image_con.value.split(",")
+
 
     val hospital = hospitalViewModel.getHospitalDetail(if (hospitalId.value.isNotEmpty()) hospitalId.value.toInt() else 1)
     val painter = rememberImagePainter(data = hospital.drawing, builder = {crossfade(true)})
@@ -99,8 +110,12 @@ fun PatientMap (
         MakeCircle(imageWidth = drawing_x.value, imageHeight = drawing_y.value, x = station_x_3.value, y = station_y_3.value)
         MakeCircle(imageWidth = drawing_x.value, imageHeight = drawing_y.value, x = station_x_4.value, y = station_y_4.value)
 
-        PatientCircle(imageWidth = drawing_x.value, imageHeight = drawing_y.value, x= 50, y = 270)
-
+        PatientCircle(
+            imageWidth = drawing_x.value,
+            imageHeight = drawing_y.value,
+            x = x_fcm.toDouble().toInt(),
+            y = y_fcm.toDouble().toInt()
+        )
     }
 
 }

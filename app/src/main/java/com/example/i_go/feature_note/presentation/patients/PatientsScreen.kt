@@ -67,23 +67,19 @@ fun PatientsScreen(
     }.collectAsState(initial = "")
 
     "Name is ${name.value}".log()
-    val TITLE: SharedPreferences =
-        context.getSharedPreferences("title", Context.MODE_PRIVATE)
+    val ID_FCM: SharedPreferences =
+        context.getSharedPreferences("ID_FCM", Context.MODE_PRIVATE)
 
-    val BODY: SharedPreferences =
-        context.getSharedPreferences("body", Context.MODE_PRIVATE)
+    val IMAGE_FCM: SharedPreferences =
+        context.getSharedPreferences("IMAGE_FCM", Context.MODE_PRIVATE)
 
-    val IMAGE: SharedPreferences =
-        context.getSharedPreferences("image", Context.MODE_PRIVATE)
+    "This is pref1: ${ID_FCM.getString("ID_FCM", "").toString()}".log()
+    "This is pref2: ${IMAGE_FCM.getString("IMAGE_FCM", "").toString()}".log()
 
-    "This is pref1: ${TITLE.getString("title", "").toString()}".log()
-    "This is pref1: ${BODY.getString("body", "").toString()}".log()
-    "This is pref1: ${IMAGE.getString("image", "").toString()}".log()
-
-    if (!IMAGE.getString("image", "").isNullOrBlank()){
+    if (!ID_FCM.getString("ID_FCM", "").isNullOrBlank()){
         navController.navigate(Screen.AddEditPatientScreen.route +
-                "?patientId=${3}&patientImage=${2}")
-
+                "?patientId=${ID_FCM.getString("ID_FCM", "")}" +
+                "&patientImage=${IMAGE_FCM.getString("IMAGE_FCM", "")}")
     }
 
     val openDialog = remember { mutableStateOf(false) }
