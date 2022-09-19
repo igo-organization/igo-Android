@@ -1,10 +1,12 @@
 package com.example.i_go.feature_note.firebase
 
-import android.app.NotificationManager
+import android.R
+import android.app.Notification
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.i_go.MainActivity
@@ -22,45 +24,42 @@ class TechFirebaseMessageService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val mBuilder = NotificationCompat.Builder(this)
 
-        "Tech 진입".log()
-        Log.v("CloudMessage", "From ${message.from}")
-        "this is cloudsMessage ${message.data}".log()
-        "value is ${message.data.values}".log()
         if (message.data.isNotEmpty()){
-            "Message Data ${message.data}".log()
-        }
-        message.data.let{
-            "Message Notification Body ${it["body"]}".log()
+            "Message Data - x     ${message.data["x"]}".log()
+            "Message Data - y     ${message.data["y"]}".log()
+            "Message Data - id    ${message.data["id"]}".log()
+            "Message Data - image ${message.data["image"]}".log()
+
+            val X_FCM = getSharedPreferences("X_FCM", Context.MODE_PRIVATE)
+            var editor = X_FCM.edit()
+            editor.putString("X_FCM",message.data["x"])
+            editor.apply()
+
+            val Y_FCM = getSharedPreferences("Y_FCM", Context.MODE_PRIVATE)
+            editor = Y_FCM.edit()
+            editor.putString("Y_FCM",message.data["y"])
+            editor.apply()
+
+            val ID_FCM = getSharedPreferences("ID_FCM", Context.MODE_PRIVATE)
+            editor = ID_FCM.edit()
+            editor.putString("ID_FCM",message.data["id"])
+            editor.apply()
+
+            val IMAGE_FCM = getSharedPreferences("IMAGE_FCM", Context.MODE_PRIVATE)
+            editor = IMAGE_FCM.edit()
+            editor.putString("IMAGE_FCM",message.data["image"])
+            editor.apply()
         }
 
         if (message.notification != null) {
-
-            val title = getSharedPreferences("title", Context.MODE_PRIVATE)
-            var editor = title.edit()
-            editor.putString("title",message.notification!!.title)
-            editor.apply()
-
-            val body = getSharedPreferences("body", Context.MODE_PRIVATE)
-            editor = body.edit()
-            editor.putString("body",message.notification!!.body)
-            editor.apply()
-
-            val image = getSharedPreferences("image", Context.MODE_PRIVATE)
-            editor = image.edit()
-            editor.putString("image",message.notification!!.imageUrl.toString())
-            editor.apply()
-
-            "This is Note: ${title.getString("title", "defaultTitle")}".log()
+            "작업표시줄 내용: ${message.notification!!.title} ${message.notification!!.body}".log()
             val intent = Intent(applicationContext, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
-
         }
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
 
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 "Fetching FCM registration token failed ${task.exception}".log()
                 return@OnCompleteListener
