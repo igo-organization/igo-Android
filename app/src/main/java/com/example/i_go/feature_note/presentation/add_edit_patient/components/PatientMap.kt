@@ -105,10 +105,12 @@ fun PatientMap (
         )
 
         // x의 범위: 0에서 682, y 범위: 0에서 484.5 사이
+        /*
         MakeCircle(imageWidth = drawing_x.value, imageHeight = drawing_y.value, x = station_x_1.value, y = station_y_1.value)
         MakeCircle(imageWidth = drawing_x.value, imageHeight = drawing_y.value, x = station_x_2.value, y = station_y_2.value)
         MakeCircle(imageWidth = drawing_x.value, imageHeight = drawing_y.value, x = station_x_3.value, y = station_y_3.value)
         MakeCircle(imageWidth = drawing_x.value, imageHeight = drawing_y.value, x = station_x_4.value, y = station_y_4.value)
+        */
 
         PatientCircle(
             imageWidth = drawing_x.value,

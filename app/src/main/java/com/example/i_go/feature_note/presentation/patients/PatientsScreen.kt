@@ -31,6 +31,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.i_go.R
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
 import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.util.log
@@ -227,7 +229,7 @@ fun PatientsScreen(
                             },
                             onDeleteClick = {
                                 viewModel.onEvent(
-                                    PatientsEvent.DeletePatient,
+                                    PatientsEvent.DeletePatient(patient = MappingPatient(it)),
                                     doctor_id = name.value.toInt(),
                                     patient_id = it.id!!
                                 )
@@ -236,7 +238,16 @@ fun PatientsScreen(
                                         message = "환자가 삭제되었습니다.",
                                         actionLabel = "취소하기"
                                     )
-                                    viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        "취소 버튼 누름".log()
+                                        viewModel.onEvent(
+                                            PatientsEvent.RestorePatients,
+                                            doctor_id = name.value.toInt(),
+                                            patient_id = it.id!!
+                                        )
+                                    } else{
+                                        viewModel.getPatients(if (name.value.isEmpty()) 1 else name.value.toInt())
+                                    }
                                 }
                             },
                             onCallClick = {
@@ -272,4 +283,19 @@ fun PatientsScreen(
             }
         }
     }
+}
+
+fun MappingPatient(patientById: PatientByIdDTO)
+: PatientDTO {
+    val patient = PatientDTO(
+        name = patientById.name,
+        gender = patientById.gender,
+        age = patientById.age,
+        blood_type = patientById.blood_type,
+        blood_rh = patientById.blood_rh,
+        disease = patientById.disease,
+        extra = patientById.extra,
+        image = patientById.image
+    )
+    return patient
 }

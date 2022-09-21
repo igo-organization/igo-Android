@@ -1,8 +1,10 @@
 package com.example.i_go.feature_note.presentation.patients
 
+import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
+
 
 sealed class PatientsEvent {
-    object DeletePatient: PatientsEvent()
+    data class DeletePatient(val patient: PatientDTO): PatientsEvent()
     data class EnteredText(val message: String): PatientsEvent()
     object CallPatient: PatientsEvent()
     object RestorePatients: PatientsEvent()
