@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.i_go.feature_note.presentation.SplashScreen
 import com.example.i_go.feature_note.presentation.add_edit_patient.AddEditPatientScreen
+import com.example.i_go.feature_note.presentation.alarms.AlarmScreen
 import com.example.i_go.feature_note.presentation.doctors.DoctorScreen
 import com.example.i_go.feature_note.presentation.login.LoginScreen
 import com.example.i_go.feature_note.presentation.patients.PatientsScreen
@@ -57,6 +58,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screen.DoctorScreen.route) {
                             DoctorScreen(navController = navController)
+                        }
+                        composable(route = Screen.AlarmScreen.route){
+                            AlarmScreen(navController = navController)
                         }
                         composable(
                             route = Screen.AddEditPatientScreen.route +

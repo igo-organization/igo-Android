@@ -148,7 +148,7 @@ fun PatientsScreen(
                     }
                     IconButton(
                         onClick = {
-                            //TODO: 언젠가는 만들 알림뷰
+                            navController.navigate(Screen.AlarmScreen.route)
                         },
                     ) {
                         Icon(
