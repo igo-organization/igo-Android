@@ -44,10 +44,8 @@ interface PatientAPI {
     ): Response<PatientMessageDTO>
 
     // 12. 의료진 -> 환자 호출
-    @POST("call/doctor/{doctor_id}/patient/{patient_id}/")
+    @GET("call/doctor/patient/{patient_id}/")
     suspend fun callPatient(
-        @Path ("doctor_id") doctor_id: Int,
-        @Path ("patient_id") patient_id: Int,
-        @Body messageDTO: PatientMessageDTO
+        @Path ("patient_id") patient_id: Int
     ): Response<PatientMessageDTO>
 }

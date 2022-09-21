@@ -30,8 +30,6 @@ interface PatientRepository {
     ): Response<PatientMessageDTO>
 
     suspend fun callPatient(
-        doctor_id: Int,
         patient_id: Int,
-        messageDTO: PatientMessageDTO
     ): Response<PatientMessageDTO>
 }

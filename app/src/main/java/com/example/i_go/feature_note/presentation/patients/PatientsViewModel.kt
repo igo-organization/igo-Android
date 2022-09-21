@@ -56,7 +56,7 @@ class PatientsViewModel @Inject constructor (
 
             }
             is PatientsEvent.CallPatient -> {
-                patientUseCases.callPatient(doctor_id, patient_id, message.value).launchIn(viewModelScope)
+                patientUseCases.callPatient(patient_id).launchIn(viewModelScope)
                 //     recentlyDeletedPatient = event.patient
 
             }

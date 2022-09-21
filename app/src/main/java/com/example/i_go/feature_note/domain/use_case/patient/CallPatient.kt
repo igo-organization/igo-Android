@@ -13,10 +13,10 @@ import javax.inject.Inject
 class CallPatient @Inject constructor(
     private val repository: PatientRepository
 ) {
-    operator fun invoke(doctor_id: Int, patient_id: Int, messageDTO: PatientMessageDTO): Flow<Resource<PatientMessageDTO>> = flow {
+    operator fun invoke(patient_id: Int): Flow<Resource<PatientMessageDTO>> = flow {
         try {
             emit(Resource.Loading())
-            val r = repository.callPatient(doctor_id, patient_id, messageDTO)
+            val r = repository.callPatient(patient_id)
             when(r.code()) {
                 200 -> {
                     "patient call success".log()
