@@ -164,35 +164,16 @@ fun PatientsScreen(
                     onDismissRequest = { openDialog.value = false},
                     title = {
                         Text(
-                            text = "환자에게 보낼 메시지를 입력해주세요.",
+                            text = "정말로 환자를 호출하시겠습니까?",
                             style = MaterialTheme.typography.body1,
-                            fontSize = 20.sp,
-                            color = primary
+                            fontSize = 22.sp,
+                            color = primary,
+                            lineHeight = 35.sp
                         )
                     },
                     text = {
-                        Column{
-                            Spacer(modifier = Modifier.height(20.dp))
-                            BasicTextField(
-                                value = viewModel.message.value.message!!,
-                                onValueChange = {
-                                    viewModel.onEvent(PatientsEvent.EnteredText(it), name.value.toInt(), patientId)
-                                },
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .align(CenterHorizontally),
-                                textStyle = MaterialTheme.typography.body1,
-                                singleLine = true,
-                            )
-                            Divider(
-                                modifier = Modifier
-                                    .padding(bottom = 20.dp)
-                                    .fillMaxWidth()
-                                    .height(1.dp),
-                                color = call_color
-                            )
-                        }
-                   },
+
+                    },
                     confirmButton = {
                         Box {
                             Button(
@@ -211,6 +192,19 @@ fun PatientsScreen(
                             }
                         }
                     },
+                    dismissButton = {
+                        Box {
+                            Button(
+                                modifier = Modifier.align(Center),
+                                onClick = {
+                                    openDialog.value = false
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = call_color)
+                            ) {
+                                Text("취소하기", style = MaterialTheme.typography.h4, color = White)
+                            }
+                        }
+                    }
                 )
             }
 
