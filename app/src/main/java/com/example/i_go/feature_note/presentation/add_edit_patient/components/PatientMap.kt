@@ -113,8 +113,8 @@ fun PatientMap (
         PatientCircle(
             imageWidth = drawing_x.value,
             imageHeight = drawing_y.value,
-            x = x_fcm.toDouble().toInt(),
-            y = y_fcm.toDouble().toInt()
+            x = if (x_fcm.isEmpty()) 0 else x_fcm.toDouble().toInt(),
+            y = if (y_fcm.isEmpty()) 0 else y_fcm.toDouble().toInt(),
         )
     }
 
