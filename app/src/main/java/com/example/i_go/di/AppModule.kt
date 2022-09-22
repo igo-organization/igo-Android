@@ -1,18 +1,27 @@
 package com.example.i_go.di
 
+import android.app.Application
+import android.app.Notification
 import android.content.Context
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.room.Room
 import com.example.i_go.feature_note._constants.Const.RemoteConst.BASE_URL
+import com.example.i_go.feature_note.data.notification_source.NotificationDatabase
 import com.example.i_go.feature_note.data.remote.PatientAPI
 import com.example.i_go.feature_note.data.remote.UserAPI
+import com.example.i_go.feature_note.data.repository.NotificationRepositoryImpl
 import com.example.i_go.feature_note.data.repository.PatientRepositoryImpl
 import com.example.i_go.feature_note.data.repository.UserRepositoryImpl
 import com.example.i_go.feature_note.data.storage.IdStore
 import com.example.i_go.feature_note.data.storage.TokenStore
 import com.example.i_go.feature_note.data.storage.dataStore
 import com.example.i_go.feature_note.data.storage.idStore
+import com.example.i_go.feature_note.domain.repository.NotificationRepository
 import com.example.i_go.feature_note.domain.repository.PatientRepository
 import com.example.i_go.feature_note.domain.repository.UserRepository
+import com.example.i_go.feature_note.domain.use_case.notification.AddNotification
+import com.example.i_go.feature_note.domain.use_case.notification.GetNotifications
+import com.example.i_go.feature_note.domain.use_case.notification.NotificationUseCases
 import com.example.i_go.feature_note.domain.util.log
 import dagger.Module
 import dagger.Provides
@@ -118,5 +127,32 @@ object AppModule {
     @Singleton
     fun providePatientRepository(api: PatientAPI): PatientRepository {
         return PatientRepositoryImpl(api)
+    }
+
+    // Notification Database 제공
+    @Provides
+    @Singleton
+    fun provideNotificationDatabase(app: Application): NotificationDatabase {
+        return Room.databaseBuilder(
+            app,
+            NotificationDatabase::class.java,
+            NotificationDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    //
+    @Provides
+    @Singleton
+    fun provideNotificationRepository(db: NotificationDatabase): NotificationRepository {
+        return NotificationRepositoryImpl(db.notificationDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationUseCases(repository: NotificationRepository): NotificationUseCases {
+        return NotificationUseCases(
+            getNotifications = GetNotifications(repository),
+            addNotification = AddNotification(repository)
+        )
     }
 }
