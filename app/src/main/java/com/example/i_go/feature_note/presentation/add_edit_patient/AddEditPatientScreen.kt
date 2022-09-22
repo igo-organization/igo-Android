@@ -104,7 +104,9 @@ fun AddEditPatientScreen(
             when (event) {
                 is AddEditPatientViewModel.UiEvent.SavePatient -> {
                     "HI sucess".log()
-                    navController.navigate(Screen.PatientsScreen.route)
+                    navController.navigate(Screen.PatientsScreen.route){
+                        popUpTo(0)
+                    }
                 }
                 is AddEditPatientViewModel.UiEvent.ShowSnackbar -> {
                     "this come fail".log()

@@ -64,9 +64,13 @@ fun AlarmScreen(
                 AlarmItem(
                     image = notification.image - 1,
                     name = notification.name,
-                    onClick = { navController.navigate(Screen.AddEditPatientScreen.route +
-                            "?patientId=${notification.patient_id}" +
-                            "&patientImage=${notification.image}") },
+                    onClick = {
+                        navController.navigate(Screen.AddEditPatientScreen.route +
+                                "?patientId=${notification.patient_id}" +
+                                "&patientImage=${notification.image}"){
+                            popUpTo(0)
+                        }
+                    },
                     onCallClick = {
                         "patient id is ${notification.patient_id}".log()
                         viewModel.callPatients(notification.patient_id)

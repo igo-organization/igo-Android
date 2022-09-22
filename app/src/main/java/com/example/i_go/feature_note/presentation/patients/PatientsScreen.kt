@@ -90,7 +90,9 @@ fun PatientsScreen(
     if (!ID_FCM.getString("ID_FCM", "").isNullOrBlank()){
         navController.navigate(Screen.AddEditPatientScreen.route +
                 "?patientId=${ID_FCM.getString("ID_FCM", "")}" +
-                "&patientImage=${IMAGE_FCM.getString("IMAGE_FCM", "")}")
+                "&patientImage=${IMAGE_FCM.getString("IMAGE_FCM", "")}") {
+            popUpTo(0)
+        }
         notificationViewModel.addNotification(
             patient_id = ID_FCM.getString("ID_FCM", "")!!.toInt(),
             patient_image = IMAGE_FCM.getString("IMAGE_FCM", "")!!.toInt(),
