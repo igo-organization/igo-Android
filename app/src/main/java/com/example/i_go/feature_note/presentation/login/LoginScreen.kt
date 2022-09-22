@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -134,12 +135,12 @@ fun LoginScreen(
                     horizontalAlignment = CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
+                        .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
+                        .verticalScroll(rememberScrollState())
                         .fillMaxWidth()
                         .fillMaxHeight()
-                        .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
                         .background(card_color)
                         .padding(10.dp)
-                        .verticalScroll(rememberScrollState())
                         .addFocusCleaner(focusManager)
                         .animateContentSize()
                 ) {
@@ -211,7 +212,8 @@ fun LoginScreen(
                                         SignInEvent.EnteredUsername(it),
                                         scaffoldState
                                     )
-                                }
+                                },
+                                alertMessage = "이전에 등록된 아이디 불가"
                             )
                             CustomText(
                                 text = "이메일   ",
@@ -221,7 +223,8 @@ fun LoginScreen(
                                         SignInEvent.EnteredEmail(it),
                                         scaffoldState
                                     )
-                                }
+                                },
+                                alertMessage = "이전에 등록된 이메일 불가"
                             )
                             CustomText(
                                 text = "패스워드",
@@ -232,7 +235,8 @@ fun LoginScreen(
                                         scaffoldState
                                     )
                                 },
-                                isPassword = true
+                                isPassword = true,
+                                alertMessage = "단순하지 않으며 8자 이상, 영어가 포함"
                             )
                             CustomText(
                                 text = "패스워드",
@@ -243,13 +247,8 @@ fun LoginScreen(
                                         scaffoldState
                                     )
                                 },
-                                isPassword = true
-                            )
-                            Text(
-                                text = "[회원가입 조건]\n\nID: 중복 불가, email: 중복 불가\n비밀번호: 이메일 아이디랑 중복되지 않으며 8자 이상, 영어가 있어야 함",
-                                color = primary,
-                                fontSize = 13.sp,
-                                modifier = Modifier.align(End).padding(top = 30.dp)
+                                isPassword = true,
+                                alertMessage = "패스워드1과 동일해야 함"
                             )
                         }
                         Spacer(modifier = Modifier.padding(30.dp))
@@ -285,8 +284,10 @@ fun LoginScreen(
                                             )
                                         } else viewModel2.onEvent(SignInEvent.SignIn, scaffoldState)
                                     } else {
-                                        if (viewModel.emailPw.value.username.isEmpty()) ExceptionMessage(viewModel.emailPw.value.username, "아이디를 입력해주세요.", scaffoldState)
-                                        else if (viewModel.emailPw.value.password.isEmpty()) ExceptionMessage(viewModel.emailPw.value.password, "패스워드를 입력해주세요.", scaffoldState)
+                                        if (viewModel.emailPw.value.username.isEmpty())
+                                            ExceptionMessage(viewModel.emailPw.value.username, "아이디를 입력해주세요.", scaffoldState)
+                                        else if (viewModel.emailPw.value.password.isEmpty())
+                                            ExceptionMessage(viewModel.emailPw.value.password, "패스워드를 입력해주세요.", scaffoldState)
                                         else viewModel.onEvent(LoginEvent.Login, scaffoldState)
                                     }
                                 }
