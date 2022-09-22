@@ -3,6 +3,7 @@ package com.example.i_go.feature_note.presentation.alarms
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -15,17 +16,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.i_go.feature_note.domain.util.log
 import com.example.i_go.feature_note.presentation.alarms.component.AlarmItem
+import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.primary
 
 @Composable
 fun AlarmScreen(
-    navController : NavHostController
+    navController: NavHostController,
+    viewModel: AlarmViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.value
+
     Column(
         modifier = Modifier
-            .fillMaxSize().background(White)
+            .fillMaxSize()
+            .background(White)
     ) {
         Row(
             modifier = Modifier
@@ -51,12 +59,29 @@ fun AlarmScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(16.dp)
         ) {
-            item{
-                AlarmItem()
+            items(state.notifications) { notification ->
+                "알림창에서 ${notification.patient_id} ${notification.image}".log()
+                AlarmItem(
+                    image = notification.image - 1,
+                    name = notification.name,
+                    onClick = { navController.navigate(Screen.AddEditPatientScreen.route +
+                            "?patientId=${notification.patient_id}" +
+                            "&patientImage=${notification.image}") },
+                    onCallClick = {
+                        "patient id is ${notification.patient_id}".log()
+                        viewModel.callPatients(notification.patient_id)
+                    }
+                )
             }
-            item{
-                AlarmItem()
-            }
+        /*
+            items(state.notifications) { notification ->
+                AlarmItem(
+                    image = notification.image,
+                    name = notification.name,
+                    onClick = { /* 환자 상세정보 */ "환자 상세정보 알림".log() },
+                    onCallClick = { /* 환자 호출 */ "환자 호출해봄".log() }
+                )
+            }*/
         }
     }
 }

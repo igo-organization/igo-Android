@@ -27,15 +27,19 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.i_go.R
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientDTO
+import com.example.i_go.feature_note.data.storage.dataStore
 import com.example.i_go.feature_note.data.storage.idStore
 import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.util.log
+import com.example.i_go.feature_note.presentation.alarms.AlarmViewModel
 import com.example.i_go.feature_note.presentation.patients.components.PatientItem
 import com.example.i_go.feature_note.presentation.util.Screen
 import com.example.i_go.ui.theme.*
@@ -48,7 +52,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun PatientsScreen(
     navController: NavController,
-    viewModel: PatientsViewModel = hiltViewModel()
+    viewModel: PatientsViewModel = hiltViewModel(),
+    notificationViewModel: AlarmViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
@@ -74,7 +79,11 @@ fun PatientsScreen(
 
     val IMAGE_FCM: SharedPreferences =
         context.getSharedPreferences("IMAGE_FCM", Context.MODE_PRIVATE)
+    val X_FCM: SharedPreferences =
+        context.getSharedPreferences("X_FCM", Context.MODE_PRIVATE)
 
+    val Y_FCM: SharedPreferences =
+        context.getSharedPreferences("Y_FCM", Context.MODE_PRIVATE)
     "This is pref1: ${ID_FCM.getString("ID_FCM", "").toString()}".log()
     "This is pref2: ${IMAGE_FCM.getString("IMAGE_FCM", "").toString()}".log()
 
@@ -82,6 +91,13 @@ fun PatientsScreen(
         navController.navigate(Screen.AddEditPatientScreen.route +
                 "?patientId=${ID_FCM.getString("ID_FCM", "")}" +
                 "&patientImage=${IMAGE_FCM.getString("IMAGE_FCM", "")}")
+        notificationViewModel.addNotification(
+            patient_id = ID_FCM.getString("ID_FCM", "")!!.toInt(),
+            patient_image = IMAGE_FCM.getString("IMAGE_FCM", "")!!.toInt(),
+            patient_x = X_FCM.getString("X_FCM", "")!!.toDouble(),
+            patient_y = Y_FCM.getString("Y_FCM", "")!!.toDouble(),
+        )
+        ID_FCM.edit().putString("ID_FCM", "").apply()
     }
 
     val openDialog = remember { mutableStateOf(false) }
