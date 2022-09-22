@@ -28,7 +28,8 @@ val Typography = Typography(
     h3 = TextStyle(
         fontFamily = QuickSand,
         fontWeight = FontWeight.Bold,
-        fontSize = 10.sp,
+        fontSize = 18.sp,
+        lineHeight = 20.sp,
         textAlign = TextAlign.Center
 
     ),
