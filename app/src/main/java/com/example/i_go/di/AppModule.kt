@@ -20,6 +20,7 @@ import com.example.i_go.feature_note.domain.repository.NotificationRepository
 import com.example.i_go.feature_note.domain.repository.PatientRepository
 import com.example.i_go.feature_note.domain.repository.UserRepository
 import com.example.i_go.feature_note.domain.use_case.notification.AddNotification
+import com.example.i_go.feature_note.domain.use_case.notification.DeleteNotification
 import com.example.i_go.feature_note.domain.use_case.notification.GetNotifications
 import com.example.i_go.feature_note.domain.use_case.notification.NotificationUseCases
 import com.example.i_go.feature_note.domain.util.log
@@ -152,7 +153,8 @@ object AppModule {
     fun provideNotificationUseCases(repository: NotificationRepository): NotificationUseCases {
         return NotificationUseCases(
             getNotifications = GetNotifications(repository),
-            addNotification = AddNotification(repository)
+            addNotification = AddNotification(repository),
+            deleteNotification = DeleteNotification(repository)
         )
     }
 }

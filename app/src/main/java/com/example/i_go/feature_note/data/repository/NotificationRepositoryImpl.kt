@@ -16,4 +16,8 @@ class NotificationRepositoryImpl(
     override suspend fun insertNotification(notification: Notification) {
         dao.insertNotification(notification)
     }
+
+    override suspend fun deleteNotification(notification: Notification) {
+        dao.deleteNotification(notification)
+    }
 }

@@ -9,4 +9,5 @@ interface NotificationRepository {
 
     suspend fun insertNotification(notification: Notification)
 
+    suspend fun deleteNotification(notification: Notification)
 }

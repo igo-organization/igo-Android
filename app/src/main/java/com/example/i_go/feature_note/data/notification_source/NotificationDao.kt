@@ -1,9 +1,6 @@
 package com.example.i_go.feature_note.data.notification_source
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.i_go.feature_note.domain.model.Notification
 import kotlinx.coroutines.flow.Flow
 
@@ -16,4 +13,6 @@ interface NotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNotification(notification: Notification)
 
+    @Delete
+    suspend fun deleteNotification(notification: Notification)
 }
