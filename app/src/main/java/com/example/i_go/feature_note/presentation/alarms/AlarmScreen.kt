@@ -74,18 +74,12 @@ fun AlarmScreen(
                     onCallClick = {
                         "patient id is ${notification.patient_id}".log()
                         viewModel.callPatients(notification.patient_id)
+                    },
+                    onDeleteClick = {
+                        viewModel.deleteNotifications(notification)
                     }
                 )
             }
-        /*
-            items(state.notifications) { notification ->
-                AlarmItem(
-                    image = notification.image,
-                    name = notification.name,
-                    onClick = { /* 환자 상세정보 */ "환자 상세정보 알림".log() },
-                    onCallClick = { /* 환자 호출 */ "환자 호출해봄".log() }
-                )
-            }*/
         }
     }
 }

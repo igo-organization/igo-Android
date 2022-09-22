@@ -4,28 +4,23 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.End
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.i_go.feature_note.data.remote.responseDTO.PatientByIdDTO
-import com.example.i_go.feature_note.domain.model.Notification
 import com.example.i_go.ui.theme.call_color
 import com.example.i_go.ui.theme.card_color
 import com.example.i_go.ui.theme.text_gray
@@ -36,8 +31,9 @@ fun AlarmItem(
     image: Int = 1,
     name: String = "맹구",
     onClick: () -> Unit = {},
-    onCallClick: () -> Unit = {}
-){
+    onCallClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,6 +41,7 @@ fun AlarmItem(
             .clip(RoundedCornerShape(30.dp))
             .background(card_color),
     ) {
+
         Row(
             modifier = Modifier.clickable(onClick = onClick).padding(20.dp).fillMaxSize()
         ) {
@@ -77,6 +74,16 @@ fun AlarmItem(
                     color = text_gray
                 )
             }
+        }
+        IconButton(
+            onClick = onDeleteClick,
+            modifier = Modifier.padding(top = 10.dp, end = 60.dp).size(20.dp).align(TopEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete note",
+                tint = Color.White
+            )
         }
         Row(
             modifier = Modifier

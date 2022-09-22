@@ -75,4 +75,11 @@ class AlarmViewModel @Inject constructor(
             }
     }
 
+    fun deleteNotifications(notification: Notification){
+        viewModelScope.launch {
+            notificationUseCases.deleteNotification(notification)
+        }
+    }
+
+
 }
