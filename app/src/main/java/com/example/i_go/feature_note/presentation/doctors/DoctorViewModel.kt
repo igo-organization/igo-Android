@@ -1,7 +1,10 @@
 package com.example.i_go.feature_note.presentation.doctors
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.i_go.feature_note.data.remote.requestDTO.UserDTO
@@ -54,6 +57,7 @@ class DoctorViewModel @Inject constructor(
                     id.value.hospitalId = it.data!!.hospital
                     userUseCases.setId(id.value)
                     "확인 ${id.value} and ${user.value}".log()
+                    "토큰 여기 ${user.value.token}".log()
                     _eventFlow.emit(UiEvent.SaveDoctor)
                 }
                 is Resource.Error -> {
@@ -91,6 +95,12 @@ class DoctorViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun setFCMToken(token: String){
+        "FCM 토큰 ${token}".log()
+        _user.value = user.value.copy(
+            token = token
+        )
+    }
     fun onEvent(event: DoctorEvent, doctor_id: Int){
         when (event) {
             is DoctorEvent.EnteredName -> {

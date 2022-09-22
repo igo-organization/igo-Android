@@ -1,5 +1,7 @@
 package com.example.i_go.feature_note.presentation.doctors
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -69,6 +71,12 @@ fun DoctorScreen (
         Icons.Filled.KeyboardArrowDown
     }
 
+    val FCM_TOKEN: SharedPreferences =
+        context.getSharedPreferences("FCM_TOKEN", Context.MODE_PRIVATE)
+
+    "This is FCM_TOKEN: ${FCM_TOKEN.getString("FCM_TOKEN", "").toString()}".log()
+
+
     val userIdKey = stringPreferencesKey("user")
     var userId = flow<String> {
 
@@ -83,6 +91,7 @@ fun DoctorScreen (
 
 
     LaunchedEffect(key1 = true) {
+        doctorViewModel.setFCMToken(FCM_TOKEN.getString("FCM_TOKEN", "").toString())
         doctorViewModel.getUserInfo(if (userId.value.isEmpty()) 1 else userId.value.toInt())
 
         doctorViewModel.eventFlow.collectLatest { event ->

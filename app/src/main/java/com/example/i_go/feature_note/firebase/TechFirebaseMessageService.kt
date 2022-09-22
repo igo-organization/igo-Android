@@ -30,6 +30,7 @@ class TechFirebaseMessageService : FirebaseMessagingService() {
             "Message Data - y     ${message.data["y"]}".log()
             "Message Data - id    ${message.data["id"]}".log()
             "Message Data - image ${message.data["image"]}".log()
+            "Message Data - name  ${message.data["name"]}".log()
 
             val X_FCM = getSharedPreferences("X_FCM", Context.MODE_PRIVATE)
             var editor = X_FCM.edit()
@@ -50,6 +51,11 @@ class TechFirebaseMessageService : FirebaseMessagingService() {
             editor = IMAGE_FCM.edit()
             editor.putString("IMAGE_FCM",message.data["image"])
             editor.apply()
+
+            val NAME_FCM = getSharedPreferences("NAME_FCM", Context.MODE_PRIVATE)
+            editor = NAME_FCM.edit()
+            editor.putString("NAME_FCM", if (message.data["name"]!!.isNotEmpty()) message.data["name"] else "안녕" )
+            editor.apply()
         }
 
         if (message.notification != null) {
@@ -66,7 +72,7 @@ class TechFirebaseMessageService : FirebaseMessagingService() {
             }
 
             val token = task.result
-            token.log()
+            "onMessageReceived ${token}".log()
 
         }
         )
@@ -74,14 +80,18 @@ class TechFirebaseMessageService : FirebaseMessagingService() {
 
 
     override fun onNewToken(token: String) {
-        token.log()
+        val FCM_TOKEN = getSharedPreferences("FCM_TOKEN", Context.MODE_PRIVATE)
+        var editor = FCM_TOKEN.edit()
+        editor.putString("FCM_TOKEN",token)
+        editor.apply()
+
         GlobalScope.launch{
             saveGCMToken(token)
         }
     }
 
     private suspend fun saveGCMToken(token: String) {
-        token.log()
+        "saveGCMToken ${token}".log()
         val gckTokenKey = stringPreferencesKey("gcm_token")
         baseContext.dataStore.edit { pref ->
             pref[gckTokenKey] = token

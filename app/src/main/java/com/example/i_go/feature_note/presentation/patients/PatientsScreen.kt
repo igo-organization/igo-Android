@@ -79,11 +79,16 @@ fun PatientsScreen(
 
     val IMAGE_FCM: SharedPreferences =
         context.getSharedPreferences("IMAGE_FCM", Context.MODE_PRIVATE)
+
     val X_FCM: SharedPreferences =
         context.getSharedPreferences("X_FCM", Context.MODE_PRIVATE)
 
     val Y_FCM: SharedPreferences =
         context.getSharedPreferences("Y_FCM", Context.MODE_PRIVATE)
+
+    val NAME_FCM: SharedPreferences =
+        context.getSharedPreferences("NAME_FCM", Context.MODE_PRIVATE)
+
     "This is pref1: ${ID_FCM.getString("ID_FCM", "").toString()}".log()
     "This is pref2: ${IMAGE_FCM.getString("IMAGE_FCM", "").toString()}".log()
 
@@ -98,12 +103,14 @@ fun PatientsScreen(
             patient_image = IMAGE_FCM.getString("IMAGE_FCM", "")!!.toInt(),
             patient_x = X_FCM.getString("X_FCM", "")!!.toDouble(),
             patient_y = Y_FCM.getString("Y_FCM", "")!!.toDouble(),
+            patient_name = NAME_FCM.getString("NAME_FCM", "")!!,
         )
         ID_FCM.edit().putString("ID_FCM", "").apply()
     }
 
     val openDialog = remember { mutableStateOf(false) }
     var patientId by remember { mutableStateOf(1) }
+    var patientName by remember { mutableStateOf("") }
 
 
     LaunchedEffect(key1 = true){
@@ -184,7 +191,7 @@ fun PatientsScreen(
                     onDismissRequest = { openDialog.value = false},
                     title = {
                         Text(
-                            text = "정말로 환자를 호출하시겠습니까?",
+                            text = "$patientName 환자를 호출하시겠습니까?",
                             style = MaterialTheme.typography.body1,
                             fontSize = 22.sp,
                             color = primary,
@@ -271,6 +278,7 @@ fun PatientsScreen(
                             onCallClick = {
                                 openDialog.value = true
                                 patientId = it.id!!
+                                patientName = it.name
                             }
                         )
                     }

@@ -46,7 +46,8 @@ class AlarmViewModel @Inject constructor(
         patient_id: Int,
         patient_x: Double,
         patient_y: Double,
-        patient_image: Int
+        patient_image: Int,
+        patient_name: String
     ){
         viewModelScope.launch {
             try {
@@ -56,7 +57,7 @@ class AlarmViewModel @Inject constructor(
                         patient_x = patient_x,
                         patient_y = patient_y,
                         image = patient_image,
-                        name = "원정"
+                        name = patient_name
                     )
                 )
                 "노트앱은 ${patient_id}".log()

@@ -67,9 +67,7 @@ fun AlarmScreen(
                     onClick = {
                         navController.navigate(Screen.AddEditPatientScreen.route +
                                 "?patientId=${notification.patient_id}" +
-                                "&patientImage=${notification.image}"){
-                            popUpTo(0)
-                        }
+                                "&patientImage=${notification.image}")
                     },
                     onCallClick = {
                         "patient id is ${notification.patient_id}".log()
